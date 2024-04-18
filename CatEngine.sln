@@ -3,24 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{52756822-4346-4D4D-968A-7E0CF018E734}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CatEngine", "CatEngine\CatEngine.vcxproj", "{E87B5397-9310-47FC-9FA0-8FE6289B66AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Debug|x64.ActiveCfg = Debug|x64
 		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Debug|x64.Build.0 = Debug|x64
-		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Debug|x86.ActiveCfg = Debug|Win32
-		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Debug|x86.Build.0 = Debug|Win32
 		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Release|x64.ActiveCfg = Release|x64
 		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Release|x64.Build.0 = Release|x64
-		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Release|x86.ActiveCfg = Release|Win32
-		{E87B5397-9310-47FC-9FA0-8FE6289B66AD}.Release|x86.Build.0 = Release|Win32
+		{52756822-4346-4D4D-968A-7E0CF018E734}.Debug|x64.ActiveCfg = Debug|x64
+		{52756822-4346-4D4D-968A-7E0CF018E734}.Debug|x64.Build.0 = Debug|x64
+		{52756822-4346-4D4D-968A-7E0CF018E734}.Release|x64.ActiveCfg = Release|x64
+		{52756822-4346-4D4D-968A-7E0CF018E734}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
