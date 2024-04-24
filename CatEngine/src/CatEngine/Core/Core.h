@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 
 #ifdef CE_PLATFORM_WINDOWS
 	#ifdef CE_USING_DLL
@@ -18,3 +17,5 @@
 
 
 #endif // CE_PLATFORM_WINDOWS
+
+#define BIT(x) (1 << x)

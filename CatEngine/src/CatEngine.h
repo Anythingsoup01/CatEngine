@@ -2,9 +2,10 @@
 
 // For use by Cat Engine Applications
 
-#include "CatEngine/Core.h"
+#include "CatEngine/Core/Log.h"
+#include "CatEngine/Core/Core.h"
 #include "CatEngine/Application.h"
 
 // Entry Point
 
-#include "CatEngine/Entrypoint.h"
+#include "CatEngine/Core/Entrypoint.h"
