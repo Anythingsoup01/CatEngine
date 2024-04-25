@@ -1,10 +1,10 @@
 workspace "CatEngine"
 	architecture "x64"
 
-	configurations{
+	configurations {
 		"Debug",
-		"Release",
-		"Dist"
+		"Dist",
+		"Release"
 	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -14,31 +14,26 @@ IncludeDir["GLFW"] = "CatEngine/vendors/GLFW/include"
 
 include "CatEngine/vendors/GLFW"
 
-project "CatEngine"
-	location "CatEngine"
-	kind "StaticLib"
+project "Sandbox"
+	location "Sandbox"
+	kind "ConsoleApp"
 	language "C++"
 
 	targetdir ("bin/" ..outputdir.. "/%{prj.name}")
 	objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
 
-	pchheader "cepch.h"
-	pchsource "CatEngine/src/cepch.cpp"
-
-	files{
+	files {
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs{
-		"%{prj.name}/src",
-		"%{prj.name}/vendors/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"CatEngine/src",
+		"CatEngine/vendors/spdlog/include"
 	}
 
 	links{
-		"GLFW",
-		"opengl32.lib"
+		"CatEngine"
 	}
 
 	filter "system:windows"
@@ -48,10 +43,6 @@ project "CatEngine"
 
 		defines{
 			"CE_PLATFORM_WINDOWS"
-		}
-
-		postbuildcommands{
-
 		}
 
 	filter "configurations:Debug"
@@ -66,26 +57,31 @@ project "CatEngine"
 		defines "CE_DIST"
 		optimize "On"
 
-project "Sandbox"
-	location "Sandbox"
-	kind "ConsoleApp"
+project "CatEngine"
+	location "CatEngine"
+	kind "StaticLib"
 	language "C++"
 
 	targetdir ("bin/" ..outputdir.. "/%{prj.name}")
 	objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
 
-	files{
+	pchheader "cepch.h"
+	pchsource "CatEngine/src/cepch.cpp"
+
+	files {
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs{
-		"CatEngine/vendors/spdlog/include",
-		"CatEngine/src"
+		"%{prj.name}/src",
+		"%{prj.name}/vendors/spdlog/include",
+		"%{IncludeDir.GLFW}"
 	}
 
 	links{
-		"CatEngine"
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"

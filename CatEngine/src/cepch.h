@@ -15,5 +15,3 @@
 #ifdef CE_PLATFORM_WINDOWS
 #include <Windows.h>
 #endif
-
-

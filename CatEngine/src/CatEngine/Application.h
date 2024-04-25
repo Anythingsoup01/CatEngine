@@ -1,25 +1,19 @@
 #pragma once
 
-#include "Core/Core.h"
 
-#include "Events/EventHandler.h"
+#include "Events/Events.h"
 #include "Events/ApplicationEvent.h"
 
 #include "Window.h"
 
-
-
 namespace CatEngine {
-
-	class __declspec(dllexport) Application
-	{
+	class Application {
 	public:
 		Application();
 		virtual ~Application();
 
 		void Run();
-
-		void OnEvent(EventHandler& e);
+		void OnEvent(Events& e);
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
@@ -27,6 +21,6 @@ namespace CatEngine {
 		bool m_Running = true;
 	};
 
-	//Defined in client
+	// Defined in client
 	Application* CreateApplication();
 }

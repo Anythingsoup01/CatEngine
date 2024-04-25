@@ -1,11 +1,13 @@
 #pragma once
 
-// For use by Cat Engine Applications
-
-#include "CatEngine/Core/Log.h"
-#include "CatEngine/Core/Core.h"
 #include "CatEngine/Application.h"
+#include "CatEngine/Core/Log.h"
 
-// Entry Point
+#include "CatEngine/Events/ApplicationEvent.h"
+#include "CatEngine/Events/Events.h"
+#include "CatEngine/Events/KeyEvent.h"
+#include "CatEngine/Events/MouseEvent.h"
+
+// EntryPoint
 
 #include "CatEngine/Core/Entrypoint.h"
