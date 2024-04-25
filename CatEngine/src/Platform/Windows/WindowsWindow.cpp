@@ -8,6 +8,8 @@
 #include "CatEngine/Events/KeyEvent.h"
 #include "CatEngine/Events/MouseEvent.h"
 
+
+
 namespace CatEngine {
 	// Setting GLFW Functions and Variables
 	static bool s_GLFWInitialized = false;
@@ -62,6 +64,8 @@ namespace CatEngine {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		CORE_ASSERT(status, "Failed to load GLAD");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 

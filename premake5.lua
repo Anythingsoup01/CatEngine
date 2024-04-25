@@ -11,8 +11,12 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "CatEngine/vendors/GLFW/include"
+IncludeDir["Glad"] = "CatEngine/vendors/Glad/include"
+IncludeDir["ImGui"] = "CatEngine/vendors/ImGui"
 
 include "CatEngine/vendors/GLFW"
+include "CatEngine/vendors/Glad"
+include "CatEngine/vendors/ImGui"
 
 project "Sandbox"
 	location "Sandbox"
@@ -42,7 +46,7 @@ project "Sandbox"
 		systemversion "latest"
 
 		defines{
-			"CE_PLATFORM_WINDOWS"
+			"CE_PLATFORM_WINDOWS",
 		}
 
 	filter "configurations:Debug"
@@ -76,11 +80,15 @@ project "CatEngine"
 	includedirs{
 		"%{prj.name}/src",
 		"%{prj.name}/vendors/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}",
 	}
 
 	links{
 		"GLFW",
+		"Glad",
+		"ImGui",
 		"opengl32.lib"
 	}
 
