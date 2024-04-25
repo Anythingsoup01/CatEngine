@@ -1,10 +1,10 @@
 #pragma once
 
-
+#include "Window.h"
+#include "CatEngine/Core/Layers/LayerStack.h"
 #include "Events/Events.h"
 #include "Events/ApplicationEvent.h"
 
-#include "Window.h"
 
 namespace CatEngine {
 	class Application {
@@ -14,11 +14,15 @@ namespace CatEngine {
 
 		void Run();
 		void OnEvent(Events& e);
+
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* overlay);
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
+		LayerStack m_LayerStack;
 	};
 
 	// Defined in client
