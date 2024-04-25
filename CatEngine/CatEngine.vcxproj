@@ -143,7 +143,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\CatEngine\Core\Log.h" />
+    <ClInclude Include="src\CatEngine\Core\Layers\Layer.h" />
+    <ClInclude Include="src\CatEngine\Core\Layers\LayerStack.h" />
+    <ClInclude Include="src\CatEngine\Core\Logging\Log.h" />
     <ClInclude Include="src\CatEngine.h" />
     <ClInclude Include="src\CatEngine\Application.h" />
     <ClInclude Include="src\CatEngine\Core\Core.h" />
@@ -157,7 +159,9 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\CatEngine\Core\Log.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Layers\Layer.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Layers\LayerStack.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Logging\Log.cpp" />
     <ClCompile Include="src\CatEngine\Application.cpp" />
     <ClCompile Include="src\cepch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

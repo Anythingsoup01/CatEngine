@@ -2,7 +2,7 @@
 #include "WindowsWindow.h"
 
 // Logging
-#include "CatEngine/Core/Log.h"
+#include "CatEngine/Core/Logging/Log.h"
 // Events
 #include "CatEngine/Events/ApplicationEvent.h"
 #include "CatEngine/Events/KeyEvent.h"
