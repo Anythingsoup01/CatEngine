@@ -8,7 +8,7 @@ namespace CatEngine {
 	public:
 		WindowCloseEvent() {}
 		EVENT_CLASS_TYPE(WindowClose)
-		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	};
 	// Window Resize Event
 	class WindowResizeEvent : public Events {
@@ -25,7 +25,7 @@ namespace CatEngine {
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(WindowResize)
-			EVENT_CLASS_CATEGORY(ApplicationEvent)
+			EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	private:
 		unsigned int m_Width, m_Height;
 	};
@@ -34,34 +34,34 @@ namespace CatEngine {
 	public:
 		WindowFocusEvent() {}
 		EVENT_CLASS_TYPE(WindowFocus)
-		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	};
 	// Window Lost Focus Event
 	class WindowLostFocusEvent : public Events {
 	public:
 		WindowLostFocusEvent() {}
 		EVENT_CLASS_TYPE(WindowLostFocus)
-		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	};
 	// Window Moved Event
 	class WindowMovedEvent : public Events {
 	public:
 		WindowMovedEvent() {}
 		EVENT_CLASS_TYPE(WindowMoved)
-		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	};
 	// Window Maximized
 	class WindowMaximizedEvent : public Events {
 	public:
 		WindowMaximizedEvent() {}
 		EVENT_CLASS_TYPE(WindowMaximized)
-		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	};
 	// Window Minimized Event
 	class WindowMinimizedEvent : public Events {
 	public:
 		WindowMinimizedEvent() {}
 		EVENT_CLASS_TYPE(WindowMinimized)
-		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	};
 }

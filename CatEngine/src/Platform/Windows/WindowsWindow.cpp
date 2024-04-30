@@ -28,8 +28,11 @@ namespace CatEngine {
 	}
 	void WindowsWindow::OnUpdate()
 	{
+		
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
+
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 	void WindowsWindow::SetVSync(bool enabled)
 	{
@@ -147,6 +150,13 @@ namespace CatEngine {
 					break;
 				}
 			}
+		});
+
+		// Key Typed Callback
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint) {
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			KeyTypedEvent event(codepoint);
+			data.EventCallback(event);
 		});
 
 		// Mouse Callback

@@ -5,5 +5,5 @@
 	path = CatEngine/vendors/GLFW
 	url = https://github.com/Anythingsoup01/glfw.git
 [submodule "CatEngine/vendors/ImGui"]
-	path = CatEngine/vendors/ImGui
-	url = https://github.com/anythingsoup01/ImGui
+	path=CatEngine/vendors/ImGui
+	url = https://github.com/Anythingsoup01/ImGui.git

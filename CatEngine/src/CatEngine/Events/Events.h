@@ -7,17 +7,17 @@ namespace CatEngine {
 	enum class EventType {
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, WindowMaximized, WindowMinimized,
-		KeyPressed, KeyReleased,
+		KeyPressed, KeyTyped, KeyReleased,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 	};
 
 	enum EventCategory { 
 		None = 0, 
-		ApplicationEvent   = BIT(0),	
-		InputEvent         = BIT(1),
-		KeyboardEvent      = BIT(2),
-		MouseEvent         = BIT(3),
-		MouseButtonEvent   = BIT(4),
+		CategoryApplicationEvent   = BIT(0),	
+		CategoryInputEvent         = BIT(1),
+		CategoryKeyboardEvent      = BIT(2),
+		CategoryMouseEvent         = BIT(3),
+		CategoryMouseButtonEvent   = BIT(4),
 	};
 
 /* The event type lets the Event Dispatcher determine what the event is and runs any premade scripts or custom scripts.
@@ -26,7 +26,7 @@ Defaults to None, but can take WindowClose, WindowResize, WindowFocus, WindowLos
                                virtual EventType GetEventType() const override { return GetStaticType(); }\
                                virtual const char* GetName() const override { return #type; }
 /* The event category is used to group the event into what they apply to.
-This can range from ApplicationEvent, InputEvent, KeyboardEvent, MouseEvent, MouseButtonEvent*/
+This can range from CategoryApplicationEvent, CategoryInputEvent, CategoryKeyboardEvent, CategoryMouseEvent, CategoryMouseButtonEvent*/
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
 	class Events {

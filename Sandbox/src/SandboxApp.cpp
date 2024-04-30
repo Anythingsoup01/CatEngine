@@ -2,6 +2,7 @@
 
 #include "CatEngine.h"
 
+
 class ExampleLayer : public CatEngine::Layer {
 public:
 	ExampleLayer()
@@ -22,6 +23,7 @@ class Sandbox : public CatEngine::Application {
 public:
 	Sandbox() {
 		PushLayer(new ExampleLayer());
+		PushOverlay(new CatEngine::ImGuiLayer());
 	}
 	~Sandbox() {
 

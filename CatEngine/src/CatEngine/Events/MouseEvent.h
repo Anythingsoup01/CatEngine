@@ -8,7 +8,7 @@ namespace CatEngine {
 	public:
 		inline int GetMouseButton() const { return m_Button; }
 
-		EVENT_CLASS_CATEGORY(MouseButtonEvent | InputEvent)
+		EVENT_CLASS_CATEGORY(CategoryMouseButtonEvent | CategoryInputEvent)
 	protected:
 		MouseOnButtonEvent(int button)
 			: m_Button(button) {}
@@ -54,27 +54,27 @@ namespace CatEngine {
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(MouseMoved)
-		EVENT_CLASS_CATEGORY(MouseEvent | InputEvent)
+		EVENT_CLASS_CATEGORY(CategoryMouseEvent | CategoryInputEvent)
 	private:
 		unsigned int m_MouseX, m_MouseY;
 	};
 
 	class MouseScrolledEvent : public Events {
 	public:
-		MouseScrolledEvent(unsigned int offsetX, unsigned int offsetY)
+		MouseScrolledEvent(float offsetX, float offsetY)
 			: m_OffsetX(offsetX), m_OffsetY(offsetY) {}
 
-		inline unsigned int GetMouseX() const { return m_OffsetX; }
-		inline unsigned int GetMouseY() const { return m_OffsetY; }
+		inline float GetXOffset() const { return m_OffsetX; }
+		inline float GetYOffset() const { return m_OffsetY; }
 
 		std::string ToString() const override {
 			std::stringstream ss;
-			ss << "Mouse Scrolled Event: " << m_OffsetX << ", " << m_OffsetY;
+			ss << "Mouse Scrolled Event: " << GetXOffset() << ", " << GetYOffset();
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(MouseScrolled)
-		EVENT_CLASS_CATEGORY(MouseEvent | InputEvent)
+		EVENT_CLASS_CATEGORY(CategoryMouseEvent | CategoryInputEvent)
 	private:
-		unsigned int m_OffsetX, m_OffsetY;
+		float m_OffsetX, m_OffsetY;
 	};
 }
