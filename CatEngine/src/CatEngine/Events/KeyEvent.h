@@ -42,7 +42,6 @@ namespace CatEngine {
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(KeyTyped)
-	private:
 	};
 
 	// Key Released Event, using Key Event
