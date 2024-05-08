@@ -23,6 +23,8 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" ..outputdir.. "/%{prj.name}")
 	objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -35,7 +37,8 @@ project "Sandbox"
 	includedirs{
 		"CatEngine/src",
 		"CatEngine/vendors/spdlog/include",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
 	}
 
 	links{
@@ -43,8 +46,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines{
@@ -53,21 +54,22 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "CE_DEBUG"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "CE_RELEASE"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "CE_DIST"
-		optimize "On"
+		optimize "on"
 
 project "CatEngine"
 	location "CatEngine"
 	kind "StaticLib"
 	language "C++"
-	staticruntime "On"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" ..outputdir.. "/%{prj.name}")
 	objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -97,22 +99,24 @@ project "CatEngine"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines{
-			"CE_PLATFORM_WINDOWS"
+			"CE_PLATFORM_WINDOWS",
+			"GLFW_INCLUDE_NONE"
 		}
 
 	filter "configurations:Debug"
 		defines "CE_DEBUG"
-		symbols "On"
+		runtime "Debug"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "CE_RELEASE"
-		optimize "On"
+		runtime "Release"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "CE_DIST"
-		optimize "On"
+		runtime "Release"
+		optimize "on"

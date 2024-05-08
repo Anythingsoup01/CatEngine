@@ -2,6 +2,8 @@
 
 #include "CatEngine.h"
 
+#include "imgui.h"
+
 class ExampleLayer : public CatEngine::Layer {
 public:
 	ExampleLayer()
@@ -10,6 +12,12 @@ public:
 	void OnUpdate() override 
 	{
 		//CLI_INFO("ExampleLayer::Update");
+	}
+
+	virtual void OnImGuiDraw() override {
+		ImGui::Begin("Test Window");
+		ImGui::Text("This is a test");
+		ImGui::End();
 	}
 
 	void OnEvent(CatEngine::Events& event) override 
@@ -25,7 +33,6 @@ class Sandbox : public CatEngine::Application {
 public:
 	Sandbox() {
 		PushLayer(new ExampleLayer());
-		PushOverlay(new CatEngine::ImGuiLayer());
 	}
 	~Sandbox() {
 

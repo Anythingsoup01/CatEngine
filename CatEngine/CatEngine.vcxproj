@@ -159,7 +159,6 @@
     <ClInclude Include="src\CatEngine\Events\KeyEvent.h" />
     <ClInclude Include="src\CatEngine\Events\MouseEvent.h" />
     <ClInclude Include="src\CatEngine\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\cepch.h" />
@@ -169,8 +168,8 @@
     <ClCompile Include="src\CatEngine\Core\Layers\Layer.cpp" />
     <ClCompile Include="src\CatEngine\Core\Layers\LayerStack.cpp" />
     <ClCompile Include="src\CatEngine\Core\Logging\Log.cpp" />
+    <ClCompile Include="src\CatEngine\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\CatEngine\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\cepch.cpp">

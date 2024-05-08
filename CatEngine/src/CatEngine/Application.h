@@ -5,11 +5,7 @@
 #include "Events/Events.h"
 #include "Events/ApplicationEvent.h"
 
-
-#include "Core/Logging/Log.h"
-#include "Core/Core.h"
-#include "Core/Input/Input.h"
-
+#include "CatEngine/ImGui/ImGuiLayer.h"
 
 namespace CatEngine {
 	class Application {
@@ -30,6 +26,7 @@ namespace CatEngine {
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
