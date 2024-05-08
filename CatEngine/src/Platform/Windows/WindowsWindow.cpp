@@ -15,7 +15,7 @@ namespace CatEngine {
 	static bool s_GLFWInitialized = false;
 
 	static void GLFWErrorCallback(int error, const char* description) {
-		CORE_ERROR("GLFW Error ({0}) : {1}", error, description);
+		API_ERROR("GLFW Error ({0}) : {1}", error, description);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -28,11 +28,8 @@ namespace CatEngine {
 	}
 	void WindowsWindow::OnUpdate()
 	{
-		
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
-
-		glClear(GL_COLOR_BUFFER_BIT);
 	}
 	void WindowsWindow::SetVSync(bool enabled)
 	{
@@ -43,6 +40,11 @@ namespace CatEngine {
 	bool WindowsWindow::IsVSync() const
 	{
 		return m_Data.VSync;
+	}
+
+	void* WindowsWindow::GetNativeWindow() const
+	{
+		return m_Window;
 	}
 	
 	Window* Window::Create(const WindowProps& props) {
@@ -56,19 +58,19 @@ namespace CatEngine {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		CORE_INFO("Creating Window {0}({1}, {2})", props.Title, props.Width, props.Height);
+		API_INFO("Creating Window {0}({1}, {2})", props.Title, props.Width, props.Height);
 
 		// Initializing GLFW
 		if (!s_GLFWInitialized) {
 			int success = glfwInit();
 			glfwSetErrorCallback(GLFWErrorCallback);
-			CORE_ASSERT(success, "Could not load GLFW!");
+			API_ASSERT(success, "Could not load GLFW!");
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		CORE_ASSERT(status, "Failed to load GLAD");
+		API_ASSERT(status, "Failed to load GLAD");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
