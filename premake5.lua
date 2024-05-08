@@ -13,6 +13,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "CatEngine/vendors/GLFW/include"
 IncludeDir["Glad"] = "CatEngine/vendors/Glad/include"
 IncludeDir["ImGui"] = "CatEngine/vendors/ImGui"
+IncludeDir["glm"] = "CatEngine/vendors/glm"
 
 include "CatEngine/vendors/GLFW"
 include "CatEngine/vendors/Glad"
@@ -33,7 +34,8 @@ project "Sandbox"
 
 	includedirs{
 		"CatEngine/src",
-		"CatEngine/vendors/spdlog/include"
+		"CatEngine/vendors/spdlog/include",
+		"%{IncludeDir.glm}"
 	}
 
 	links{
@@ -84,6 +86,7 @@ project "CatEngine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}",
 	}
 
 	links{

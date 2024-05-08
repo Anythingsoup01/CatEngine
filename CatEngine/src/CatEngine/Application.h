@@ -1,9 +1,14 @@
 #pragma once
 
-#include "Window.h"
+#include "Core/Window.h"
 #include "CatEngine/Core/Layers/LayerStack.h"
 #include "Events/Events.h"
 #include "Events/ApplicationEvent.h"
+
+
+#include "Core/Logging/Log.h"
+#include "Core/Core.h"
+#include "Core/Input/Input.h"
 
 
 namespace CatEngine {

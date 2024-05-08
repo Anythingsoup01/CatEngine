@@ -1,10 +1,8 @@
 #include "cepch.h"
 #include "Application.h"
-
-#include "Core/Logging/Log.h"
-#include "Core/Core.h"
-
 #include <glad/glad.h>
+
+#include <glm/glm.hpp>
 
 namespace CatEngine {
 
@@ -23,10 +21,13 @@ namespace CatEngine {
 	void Application::Run()
 	{
 		while (m_Running) {
-			m_Window->OnUpdate();
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			m_Window->OnUpdate();
+			
 		}
 	}
 

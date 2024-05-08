@@ -8,8 +8,7 @@
 #include "GLFW/glfw3.h"
 
 #include "CatEngine/Application.h"
-// TEMPORARY
-#include <GLFW/glfw3.h>
+#include "CatEngine/Core/Input/Input.h"
 
 namespace CatEngine {
 	
@@ -97,10 +96,12 @@ namespace CatEngine {
 		ImGuiIO& io = ImGui::GetIO();
 		io.KeysDown[e.GetKeyCode()] = true;
 
-		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+
+		io.KeyMap[ImGuiKey_Space] = io.KeysDown[CE_SPACE];
+		io.KeyCtrl = io.KeysDown[CE_LEFT_CONTROL] || io.KeysDown[CE_RIGHT_CONTROL];
+		io.KeyAlt = io.KeysDown[CE_LEFT_ALT] || io.KeysDown[CE_RIGHT_ALT];
+		io.KeyShift = io.KeysDown[CE_LEFT_SHIFT] || io.KeysDown[CE_RIGHT_SHIFT];
+		io.KeySuper = io.KeysDown[CE_LEFT_SUPER] || io.KeysDown[CE_RIGHT_SUPER];
 		return false;
 	}
 	bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)

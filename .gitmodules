@@ -7,3 +7,6 @@
 [submodule "CatEngine/vendors/ImGui"]
 	path=CatEngine/vendors/ImGui
 	url = https://github.com/Anythingsoup01/ImGui.git
+[submodule "CatEngine/vendors/glm"]
+	path = CatEngine/vendors/glm
+	url = https://github.com/Anythingsoup01/glm.git

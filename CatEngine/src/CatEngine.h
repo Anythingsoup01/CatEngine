@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CatEngine/Application.h"
+#include "CatEngine/Core/Input/Input.h"
 #include "CatEngine/Core/Layers/Layer.h"
 #include "CatEngine/Core/Logging/Log.h"
 		  

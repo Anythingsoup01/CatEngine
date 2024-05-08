@@ -2,7 +2,6 @@
 
 #include "CatEngine.h"
 
-
 class ExampleLayer : public CatEngine::Layer {
 public:
 	ExampleLayer()
@@ -10,12 +9,15 @@ public:
 	
 	void OnUpdate() override 
 	{
-		DEBUG_INFO("ExampleLayer::Update");
+		//CLI_INFO("ExampleLayer::Update");
 	}
 
 	void OnEvent(CatEngine::Events& event) override 
 	{
-		DEBUG_TRACE("{0}", event.ToString());
+		if (event.GetEventType() == CatEngine::EventType::KeyPressed) {
+			CatEngine::KeyPressedEvent& e = (CatEngine::KeyPressedEvent&)event;
+			API_TRACE("{0}", (char)e.GetKeyCode());
+		}
 	}
 };
 
