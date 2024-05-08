@@ -1,3 +1,12 @@
 [submodule "CatEngine/vendors/glm"]
 	path = CatEngine/vendors/glm
 	url = https://github.com/Anythingsoup01/glm.git
+[submodule "CatEngine/vendors/spdlog"]
+	path = CatEngine/vendors/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "CatEngine/vendors/ImGui"]
+	path = CatEngine/vendors/ImGui
+	url = https://github.com/Anythingsoup01/ImGui
+[submodule "CatEngine/vendors/GLFW"]
+	path = CatEngine/vendors/GLFW
+	url = https://github.com/Anythingsoup01/GLFW
