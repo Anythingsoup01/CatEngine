@@ -6,6 +6,10 @@
 #include "Events/ApplicationEvent.h"
 
 #include "CatEngine/ImGui/ImGuiLayer.h"
+ 
+#include "CatEngine/Core/Renderer/Buffers/Buffer.h"
+
+#include "CatEngine/Core/Renderer/Shader/OpenGLShader.h"
 
 namespace CatEngine {
 	class Application {
@@ -29,6 +33,12 @@ namespace CatEngine {
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+
+		unsigned int m_VertexArray;
+		std::unique_ptr<OpenGLShader> m_Shader;
+
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
 
 	private:
 		static Application* s_Instance;
