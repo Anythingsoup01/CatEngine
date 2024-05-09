@@ -91,6 +91,11 @@ project "CatEngine"
 		"%{IncludeDir.glm}",
 	}
 
+		defines
+		{
+			"_CRT_SECURE_NO_WARNINGS",
+		}
+
 	links{
 		"GLFW",
 		"Glad",
@@ -103,7 +108,7 @@ project "CatEngine"
 
 		defines{
 			"CE_PLATFORM_WINDOWS",
-			"GLFW_INCLUDE_NONE"
+			"GLFW_INCLUDE_NONE",
 		}
 
 	filter "configurations:Debug"
