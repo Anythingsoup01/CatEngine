@@ -3,17 +3,26 @@
 
 #include "spdlog/spdlog.h"
 
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GLCall(x) Log::GLClearError();x;ASSERT(Log::GLLog(#x, __FILE__, __LINE__));
+
+
+
 namespace CatEngine {
 	class Log
 	{
-	private:
-		static std::shared_ptr<spdlog::logger> s_APILogger;
-		static std::shared_ptr<spdlog::logger> s_CLILogger;
 	public:
+		static void GLClearError();
+
+		static bool GLLog(const char* function, const char* file, int line);
+
 		static void Init();
 
 		inline static std::shared_ptr<spdlog::logger>& GetAPILogger() { return s_APILogger; }
 		inline static std::shared_ptr<spdlog::logger>& GetCLILogger() { return s_CLILogger; }
+	private:
+		static std::shared_ptr<spdlog::logger> s_APILogger;
+		static std::shared_ptr<spdlog::logger> s_CLILogger;
 	};
 }
 
