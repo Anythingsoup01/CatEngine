@@ -3,6 +3,11 @@
 
 // Logging
 #include "CatEngine/Core/Logging/Log.h"
+
+// Graphics Contexts
+#include "Platform/OpenGL/OpenGLGraphicsContext.h"
+
+
 // Events
 #include "CatEngine/Events/ApplicationEvent.h"
 #include "CatEngine/Events/KeyEvent.h"
@@ -29,7 +34,7 @@ namespace CatEngine {
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 	void WindowsWindow::SetVSync(bool enabled)
 	{
@@ -60,6 +65,7 @@ namespace CatEngine {
 
 		API_INFO("Creating Window {0}({1}, {2})", props.Title, props.Width, props.Height);
 
+
 		// Initializing GLFW
 		if (!s_GLFWInitialized) {
 			int success = glfwInit();
@@ -68,9 +74,10 @@ namespace CatEngine {
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		API_ASSERT(status, "Failed to load GLAD");
+
+		m_Context = new OpenGLGraphicsContext(m_Window);
+		m_Context->Init();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 

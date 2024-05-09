@@ -1,7 +1,9 @@
 #pragma once
 
 #include "CatEngine/Core/Window.h"
-#include "glad/glad.h"
+
+#include "CatEngine/Core/Renderer/GraphicsAPIContext.h"
+
 #include "GLFW/glfw3.h"
 
 namespace CatEngine {
@@ -24,6 +26,7 @@ namespace CatEngine {
 
 	private:
 		GLFWwindow* m_Window;
+		GraphicsAPIContext* m_Context;
 
 		struct WindowData {
 			std::string Title;
