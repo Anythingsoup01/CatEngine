@@ -8,6 +8,8 @@
 #include "CatEngine/ImGui/ImGuiLayer.h"
  
 #include "CatEngine/Core/Renderer/Buffers/Buffer.h"
+#include "CatEngine/Core/Renderer/Buffers/VertexArray.h"
+#include "CatEngine/Core/Renderer/Renderer.h"
 
 #include "CatEngine/Core/Renderer/Shader/OpenGLShader.h"
 
@@ -31,15 +33,15 @@ namespace CatEngine {
 
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
-		bool m_Running = true;
 		LayerStack m_LayerStack;
 
-		unsigned int m_VertexArray;
-		std::unique_ptr<OpenGLShader> m_Shader;
 
-		std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		std::shared_ptr<OpenGLShader> m_Shader;
+		std::shared_ptr<VertexArray> m_VertexArray;
 
+		Renderer m_Renderer;
+
+		bool m_Running = true;
 	private:
 		static Application* s_Instance;
 	};

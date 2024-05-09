@@ -130,6 +130,6 @@ namespace CatEngine {
 
 		virtual uint32_t GetCount() const = 0;
 
-		static IndexBuffer* Create(uint32_t* vertices, uint32_t size);
+		static IndexBuffer* Create(uint32_t* indices, uint32_t size);
 	};
 }

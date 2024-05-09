@@ -14,12 +14,6 @@ public:
 		//CLI_INFO("ExampleLayer::Update");
 	}
 
-	virtual void OnImGuiDraw() override {
-		ImGui::Begin("Test Window");
-		ImGui::Text("This is a test");
-		ImGui::End();
-	}
-
 	void OnEvent(CatEngine::Events& event) override 
 	{
 		if (event.GetEventType() == CatEngine::EventType::KeyPressed) {

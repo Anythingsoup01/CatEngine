@@ -13,25 +13,6 @@ namespace CatEngine {
 
 	Application* Application::s_Instance = nullptr;
 
-	static GLenum ShaderDataTypeToGLBaseType(ShaderDataType type) {
-		switch (type)
-		{
-		case CatEngine::ShaderDataType::Vec:  return GL_FLOAT;
-		case CatEngine::ShaderDataType::Vec2: return GL_FLOAT;
-		case CatEngine::ShaderDataType::Vec3: return GL_FLOAT;
-		case CatEngine::ShaderDataType::Vec4: return GL_FLOAT;
-		case CatEngine::ShaderDataType::Mat3: return GL_FLOAT;
-		case CatEngine::ShaderDataType::Mat4: return GL_FLOAT;
-		case CatEngine::ShaderDataType::Int:  return GL_INT;
-		case CatEngine::ShaderDataType::Int2: return GL_INT;
-		case CatEngine::ShaderDataType::Int3: return GL_INT;
-		case CatEngine::ShaderDataType::Int4: return GL_INT;
-		case CatEngine::ShaderDataType::Bool: return GL_BOOL;
-		}
-		API_ASSERT(false, "Unknown ShaderDataType!");
-		return 0;
-	}
-
 	Application::Application()
 	{
 
@@ -43,51 +24,36 @@ namespace CatEngine {
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
+
+		// Vertex Array
+		m_VertexArray.reset(VertexArray::Create());
+
+		// Vertex Buffer
 		float vertices[7 * 4]{
 			-0.5f, -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, 1.0f, // 0
 			 0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.2f, 1.0f, // 1
 			-0.5f,  0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f, // 2
-			 0.5f,  0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f, // 3
+			 0.5f,  0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f, // 2
 		};
 
-		unsigned int indices[]{
-			0, 1, 2,
-			1, 3, 2
-		};
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		// Vertex Array
-		glCreateVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-		// Vertex Buffer
-
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-		{
-			BufferLayout layout = {
-				{ ShaderDataType::Vec3, "a_Position", false },
-				{ ShaderDataType::Vec4, "a_Color", false }
-			};
-
-			m_VertexBuffer->SetLayout(layout);
-		}
-
-
-		uint32_t index = 0;
-		const auto& layout = m_VertexBuffer->GetLayout();
-		for (const auto& element : layout)
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(
-				index, 
-				element.GetComponentCount(element.Type), 
-				ShaderDataTypeToGLBaseType(element.Type), 
-				element.Normalized ? GL_TRUE : GL_FALSE, 
-				layout.GetStride(),
-				(const void*)element.Offset);
-			index++;
-		}
+		vertexBuffer->SetLayout
+		({
+			{ ShaderDataType::Vec3, "a_Position", false },
+			{ ShaderDataType::Vec4, "a_Color", false }
+		});
+		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 		// Index Buffer
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+
+		unsigned int indices[]{ 0, 1, 2, 1, 3, 2};
+
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_VertexArray->SetIndexBuffer(indexBuffer);
+
 		// Shader / Texture Binding
 
 		std::string vertexSource = R"(
@@ -122,19 +88,20 @@ namespace CatEngine {
 		)";
 
 		m_Shader.reset(new OpenGLShader(vertexSource, fragmentSource));
+
 	}
 	Application::~Application()
 	{
-		glDeleteVertexArrays(1, &m_VertexArray);
 	}
 	void Application::Run()
 	{
 		while (m_Running) {
-			glClear(GL_COLOR_BUFFER_BIT);
+			m_Renderer.Clear();
 
 			m_Shader->Bind();
-			glBindVertexArray(m_VertexArray);
-			GLCall(glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr));
+			m_VertexArray->Bind();
+
+			m_Renderer.Draw(m_VertexArray->GetIndexBuffer());
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
@@ -145,9 +112,6 @@ namespace CatEngine {
 			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
-
-
-
 
 		}
 	}
