@@ -143,9 +143,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="src\CatEngine\Core\Renderer\Renderer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\Renderer\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\RendererAPI.h" />
+    <ClInclude Include="src\Platform\OpenGL\Buffers\OpenGLVertexArray.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\Renderer.h" />
+    <ClInclude Include="src\Platform\OpenGL\Buffers\OpenGLBuffer.h" />
     <ClInclude Include="src\CatEngine\Core\Renderer\Shader\OpenGLShader.h" />
     <ClInclude Include="src\CatEngine.h" />
     <ClInclude Include="src\CatEngine\Application.h" />
@@ -172,10 +175,13 @@
     <ClInclude Include="src\CatEngine\Core\Renderer\Buffers\Buffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\Renderer\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\RenderCommand.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\RendererAPI.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\Buffers\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\CatEngine\Core\Renderer\Buffers\VertexArray.cpp" />
-    <ClCompile Include="src\CatEngine\Core\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\Renderer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\Buffers\OpenGLBuffer.cpp" />
     <ClCompile Include="src\CatEngine\Core\Renderer\Shader\OpenGLShader.cpp" />
     <ClCompile Include="src\CatEngine\Application.cpp" />
     <ClCompile Include="src\CatEngine\Core\Layers\Layer.cpp" />
