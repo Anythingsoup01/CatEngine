@@ -1,8 +1,5 @@
 #include "cepch.h"
 #include "Application.h"
-#include <glad/glad.h>
-
-#include <glm/glm.hpp>
 
 #include "Core/Logging/Log.h"
 #include "Core/Core.h"
@@ -16,7 +13,7 @@ namespace CatEngine {
 	Application::Application()
 	{
 
-		s_Instance = this;
+		/*s_Instance = this;
 
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
@@ -87,34 +84,36 @@ namespace CatEngine {
 			};
 		)";
 
-		m_Shader.reset(new OpenGLShader(vertexSource, fragmentSource));
+		m_Shader.reset(new OpenGLShader(vertexSource, fragmentSource));*/
 
 	}
 	Application::~Application()
 	{
 	}
-	void Application::Run()
-	{
-		while (m_Running) {
-			m_Renderer.Clear();
 
-			m_Shader->Bind();
-			m_VertexArray->Bind();
-
-			m_Renderer.Draw(m_VertexArray->GetIndexBuffer());
-
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
-
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
-				layer->OnImGuiDraw();
-			m_ImGuiLayer->End();
-
-			m_Window->OnUpdate();
-
-		}
-	}
+	//void Application::Run()
+	//{
+	//	while (m_Running) {
+	//		RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
+	//	
+	//		Renderer::BeginScene();
+	//		m_Shader->Bind();
+	//		Renderer::Submit(m_VertexArray);
+	//		Renderer::EndScene();
+	//	
+	//		RenderCommand::DrawIndexed(m_VertexArray);
+	//	
+	//		for (Layer* layer : m_LayerStack)
+	//			layer->OnUpdate();
+	//	
+	//		m_ImGuiLayer->Begin();
+	//		for (Layer* layer : m_LayerStack)
+	//			layer->OnImGuiDraw();
+	//		m_ImGuiLayer->End();
+	//	
+	//		m_Window->OnUpdate();
+	//	}
+	//}
 
 	void Application::OnEvent(Events& e)
 	{
