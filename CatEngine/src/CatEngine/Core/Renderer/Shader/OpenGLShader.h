@@ -2,15 +2,19 @@
 
 #include <string>
 
+#include "glm/glm.hpp"
+
 namespace CatEngine {
-	class OpenGLShader
+	class Shader
 	{
 	public:
-		OpenGLShader(const std::string& vertexShader, const std::string& fragmentShader);
-		~OpenGLShader();
+		Shader(const std::string& vertexShader, const std::string& fragmentShader);
+		~Shader();
 
 		void Bind() const;
 		void Unbind() const;
+
+		void UploadUniformMat4(const std::string name, const glm::mat4& matrix);
 	private:
 		uint32_t m_RendererID;
 	};

@@ -5,8 +5,10 @@
 
 #include "glad/glad.h"
 
+#include "glm/gtc/type_ptr.hpp"
+
 namespace CatEngine {
-	OpenGLShader::OpenGLShader(const std::string& vertexSource, const std::string& fragmentSource)
+	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
 	{
 
 		// Create an empty vertex shader handle
@@ -109,16 +111,21 @@ namespace CatEngine {
 		glDetachShader(m_RendererID, vertexShader);
 		glDetachShader(m_RendererID, fragmentShader);
 	}
-	OpenGLShader::~OpenGLShader()
+	Shader::~Shader()
 	{
 		glDeleteProgram(m_RendererID);
 	}
-	void OpenGLShader::Bind() const
+	void Shader::Bind() const
 	{
 		glUseProgram(m_RendererID);
 	}
-	void OpenGLShader::Unbind() const
+	void Shader::Unbind() const
 	{
 		glUseProgram(0);
+	}
+	void Shader::UploadUniformMat4(const std::string name, const glm::mat4& matrix)
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 }

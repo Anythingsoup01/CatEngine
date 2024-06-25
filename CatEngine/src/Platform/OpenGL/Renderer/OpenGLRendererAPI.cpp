@@ -3,6 +3,7 @@
 
 #include "glad/glad.h"
 
+
 namespace CatEngine{
 	void OpenGLRendererAPI::Clear(const glm::vec4 clearColor)
 	{

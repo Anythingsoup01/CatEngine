@@ -143,15 +143,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\OpenGL\Renderer\OpenGLRendererAPI.h" />
-    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\RenderCommand.h" />
-    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\RendererAPI.h" />
-    <ClInclude Include="src\Platform\OpenGL\Buffers\OpenGLVertexArray.h" />
-    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\Renderer.h" />
-    <ClInclude Include="src\Platform\OpenGL\Buffers\OpenGLBuffer.h" />
-    <ClInclude Include="src\CatEngine\Core\Renderer\Shader\OpenGLShader.h" />
     <ClInclude Include="src\CatEngine.h" />
     <ClInclude Include="src\CatEngine\Application.h" />
+    <ClInclude Include="src\CatEngine\Core\Camera\Camera.h" />
     <ClInclude Include="src\CatEngine\Core\Core.h" />
     <ClInclude Include="src\CatEngine\Core\EntryPoint.h" />
     <ClInclude Include="src\CatEngine\Core\Input\Input.h" />
@@ -160,42 +154,51 @@
     <ClInclude Include="src\CatEngine\Core\Layers\Layer.h" />
     <ClInclude Include="src\CatEngine\Core\Layers\LayerStack.h" />
     <ClInclude Include="src\CatEngine\Core\Logging\Log.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Buffers\Buffer.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Buffers\VertexArray.h" />
     <ClInclude Include="src\CatEngine\Core\Renderer\GraphicsAPIContext.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\RenderCommand.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\Renderer.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Rendering\RendererAPI.h" />
+    <ClInclude Include="src\CatEngine\Core\Renderer\Shader\OpenGLShader.h" />
+    <ClInclude Include="src\CatEngine\Core\TimeStep.h" />
     <ClInclude Include="src\CatEngine\Core\Window.h" />
     <ClInclude Include="src\CatEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\CatEngine\Events\Events.h" />
     <ClInclude Include="src\CatEngine\Events\KeyEvent.h" />
     <ClInclude Include="src\CatEngine\Events\MouseEvent.h" />
     <ClInclude Include="src\CatEngine\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Platform\OpenGL\Buffers\OpenGLBuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\Buffers\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLGraphicsContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\Renderer\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\cepch.h" />
-    <ClInclude Include="src\CatEngine\Core\Renderer\Buffers\VertexArray.h" />
-    <ClInclude Include="src\CatEngine\Core\Renderer\Buffers\Buffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\OpenGL\Renderer\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\RenderCommand.cpp" />
-    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\RendererAPI.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\Buffers\OpenGLVertexArray.cpp" />
-    <ClCompile Include="src\CatEngine\Core\Renderer\Buffers\VertexArray.cpp" />
-    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\Renderer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\Buffers\OpenGLBuffer.cpp" />
-    <ClCompile Include="src\CatEngine\Core\Renderer\Shader\OpenGLShader.cpp" />
     <ClCompile Include="src\CatEngine\Application.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Camera\Camera.cpp" />
     <ClCompile Include="src\CatEngine\Core\Layers\Layer.cpp" />
     <ClCompile Include="src\CatEngine\Core\Layers\LayerStack.cpp" />
     <ClCompile Include="src\CatEngine\Core\Logging\Log.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Buffers\Buffer.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Buffers\VertexArray.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\RenderCommand.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\Renderer.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Rendering\RendererAPI.cpp" />
+    <ClCompile Include="src\CatEngine\Core\Renderer\Shader\OpenGLShader.cpp" />
     <ClCompile Include="src\CatEngine\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\CatEngine\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\Buffers\OpenGLBuffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\Buffers\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLGraphicsContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\Renderer\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\cepch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\CatEngine\Core\Renderer\Buffers\Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendors\GLFW\GLFW.vcxproj">

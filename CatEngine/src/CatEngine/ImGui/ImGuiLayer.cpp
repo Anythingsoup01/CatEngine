@@ -60,8 +60,10 @@ namespace CatEngine {
 
 	void ImGuiLayer::OnImGuiDraw()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		ImGui::Begin("Inspector");
+		ImGui::BeginChild("Window01");
+		ImGui::EndChild();
+		ImGui::End();
 	}
 
 	

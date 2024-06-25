@@ -25,7 +25,7 @@ namespace CatEngine {
 			return ss.str();
 		}
 		EVENT_CLASS_TYPE(WindowResize)
-			EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
+		EVENT_CLASS_CATEGORY(CategoryApplicationEvent)
 	private:
 		unsigned int m_Width, m_Height;
 	};

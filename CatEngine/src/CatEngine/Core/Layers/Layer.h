@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CatEngine/Events/Events.h"
+#include "CatEngine/Core/TimeStep.h"
 
 namespace CatEngine {
 	class Layer {
@@ -10,7 +11,7 @@ namespace CatEngine {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Time deltaTime) {}
 		virtual void OnImGuiDraw() {}
 		virtual void OnEvent(Events& event) {}
 
