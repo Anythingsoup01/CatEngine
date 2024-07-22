@@ -1,168 +1,128 @@
 #include <iostream>
 
 #include "CatEngine.h"
+#include "Platform/OpenGL/Renderer/OpenGLShader.h"
 
 #include "imgui.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 
 class AppLayer : public CatEngine::Layer {
 public:
 	AppLayer()
-		:Layer("Application"), m_Camera(-1.77, 1.77, -1.0, 1.0, -1.0, 1.0) 
+		: Layer("Application"), m_Camera(-1.77, 1.77, -1.0, 1.0, -1.0, 1.0), m_SquareTransform(0.0f)
 	{
 		// Vertex Array
-		m_VertexArray.reset(CatEngine::VertexArray::Create());
+		m_SquareVertexArray.reset(CatEngine::VertexArray::Create());
 
 		// Vertex Buffer
 		float vertices[7 * 4]{
-			-0.5f, -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, 1.0f, // 0
-			 0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.2f, 1.0f, // 1
-			-0.5f,  0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f, // 2
-			 0.5f,  0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f, // 3
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.3f, 1.0f, // 0
+			-0.5f,  0.5f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f, // 1
+			 0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.3f, 1.0f, // 2
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, // 3
 		};
 
-		std::shared_ptr<CatEngine::VertexBuffer> squareBuffer;
+		CatEngine::Ref<CatEngine::VertexBuffer> squareBuffer;
 		squareBuffer.reset(CatEngine::VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		squareBuffer->SetLayout
 		({
 			{ CatEngine::ShaderDataType::Vec3, "a_Position", false },
-			{ CatEngine::ShaderDataType::Vec4, "a_Color", false }
+			{ CatEngine::ShaderDataType::Vec4, "a_Color", false},
 			});
-		m_VertexArray->AddVertexBuffer(squareBuffer);
-
+		m_SquareVertexArray->AddVertexBuffer(squareBuffer);
 
 		// Index Buffer
-
 		unsigned int indices[]{ 0, 1, 2, 1, 3, 2 };
 
-		std::shared_ptr<CatEngine::IndexBuffer> squareIndexBuffer;
+		CatEngine::Ref<CatEngine::IndexBuffer> squareIndexBuffer;
 		squareIndexBuffer.reset(CatEngine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-		m_VertexArray->SetIndexBuffer(squareIndexBuffer);
+		m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
 
-
-
-		m_TriangleVA.reset(CatEngine::VertexArray::Create());
-
-		float triangleVerts[7 * 4]{
-			 1.5f, -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, 1.0f, // 0
-			 0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.2f, 1.0f, // 1
-			 0.5f,  0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f, // 2
-			 1.5f,  0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f, // 3
-		};
-
-		std::shared_ptr<CatEngine::VertexBuffer> triangleVertexBuffer;
-		triangleVertexBuffer.reset(CatEngine::VertexBuffer::Create(triangleVerts, sizeof(triangleVerts)));
-
-		triangleVertexBuffer->SetLayout
-		({
-			{ CatEngine::ShaderDataType::Vec3, "a_Position", false },
-			{ CatEngine::ShaderDataType::Vec4, "a_Color", false }
-			});
-		m_TriangleVA->AddVertexBuffer(triangleVertexBuffer);
-
-		unsigned int triangleIndices[]{ 0, 1, 2, 2, 3, 0 };
-
-		std::shared_ptr<CatEngine::IndexBuffer> triangleIndexBuffer;
-		triangleIndexBuffer.reset(CatEngine::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(uint32_t)));
-		m_TriangleVA->SetIndexBuffer(triangleIndexBuffer);
-
-		// Shader / Texture Binding
-
-		std::string vertexSource = R"(
-			#version 330 core
-			
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
-			
-			uniform mat4 u_ViewProjection;
-
-			out vec3 v_Position;
-			out vec4 v_Color;	
-
-			void main()
-			{
-				v_Position = a_Position;
-				v_Color = a_Color;
-			    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
-			}; 
-		)";
-		std::string fragmentSource = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-			in vec3 v_Position;
-			in vec4 v_Color;
-			
-			void main()
-			{
-			    color =  vec4(v_Position * 0.5 + 0.5, 1.0);
-			    color =  v_Color;
-			};
-		)";
-
-		m_Shader.reset(new CatEngine::Shader(vertexSource, fragmentSource));
-
-		std::string triVertexSource = R"(
-			#version 330 core
-			
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
-			
-			uniform mat4 u_ViewProjection;
-
-			out vec3 v_Position;
-			out vec4 v_Color;	
-
-			void main()
-			{
-				v_Position = a_Position;
-				v_Color = a_Color;
-			    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
-			}; 
-		)";
-		std::string triFragmentSource = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-			in vec3 v_Position;
-			in vec4 v_Color;
-			
-			void main()
-			{
-			    color =  vec4(v_Position * 0.5 + 0.5, 1.0);
-			};
-		)";
-
-		m_TriangleShader.reset(new CatEngine::Shader(triVertexSource, triFragmentSource));
+		auto flatColorShader = m_ShaderLibrary.Load("assets/shaders/FlatShader.glsl");
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
+		
+		m_Texture2D = CatEngine::Texture2D::Create("assets/textures/cat_texture.png");
+		std::dynamic_pointer_cast<CatEngine::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<CatEngine::OpenGLShader>(textureShader)->UploadUniformInt("u_Color", 0);
 	}
 	
 	void OnUpdate(CatEngine::Time time) override 
-	{	
-		CLI_INFO("DeltaTime: {0}s, ({1}ms)", time.deltaTime(), time.deltaTimeMS());
+	{
+		//CLI_INFO("DeltaTime: {0}s, ({1}ms)", time.deltaTime(), time.deltaTimeMS());
 
+		// Camera Up
+		m_CameraPosition.y += (CatEngine::Input::IsKeyPressed(CE_W)) ? m_CameraSpeed * time.deltaTime() : 0;
+		// Camera Down
+		m_CameraPosition.y -= (CatEngine::Input::IsKeyPressed(CE_S)) ? m_CameraSpeed * time.deltaTime() : 0;
+		// Camera Right
+		m_CameraPosition.x += (CatEngine::Input::IsKeyPressed(CE_D)) ? m_CameraSpeed * time.deltaTime() : 0;
+		// Camera Left
+		m_CameraPosition.x -= (CatEngine::Input::IsKeyPressed(CE_A)) ? m_CameraSpeed * time.deltaTime() : 0;
+		// Camera Rotate Right
+		m_CameraRotation.z += CatEngine::Input::IsKeyPressed(CE_E) ? m_CameraSpeed * time.deltaTime() : 0;
+		// Camera Rotate Left
+		m_CameraRotation.z -= CatEngine::Input::IsKeyPressed(CE_Q) ? m_CameraSpeed * time.deltaTime() : 0;
+		// Camera Rotate Reset
+		m_CameraRotation.z = CatEngine::Input::IsKeyPressed(CE_R) ? 0 : m_CameraRotation.z;
+
+		m_Camera.SetPosition(m_CameraPosition);
+		m_Camera.SetRotation(m_CameraRotation);
 
 		CatEngine::RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
 		CatEngine::Renderer::BeginScene(m_Camera);
 
-		CatEngine::Renderer::Submit(m_Shader, m_VertexArray);
-		CatEngine::Renderer::Submit(m_TriangleShader, m_TriangleVA);
+		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		auto flatColorShader = m_ShaderLibrary.Get("FlatShader");
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
+		flatColorShader->Bind();
+		m_Texture2D->Bind();
+
+		if (renderSquare)
+		{
+			for (int x = 0; x < m_GridSize[0]; x++)
+			{
+				for (int y = 0; y < m_GridSize[1]; y++)
+				{
+					glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
+					glm::mat4 squareOneTransform = glm::translate(glm::mat4(1.0f), pos + m_SquareTransform) * scale;
+					CatEngine::Renderer::Submit(flatColorShader, m_SquareVertexArray, squareOneTransform);
+				}
+			}
+		}
+		if (renderBigCat)
+			CatEngine::Renderer::Submit(flatColorShader, m_SquareVertexArray, glm::mat4(glm::translate(glm::mat4(1.0f), m_SquareTransform) * glm::scale(glm::mat4(1.0f), glm::vec3(1.5))));
 
 		CatEngine::Renderer::EndScene();
 
-		m_CameraPosition.y += (CatEngine::Input::IsKeyPressed(CE_W) || CatEngine::Input::IsKeyPressed(CE_UP)) ? m_CameraSpeed * time.deltaTime() : 0;
-		m_CameraPosition.y -= (CatEngine::Input::IsKeyPressed(CE_S) || CatEngine::Input::IsKeyPressed(CE_DOWN)) ? m_CameraSpeed * time.deltaTime() : 0;
-		m_CameraPosition.x += (CatEngine::Input::IsKeyPressed(CE_D) || CatEngine::Input::IsKeyPressed(CE_RIGHT)) ? m_CameraSpeed * time.deltaTime() : 0;
-		m_CameraPosition.x -= (CatEngine::Input::IsKeyPressed(CE_A) || CatEngine::Input::IsKeyPressed(CE_LEFT)) ? m_CameraSpeed * time.deltaTime() : 0;
+	}
 
-		m_CameraRotation += CatEngine::Input::IsKeyPressed(CE_E) ? m_CameraSpeed * time.deltaTime() : 0;
-		m_CameraRotation -= CatEngine::Input::IsKeyPressed(CE_Q) ? m_CameraSpeed * time.deltaTime() : 0;
+	void OnImGuiDraw() override
+	{
+		ImGui::Begin("Inspector");
 
-		m_Camera.SetPosition({ m_CameraPosition.x, m_CameraPosition.y, m_CameraPosition.z });
-		m_Camera.SetRotation({ 0, 0, m_CameraRotation });
+		ImGui::BeginChild("Transform", ImVec2(350, 50));
+		
+		ImGui::DragFloat3("Camera Position", glm::value_ptr(m_CameraPosition), 0.025);
+		ImGui::DragFloat3("Camera Rotation", glm::value_ptr(m_CameraRotation), 0.025);
+		ImGui::EndChild();
 
+		ImGui::BeginChild("Box Settings", ImVec2(350, 100));
+		ImGui::DragInt2("Box Grid", m_GridSize, 0.25, 0, 10);
+		ImGui::Checkbox("Show Squares", &renderSquare);
+		ImGui::EndChild();
+		ImGui::BeginChild("BigBoi Settings");
+		ImGui::Checkbox("Show BigBoi", &renderBigCat);
+		ImGui::EndChild();
+
+		ImGui::End();
 	}
 
 	void OnEvent(CatEngine::Events& event) override 
@@ -171,21 +131,30 @@ public:
 	}
 private:
 
-	std::shared_ptr<CatEngine::Shader> m_Shader;
-	std::shared_ptr<CatEngine::Shader> m_TriangleShader;
-	std::shared_ptr<CatEngine::VertexArray> m_VertexArray;
-	std::shared_ptr<CatEngine::VertexArray> m_TriangleVA;
+	CatEngine::ShaderLibrary m_ShaderLibrary;
 
-	float m_CameraSpeed = 1.0f;
+	CatEngine::Ref<CatEngine::VertexArray> m_SquareVertexArray;
+	CatEngine::Ref<CatEngine::Texture2D> m_Texture2D;
+
+	CatEngine::OrthographicCamera m_Camera;
+
+	float m_CameraSpeed = 2.0f;
+	float m_ObjectMoveSpeed = 1.0f;
 
 	glm::vec3 m_CameraPosition = { 0, 0, 0 };
 
-	float m_CameraRotation = 0;
+	glm::vec3 m_CameraRotation = { 0, 0, 0 };
 
+	glm::vec3 m_SquareTransform;
 
-	CatEngine::OrthographicCamera m_Camera;
+	int m_GridSize[2] = { 1, 1 };
+
+	glm::vec3 squareColor = { 0.8, 0.2, 0.3 };
+
+	bool renderSquare = true;
+	bool renderBigCat = false;
+
 };
-
 
 class Sandbox : public CatEngine::Application {
 public:

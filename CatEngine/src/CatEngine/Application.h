@@ -1,13 +1,17 @@
 #pragma once
 
 #include "Core/Window.h"
-#include "CatEngine/Core/Layers/LayerStack.h"
+#include "Core/Layers/LayerStack.h"
 #include "Events/Events.h"
 #include "Events/ApplicationEvent.h"
 
-#include "CatEngine/ImGui/ImGuiLayer.h"
+#include "ImGui/ImGuiLayer.h"
 
-#include "CatEngine/Core/TimeStep.h"
+#include "Core/Renderer/Rendering/Renderer.h"
+
+#include "Core/Core.h"
+
+#include "Core/TimeStep.h"
 
 
 namespace CatEngine {
@@ -31,7 +35,7 @@ namespace CatEngine {
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:
-		std::unique_ptr<Window> m_Window;
+		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		float m_LastFrameTime;
 	private:

@@ -3,25 +3,25 @@
 
 #include "CatEngine/Core/Logging/Log.h"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace CatEngine {
 	OpenGLGraphicsContext::OpenGLGraphicsContext(GLFWwindow* windowHandle)
-		: m_WindowHandle(windowHandle)
+		: m_Window(windowHandle)
 	{
 		API_ASSERT(windowHandle, "Window Handle is null!");
 	}
 
 	void OpenGLGraphicsContext::Init()
 	{
-		glfwMakeContextCurrent(m_WindowHandle);
+		glfwMakeContextCurrent(m_Window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		API_ASSERT(status, "Failed to load GLAD");
 	}
 
 	void OpenGLGraphicsContext::SwapBuffers()
 	{
-		glfwSwapBuffers(m_WindowHandle);
+		glfwSwapBuffers(m_Window);
 	}
 }

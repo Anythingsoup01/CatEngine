@@ -60,10 +60,7 @@ namespace CatEngine {
 
 	void ImGuiLayer::OnImGuiDraw()
 	{
-		ImGui::Begin("Inspector");
-		ImGui::BeginChild("Window01");
-		ImGui::EndChild();
-		ImGui::End();
+
 	}
 
 	

@@ -1,6 +1,8 @@
 #pragma once
 #include "cepch.h"
 
+#include "CatEngine/Core/Core.h"
+
 #include "spdlog/spdlog.h"
 
 #define ASSERT(x) if (!(x)) __debugbreak();
@@ -29,7 +31,7 @@ namespace CatEngine {
 #ifdef CE_DEBUG
 
 // Core Log Macros
-#define API_CRITICAL(...)                ::CatEngine::Log::GetAPILogger()->critical(__VA_ARGS__)
+#define API_CRITICAL(...)             ::CatEngine::Log::GetAPILogger()->critical(__VA_ARGS__)
 #define API_ERROR(...)                ::CatEngine::Log::GetAPILogger()->error(__VA_ARGS__)
 #define API_WARN(...)                 ::CatEngine::Log::GetAPILogger()->warn(__VA_ARGS__)
 #define API_INFO(...)                 ::CatEngine::Log::GetAPILogger()->info(__VA_ARGS__)
@@ -42,6 +44,7 @@ namespace CatEngine {
 #define CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
 #define CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
 #define CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
+#define CLI_ASSERT(x, ...)if (!(x)) { ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__); __debugbreak(); }
 #elif CE_RELEASE
 // Core Log Macros
 #define API_CRITICAL(...)
@@ -52,10 +55,12 @@ namespace CatEngine {
 #define API_ASSERT(x, ...)
 
 // Client Log Macros
-#define CLI_CRITICAL(...)                ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
+#define CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
 #define CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
 #define CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
 #define CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
 #define CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
+#define CLI_ASSERT(x, ...)if (!(x)) { ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__); __debugbreak(); }
+
 #endif // CE_DEBUG
 

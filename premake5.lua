@@ -14,6 +14,7 @@ IncludeDir["GLFW"] = "CatEngine/vendors/GLFW/include"
 IncludeDir["Glad"] = "CatEngine/vendors/Glad/include"
 IncludeDir["ImGui"] = "CatEngine/vendors/ImGui"
 IncludeDir["glm"] = "CatEngine/vendors/glm"
+IncludeDir["stb"] = "CatEngine/vendors/stb"
 
 include "CatEngine/vendors/GLFW"
 include "CatEngine/vendors/Glad"
@@ -79,7 +80,11 @@ project "CatEngine"
 
 	files {
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendors/glm/glm/**.hpp",
+		"%{prj.name}/vendors/glm/glm/**.ini",
+		"%{prj.name}/vendors/stb/**.cpp",
+		"%{prj.name}/vendors/stb/**.h",
 	}
 
 	includedirs{
@@ -89,6 +94,7 @@ project "CatEngine"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb}",
 	}
 
 		defines

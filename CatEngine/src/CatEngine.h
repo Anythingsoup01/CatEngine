@@ -18,7 +18,10 @@
 #include "CatEngine/Core/Renderer/Rendering/RendererAPI.h"
 #include "CatEngine/Core/Renderer/Rendering/RenderCommand.h"
 		  
-#include "CatEngine/Core/Renderer/Shader/OpenGLShader.h"
+#include "CatEngine/Core/Renderer/Shader/Shader.h"
+#include "CatEngine/Core/Renderer/Shader/Texture.h"
+
+
 
 #include "CatEngine/Core/Camera/Camera.h"
 

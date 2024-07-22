@@ -2,8 +2,9 @@
 #include "Application.h"
 
 #include "Core/Logging/Log.h"
-#include "Core/Core.h"
 #include "Core/Input/Input.h"
+
+
 
 #include <GLFW/glfw3.h>
 
@@ -15,9 +16,10 @@ namespace CatEngine {
 	{
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<CatEngine::Window>(CatEngine::Window::Create());
+		m_Window = Scope<CatEngine::Window>(CatEngine::Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
-		m_Window->SetVSync(true);
+
+		Renderer::Init();
 
 		m_ImGuiLayer = new CatEngine::ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
