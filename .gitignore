@@ -29,8 +29,8 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-/[Bb]in/
-/[Bb]in-int/
+/bin/
+/bin-int/
 [Oo]bj/
 [Oo]ut/
 [Ll]og/
