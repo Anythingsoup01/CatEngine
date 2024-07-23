@@ -3,7 +3,7 @@
 
 #include "CatEngine/Core/Core.h"
 
-#include "Platform/OpenGL/Renderer/OpenGLShader.h"
+#include "Platform/OpenGL/Shader/OpenGLShader.h"
 
 #include <glad/glad.h> 
 

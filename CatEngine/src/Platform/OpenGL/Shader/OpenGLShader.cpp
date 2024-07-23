@@ -159,8 +159,10 @@ namespace CatEngine {
 
 		// Always detach shaders after a successful link.
 		for (auto id : glShaderIDs)
+		{
 			glDetachShader(m_RendererID, id);
-
+			glDeleteShader(id);
+		}
 		m_RendererID = program;
 	}
 

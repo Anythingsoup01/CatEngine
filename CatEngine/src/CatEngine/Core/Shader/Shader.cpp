@@ -3,7 +3,7 @@
 
 #include "CatEngine/Core/Renderer/Renderer.h"
 
-#include "Platform/OpenGL/Renderer/OpenGLShader.h"
+#include "Platform/OpenGL/Shader/OpenGLShader.h"
 
 namespace CatEngine {
 
