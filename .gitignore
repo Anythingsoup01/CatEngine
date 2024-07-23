@@ -9,8 +9,8 @@
 *.user
 *.userosscache
 *.sln.docstates
-**/bin/
-**/bin-int/
+*/bin/
+*/bin-int/
 
 CatEngine/vendors/
 
