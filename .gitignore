@@ -12,7 +12,7 @@
 **/bin/
 **/bin-int/
 
-/CatEngine/vendors/**
+/CatEngine/vendors/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
