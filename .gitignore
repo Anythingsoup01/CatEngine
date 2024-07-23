@@ -12,14 +12,7 @@
 **/bin/
 **/bin-int/
 
-/CatEngine/vendors/Glad/bin/
-/CatEngine/vendors/Glad/bin-int/
-
-/CatEngine/vendors/GLFW/bin/
-/CatEngine/vendors/GLFW/bin-int/
-
-/CatEngine/vendors/ImGui/bin/
-/CatEngine/vendors/ImGui/bin-int/
+CatEngine/vendors/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
