@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "CatEngine/Core/Renderer/Shader/Texture.h"
+#include "CatEngine/Core/Shader/Texture.h"
 
 namespace CatEngine
 {

@@ -1,12 +1,9 @@
 #include "cepch.h"
 #include "Application.h"
 
-#include "Core/Logging/Log.h"
 #include "Core/Input/Input.h"
 
-
-
-#include <GLFW/glfw3.h>
+#include "Core/Logging/Log.h"
 
 namespace CatEngine {
 
@@ -33,7 +30,7 @@ namespace CatEngine {
 		while (m_Running)
 		{
 
-			float time = (float)glfwGetTime();
+			float time = Time::GetTime();
 			Time deltaTime = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

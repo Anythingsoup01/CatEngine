@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CatEngine/Core/Renderer/Shader/Shader.h"
+#include "CatEngine/Core/Shader/Shader.h"
 // TODO -- REMOVE THE NEED FOR THIS (CAN"T INCLUDE GLAD DUE TO DYNAMIC CASTING IN SANDBOXAPP)
 typedef unsigned int GLenum;
 #include <glm/glm.hpp>

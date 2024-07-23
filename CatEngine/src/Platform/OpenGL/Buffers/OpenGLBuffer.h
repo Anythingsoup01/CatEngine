@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CatEngine/Core/Renderer/Buffers/Buffer.h"
+#include "CatEngine/Core/Buffers/Buffer.h"
 namespace CatEngine {
 
 	class OpenGLVertexBuffer : public VertexBuffer

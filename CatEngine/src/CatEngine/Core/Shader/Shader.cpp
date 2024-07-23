@@ -1,7 +1,7 @@
 #include "cepch.h"
 #include "Shader.h"
 
-#include "CatEngine/Core/Renderer/Rendering/Renderer.h"
+#include "CatEngine/Core/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/Renderer/OpenGLShader.h"
 

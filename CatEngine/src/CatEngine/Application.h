@@ -1,17 +1,15 @@
 #pragma once
 
-#include "Core/Window.h"
-#include "Core/Layers/LayerStack.h"
-#include "Events/Events.h"
 #include "Events/ApplicationEvent.h"
+#include "Events/Events.h"
 
 #include "ImGui/ImGuiLayer.h"
 
-#include "Core/Renderer/Rendering/Renderer.h"
-
 #include "Core/Core.h"
-
+#include "Core/Layers/LayerStack.h"
+#include "Core/Renderer/Renderer.h"
 #include "Core/TimeStep.h"
+#include "Core/Window.h"
 
 
 namespace CatEngine {

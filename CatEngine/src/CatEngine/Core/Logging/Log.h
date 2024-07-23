@@ -45,7 +45,7 @@ namespace CatEngine {
 #define CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
 #define CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
 #define CLI_ASSERT(x, ...)if (!(x)) { ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__); __debugbreak(); }
-#elif CE_RELEASE
+#elif CE_RELEASE || CE_DIST
 // Core Log Macros
 #define API_CRITICAL(...)
 #define API_ERROR(...)

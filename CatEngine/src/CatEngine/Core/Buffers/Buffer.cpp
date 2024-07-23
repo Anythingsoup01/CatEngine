@@ -2,7 +2,7 @@
 #include "Buffer.h"
 
 #include "CatEngine/Core/Logging/Log.h"
-#include "CatEngine/Core/Renderer/Rendering/Renderer.h"
+#include "CatEngine/Core/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/Buffers/OpenGLBuffer.h"
 

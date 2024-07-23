@@ -2,7 +2,7 @@
 
 #include "CatEngine/Core/Window.h"
 
-#include "CatEngine/Core/Renderer/GraphicsAPIContext.h"
+#include "CatEngine/Core/GraphicsAPIContext.h"
 
 #include "GLFW/glfw3.h"
 

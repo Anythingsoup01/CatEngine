@@ -1,7 +1,7 @@
 #include "cepch.h"
 #include "Texture.h"
 
-#include "CatEngine/Core/Renderer/Rendering/Renderer.h"
+#include "CatEngine/Core/Renderer/Renderer.h"
 #include "Platform/OpenGL/Shader/OpenGLTexture.h"
 
 namespace CatEngine
@@ -19,3 +19,4 @@ namespace CatEngine
 
 }
 
+ 

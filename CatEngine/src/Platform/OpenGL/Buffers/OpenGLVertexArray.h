@@ -1,5 +1,5 @@
 #pragma once
-#include "CatEngine/Core/Renderer/Buffers/VertexArray.h"
+#include "CatEngine/Core/Buffers/VertexArray.h"
 
 #include "CatEngine/Core/Core.h"
 

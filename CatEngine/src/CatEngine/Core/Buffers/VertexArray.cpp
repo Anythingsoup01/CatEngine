@@ -1,7 +1,7 @@
 #include "cepch.h"
 #include "VertexArray.h"
 
-#include "CatEngine/Core/Renderer/Rendering/Renderer.h"
+#include "CatEngine/Core/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/Buffers/OpenGLVertexArray.h"
 
