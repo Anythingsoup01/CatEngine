@@ -42,7 +42,7 @@ namespace CatEngine {
 		std::string Name;
 		ShaderDataType Type;
 		uint32_t Size;
-		uint32_t Offset;
+		uint64_t Offset;
 		bool Normalized;
 
 		BufferElements() {}

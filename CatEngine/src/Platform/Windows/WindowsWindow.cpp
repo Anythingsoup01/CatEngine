@@ -195,7 +195,7 @@ namespace CatEngine {
 		// Mouse Position Callback
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-			MouseMovedEvent event((float)xpos, (float)ypos);
+			MouseMovedEvent event((unsigned int)xpos, (unsigned int)ypos);
 			data.EventCallback(event);
 		});
 	}
