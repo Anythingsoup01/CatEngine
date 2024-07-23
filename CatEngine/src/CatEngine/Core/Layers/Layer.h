@@ -13,7 +13,7 @@ namespace CatEngine {
 		virtual void OnDetach() {}
 		virtual void OnUpdate(Time deltaTime) {}
 		virtual void OnImGuiDraw() {}
-		virtual void OnEvent(Events& event) {}
+		virtual void OnEvent(Event& event) {}
 
 		inline const std::string& GetName() const { return m_DebugName; }
 	protected:

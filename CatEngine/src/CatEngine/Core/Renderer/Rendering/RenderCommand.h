@@ -19,6 +19,12 @@ namespace CatEngine {
 		static inline void DrawIndexed(const Ref<VertexArray>& vertexArray) {
 			s_API->DrawIndexed(vertexArray);
 		}
+
+		static inline void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+		{
+			s_API->SetViewport(x, y, width, height);
+		}
+
 	private:
 		static RendererAPI* s_API;
 	};

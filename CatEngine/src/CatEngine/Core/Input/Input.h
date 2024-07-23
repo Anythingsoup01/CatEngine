@@ -1,7 +1,5 @@
 #pragma once
 #include "CatEngine/Core/Core.h"
-#include "MouseButtonCodes.h"
-#include "KeyCodes.h"
 
 namespace CatEngine {
 

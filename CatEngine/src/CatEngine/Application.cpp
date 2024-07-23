@@ -32,26 +32,34 @@ namespace CatEngine {
 	{
 		while (m_Running)
 		{
+
 			float time = (float)glfwGetTime();
 			Time deltaTime = time - m_LastFrameTime;
 			m_LastFrameTime = time;
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(deltaTime);
+
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(deltaTime);
+			}
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
 				layer->OnImGuiDraw();
 			m_ImGuiLayer->End();
-
+			
 			m_Window->OnUpdate();
+			
 		}
 	}
 
-	void Application::OnEvent(Events& e)
+	void Application::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 
+		//API_INFO(e.ToString());
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
 			(*--it)->OnEvent(e);
@@ -76,6 +84,21 @@ namespace CatEngine {
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		
+
+		return false;
 	}
 
 }

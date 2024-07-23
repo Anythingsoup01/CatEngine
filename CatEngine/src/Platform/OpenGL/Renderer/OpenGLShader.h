@@ -10,6 +10,7 @@ namespace CatEngine {
 	{
 	public:
 		OpenGLShader(const std::string& filepath);
+		OpenGLShader(const std::string& name, const std::string& filepath);
 		OpenGLShader(const std::string& name, const std::string& vertexShader, const std::string& fragmentShader);
 		virtual ~OpenGLShader();
 

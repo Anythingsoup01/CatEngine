@@ -4,7 +4,7 @@
 
 namespace CatEngine {
 	// Base Key Event Class
-	class KeyEvent : public Events {
+	class KeyEvent : public Event {
 	public:
 		inline int GetKeyCode() const { return m_KeyCode; }
 		EVENT_CLASS_CATEGORY(CategoryInputEvent | CategoryKeyboardEvent)

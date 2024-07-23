@@ -16,8 +16,9 @@ namespace CatEngine {
 
 		virtual std::string GetName() const = 0;
 
-		static Ref<Shader> Create(const std::string& name, const std::string& vertexShader, const std::string& fragmentShader);
 		static Ref<Shader> Create(const std::string& filepath);
+		static Ref<Shader> Create(const std::string& name, const std::string& filepath);
+		static Ref<Shader> Create(const std::string& name, const std::string& vertexShader, const std::string& fragmentShader);
 	};
 
 	class ShaderLibrary

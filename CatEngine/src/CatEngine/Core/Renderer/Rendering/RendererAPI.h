@@ -21,6 +21,8 @@ namespace CatEngine {
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 
+		virtual void SetViewport(uint32_t left, uint32_t bottom, uint32_t right, uint32_t top) = 0;
+
 		inline static API GetAPI() { return s_API; }
 	private:
 		static API s_API;

@@ -13,7 +13,7 @@
 class AppLayer : public CatEngine::Layer {
 public:
 	AppLayer()
-		: Layer("Application"), m_Camera(-1.77, 1.77, -1.0, 1.0, -1.0, 1.0), m_SquareTransform(0.0f)
+		: Layer("Application"), m_CameraController(1280.f / 720.f)
 	{
 		// Vertex Array
 		m_SquareVertexArray.reset(CatEngine::VertexArray::Create());
@@ -43,8 +43,10 @@ public:
 		squareIndexBuffer.reset(CatEngine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
 
-		auto flatColorShader = m_ShaderLibrary.Load("assets/shaders/FlatShader.glsl");
+		auto flatColorShader = m_ShaderLibrary.Load("FlatColorShader", "assets/shaders/FlatShader.glsl");
 		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
+
+		auto name = flatColorShader.get()->GetName();
 		
 		m_Texture2D = CatEngine::Texture2D::Create("assets/textures/cat_texture.png");
 		std::dynamic_pointer_cast<CatEngine::OpenGLShader>(textureShader)->Bind();
@@ -53,34 +55,16 @@ public:
 	
 	void OnUpdate(CatEngine::Time time) override 
 	{
-		//CLI_INFO("DeltaTime: {0}s, ({1}ms)", time.deltaTime(), time.deltaTimeMS());
-
-		// Camera Up
-		m_CameraPosition.y += (CatEngine::Input::IsKeyPressed(CE_W)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Down
-		m_CameraPosition.y -= (CatEngine::Input::IsKeyPressed(CE_S)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Right
-		m_CameraPosition.x += (CatEngine::Input::IsKeyPressed(CE_D)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Left
-		m_CameraPosition.x -= (CatEngine::Input::IsKeyPressed(CE_A)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Rotate Right
-		m_CameraRotation.z += CatEngine::Input::IsKeyPressed(CE_E) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Rotate Left
-		m_CameraRotation.z -= CatEngine::Input::IsKeyPressed(CE_Q) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Rotate Reset
-		m_CameraRotation.z = CatEngine::Input::IsKeyPressed(CE_R) ? 0 : m_CameraRotation.z;
-
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-
+		m_CameraController.OnUpdate(time);
 		CatEngine::RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
-		CatEngine::Renderer::BeginScene(m_Camera);
+		CatEngine::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-		auto flatColorShader = m_ShaderLibrary.Get("FlatShader");
+		auto flatColorShader = m_ShaderLibrary.Get("FlatColorShader");
 		auto textureShader = m_ShaderLibrary.Get("Texture");
+
 
 		flatColorShader->Bind();
 		m_Texture2D->Bind();
@@ -108,14 +92,8 @@ public:
 	{
 		ImGui::Begin("Inspector");
 
-		ImGui::BeginChild("Transform", ImVec2(350, 50));
-		
-		ImGui::DragFloat3("Camera Position", glm::value_ptr(m_CameraPosition), 0.025);
-		ImGui::DragFloat3("Camera Rotation", glm::value_ptr(m_CameraRotation), 0.025);
-		ImGui::EndChild();
-
 		ImGui::BeginChild("Box Settings", ImVec2(350, 100));
-		ImGui::DragInt2("Box Grid", m_GridSize, 0.25, 0, 10);
+		ImGui::DragInt2("Box Grid", m_GridSize, 0.25, 1, 10);
 		ImGui::Checkbox("Show Squares", &renderSquare);
 		ImGui::EndChild();
 		ImGui::BeginChild("BigBoi Settings");
@@ -125,8 +103,9 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(CatEngine::Events& event) override 
+	void OnEvent(CatEngine::Event& event) override 
 	{
+		m_CameraController.OnEvent(event);
 
 	}
 private:
@@ -136,16 +115,10 @@ private:
 	CatEngine::Ref<CatEngine::VertexArray> m_SquareVertexArray;
 	CatEngine::Ref<CatEngine::Texture2D> m_Texture2D;
 
-	CatEngine::OrthographicCamera m_Camera;
-
-	float m_CameraSpeed = 2.0f;
+	CatEngine::OrthographicCameraController m_CameraController;
 	float m_ObjectMoveSpeed = 1.0f;
 
-	glm::vec3 m_CameraPosition = { 0, 0, 0 };
-
-	glm::vec3 m_CameraRotation = { 0, 0, 0 };
-
-	glm::vec3 m_SquareTransform;
+	glm::vec3 m_SquareTransform = { 0,0,0 };
 
 	int m_GridSize[2] = { 1, 1 };
 

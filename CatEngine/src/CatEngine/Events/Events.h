@@ -6,7 +6,7 @@ namespace CatEngine {
 
 	enum class EventType {
 		None = 0,
-		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, WindowMaximized, WindowMinimized,
+		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, WindowMaximized,
 		KeyPressed, KeyTyped, KeyReleased,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 	};
@@ -21,7 +21,7 @@ namespace CatEngine {
 	};
 
 /* The event type lets the Event Dispatcher determine what the event is and runs any premade scripts or custom scripts.
-Defaults to None, but can take WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, WindowMinimized, KeyPressed, KeyReleased, MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled events*/
+Defaults to None, but can take WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, KeyPressed, KeyReleased, MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled events*/
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
                                virtual EventType GetEventType() const override { return GetStaticType(); }\
                                virtual const char* GetName() const override { return #type; }
@@ -29,7 +29,7 @@ Defaults to None, but can take WindowClose, WindowResize, WindowFocus, WindowLos
 This can range from CategoryApplicationEvent, CategoryInputEvent, CategoryKeyboardEvent, CategoryMouseEvent, CategoryMouseButtonEvent*/
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	class Events {
+	class Event {
 	public:
 		bool Handled = false;
 
@@ -47,23 +47,23 @@ This can range from CategoryApplicationEvent, CategoryInputEvent, CategoryKeyboa
 		template<typename T>
 		using EventFn = std::function<bool(T&)>;
 	public:
-		EventDispatcher(Events& event)
+		EventDispatcher(Event& event)
 		: m_Event(event) {}
 
-		template<typename T>
-		bool Dispatch(EventFn<T> func) {
+		template<typename T, typename F>
+		bool Dispatch(const F& func) {
 			if (m_Event.GetEventType() == T::GetStaticType()) {
-				m_Event.Handled = func(*(T*)&m_Event);
+				m_Event.Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;
 		}
 
 	private:
-		Events& m_Event;
+		Event& m_Event;
 	};
 
-	inline std::ostream& operator<<(std::ostream& os, const Events& e)
+	inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
 		return os << e.ToString();
 	}

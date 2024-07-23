@@ -15,7 +15,7 @@ namespace CatEngine {
 
 	class Window {
 	public:
-		using EventCallbackFn = std::function<void(Events&)>;
+		using EventCallbackFn = std::function<void(Event&)>;
 
 		virtual ~Window() {}
 

@@ -28,6 +28,14 @@ namespace CatEngine {
 		sources[GL_FRAGMENT_SHADER] = fragmentSource;
 		Compile(sources);
 	}
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath)
+	{
+		std::string source = ReadFile(filepath);
+		auto shaderSources = PreProcess(source);
+		Compile(shaderSources);
+		
+		m_Name = name;
+	}
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
 		std::string source = ReadFile(filepath);
@@ -40,7 +48,6 @@ namespace CatEngine {
 		auto lastDot = filepath.rfind('.');
 		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 		m_Name = filepath.substr(lastSlash, count);
-		API_INFO("Shader '{0}' compiled successfully!", m_Name);
 	}
 
 	OpenGLShader::~OpenGLShader()

@@ -8,7 +8,7 @@
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
 
 
-// Events
+// Event
 #include "CatEngine/Events/ApplicationEvent.h"
 #include "CatEngine/Events/KeyEvent.h"
 #include "CatEngine/Events/MouseEvent.h"
@@ -97,7 +97,11 @@ namespace CatEngine {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			data.Width = width;
 			data.Height = height;
+
+
 			WindowResizeEvent event(width, height);
+			
+
 			data.EventCallback(event);
 		});
 		
@@ -117,21 +121,6 @@ namespace CatEngine {
 		});
 
 		// TODO : Make a window moved callback!
-
-		// Maximized Callback
-		glfwSetWindowMaximizeCallback(m_Window, [](GLFWwindow* window, int maximized) 
-		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-			if (maximized)
-			{
-				WindowMaximizedEvent event;
-				data.EventCallback(event);
-			}
-			else {
-				WindowMinimizedEvent event;
-				data.EventCallback(event);
-			}
-		});
 
 		// Key Callback
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) 

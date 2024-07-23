@@ -143,6 +143,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\CatEngine\Core\Camera\OrthographicCameraController.h" />
     <ClInclude Include="src\CatEngine.h" />
     <ClInclude Include="src\CatEngine\Application.h" />
     <ClInclude Include="src\CatEngine\Core\Camera\Camera.h" />
@@ -459,6 +460,7 @@
     <ClInclude Include="vendors\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CatEngine\Core\Camera\OrthographicCameraController.cpp" />
     <ClCompile Include="src\CatEngine\Application.cpp" />
     <ClCompile Include="src\CatEngine\Core\Camera\Camera.cpp" />
     <ClCompile Include="src\CatEngine\Core\Layers\Layer.cpp" />

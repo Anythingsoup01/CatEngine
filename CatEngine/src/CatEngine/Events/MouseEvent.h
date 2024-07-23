@@ -4,7 +4,7 @@
 //MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 namespace CatEngine {
 	// Base Mouse Button Event
-	class MouseOnButtonEvent : public Events {
+	class MouseOnButtonEvent : public Event {
 	public:
 		inline int GetMouseButton() const { return m_Button; }
 
@@ -40,7 +40,7 @@ namespace CatEngine {
 	};
 
 	// Mouse Moved Event
-	class MouseMovedEvent : public Events {
+	class MouseMovedEvent : public Event {
 	public:
 		MouseMovedEvent(unsigned int mouseX, unsigned int mouseY)
 			: m_MouseX(mouseX), m_MouseY(mouseY) {}
@@ -59,7 +59,7 @@ namespace CatEngine {
 		unsigned int m_MouseX, m_MouseY;
 	};
 
-	class MouseScrolledEvent : public Events {
+	class MouseScrolledEvent : public Event {
 	public:
 		MouseScrolledEvent(float offsetX, float offsetY)
 			: m_OffsetX(offsetX), m_OffsetY(offsetY) {}

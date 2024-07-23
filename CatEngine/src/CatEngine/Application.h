@@ -21,7 +21,7 @@ namespace CatEngine {
 		virtual ~Application();
 
 		void Run();
-		void OnEvent(Events& e);
+		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
@@ -30,16 +30,18 @@ namespace CatEngine {
 
 		inline Window& GetWindow() { return *m_Window; }
 
-		bool m_Running = true;
 	private:
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 	private:
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		float m_LastFrameTime;
 	private:
 		static Application* s_Instance;
+		bool m_Running = true;
+		bool m_Minimized = false;
 	};
 
 	// Defined in client
