@@ -22,7 +22,7 @@ namespace CatEngine {
 
 /* The event type lets the Event Dispatcher determine what the event is and runs any premade scripts or custom scripts.
 Defaults to None, but can take WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, KeyPressed, KeyReleased, MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled events*/
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
                                virtual EventType GetEventType() const override { return GetStaticType(); }\
                                virtual const char* GetName() const override { return #type; }
 /* The event category is used to group the event into what they apply to.
