@@ -24,11 +24,3 @@
 
 #include "CatEngine/Core/Camera/Camera.h"
 #include "CatEngine/Core/Camera/OrthographicCameraController.h"
-
-
-
-
-
-// ---Entry Point---------------------
-#include "CatEngine/Core/EntryPoint.h"
-// -----------------------------------

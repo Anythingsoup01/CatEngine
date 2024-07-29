@@ -49,9 +49,6 @@ project "Sandbox"
 	filter "system:windows"
 		systemversion "latest"
 
-		defines{
-			"CE_PLATFORM_WINDOWS",
-		}
 
 	filter "configurations:Debug"
 		defines "CE_DEBUG"
@@ -113,7 +110,6 @@ project "CatEngine"
 		systemversion "latest"
 
 		defines{
-			"CE_PLATFORM_WINDOWS",
 			"GLFW_INCLUDE_NONE",
 		}
 

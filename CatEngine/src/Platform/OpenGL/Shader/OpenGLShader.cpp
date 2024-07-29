@@ -33,7 +33,7 @@ namespace CatEngine {
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
-		
+
 		m_Name = name;
 	}
 	OpenGLShader::OpenGLShader(const std::string& filepath)
@@ -41,7 +41,7 @@ namespace CatEngine {
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
-		
+
 		// assets/shaders/Texture.glsl
 		auto lastSlash = filepath.find_last_of("/\\");
 		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;

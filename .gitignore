@@ -24,7 +24,6 @@
 /CatEngine/vendors/ImGui/bin/
 /CatEngine/vendors/ImGui/bin-int/
 
-CatEngine/vendors/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

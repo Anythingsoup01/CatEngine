@@ -6,12 +6,12 @@
 #include "Platform/OpenGL/Buffers/OpenGLVertexArray.h"
 
 namespace CatEngine {
-	VertexArray* VertexArray::Create()
+	Ref<VertexArray> VertexArray::Create()
 	{
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:       API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;
-		case RendererAPI::API::OpenGL:     return new OpenGLVertexArray();
+		case RendererAPI::API::OpenGL:     return std::make_shared<OpenGLVertexArray>();
 		}
 		API_ASSERT(false, "Unknown Renderer API!");
 		return nullptr;

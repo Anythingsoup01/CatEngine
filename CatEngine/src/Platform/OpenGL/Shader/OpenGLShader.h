@@ -1,8 +1,6 @@
 #pragma once
 
 #include "CatEngine/Core/Shader/Shader.h"
-// TODO -- REMOVE THE NEED FOR THIS (CAN"T INCLUDE GLAD DUE TO DYNAMIC CASTING IN SANDBOXAPP)
-typedef unsigned int GLenum;
 #include <glm/glm.hpp>
 
 namespace CatEngine {
@@ -31,13 +29,11 @@ namespace CatEngine {
 
 	private:
 		std::string ReadFile(const std::string& filepath);
-		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
-		void Compile(std::unordered_map<GLenum, std::string>& shaderSources);
+		std::unordered_map<unsigned int, std::string> PreProcess(const std::string& source);
+		void Compile(std::unordered_map<unsigned int, std::string>& shaderSources);
 
 	private:
 		uint32_t m_RendererID;
 		std::string m_Name;
 	};
 }
-
-
