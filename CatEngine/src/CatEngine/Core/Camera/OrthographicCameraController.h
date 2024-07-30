@@ -36,7 +36,7 @@ namespace CatEngine
 		float m_CameraRotationSpeed = 2.0f;
 
 		glm::vec3 m_CameraPosition = { 0, 0, 0 };
-		glm::vec3 m_CameraRotation = { 0, 0, 0 };
+		float m_CameraRotation = 0.f;
 
 	};
 

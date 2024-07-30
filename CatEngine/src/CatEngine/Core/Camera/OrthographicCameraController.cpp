@@ -24,11 +24,11 @@ namespace CatEngine
 		// Camera Left
 		m_CameraPosition.x -= (Input::IsKeyPressed(CE_A)) ? m_CameraSpeed * time.deltaTime() : 0;
 		// Camera Rotate Right
-		m_CameraRotation.z += Input::IsKeyPressed(CE_E) ? m_CameraRotationSpeed * time.deltaTime() : 0;
+		m_CameraRotation += Input::IsKeyPressed(CE_E) ? m_CameraRotationSpeed * time.deltaTime() : 0;
 		// Camera Rotate Left
-		m_CameraRotation.z -= Input::IsKeyPressed(CE_Q) ? m_CameraRotationSpeed * time.deltaTime() : 0;
+		m_CameraRotation -= Input::IsKeyPressed(CE_Q) ? m_CameraRotationSpeed * time.deltaTime() : 0;
 		// Camera Rotate Reset
-		m_CameraRotation.z = Input::IsKeyPressed(CE_R) ? 0 : m_CameraRotation.z;
+		m_CameraRotation = Input::IsKeyPressed(CE_R) ? 0 : m_CameraRotation;
 
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetRotation(m_CameraRotation);

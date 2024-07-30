@@ -13,14 +13,14 @@ namespace CatEngine
 		void SetProjection(float left, float right, float bottom, float top, float Near = -1.f, float Far = 1.f);
 
 		const glm::vec3 GetPosition() const { return m_Position; }
-		const glm::vec3 GetRotation() const  { return m_Rotation; }
+		const float GetRotation() const  { return m_Rotation; }
 
 		void SetPosition(const glm::vec3& position) 
 		{
 			m_Position = position;
 			RecalculateViewMatrix();
 		}
-		void SetRotation(const glm::vec3& rotation) 
+		void SetRotation(const float rotation) 
 		{
 			m_Rotation = rotation;
 			RecalculateViewMatrix();
@@ -40,8 +40,7 @@ namespace CatEngine
 		glm::mat4 m_ViewProjectionMatrix;
 
 		glm::vec3 m_Position = { 0.f,0.f,0.f };
-		glm::vec3 m_Rotation = { 0.f,0.f,0.f };
-
+		float m_Rotation = 0.f;
 	};
 
 

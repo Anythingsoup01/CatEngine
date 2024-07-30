@@ -18,11 +18,11 @@ private:
 	CatEngine::OrthographicCameraController m_CameraController;
 
 	// Temp
-	CatEngine::Ref<CatEngine::VertexArray> m_VertexArray;
-	CatEngine::ShaderLibrary m_ShaderLibrary;
+	CatEngine::Ref<CatEngine::VertexArray> m_QuadVertexArray;
+	CatEngine::Ref<CatEngine::Shader> m_Shader;
 
-	glm::vec3 m_SquareTransform = { 0,0,0 };
+	glm::vec4 m_BoxOne = {1,1,1,1};
+	glm::vec4 m_BoxTwo = {1,1,1,1};
 
-	int m_GridSize[2] = { 1, 1 };
 
 };
