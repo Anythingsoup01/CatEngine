@@ -7,8 +7,7 @@
 #include "Renderer2D.h"
 
 #include <glad/glad.h> 
-// TODO: Remove --------------------------------
-#include "Platform/OpenGL/Shader/OpenGLShader.h"
+
 namespace CatEngine {
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
@@ -34,8 +33,8 @@ namespace CatEngine {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->Bind();
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ModelMatrix", transform);
+		shader->SetMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		shader->SetMat4("u_ModelMatrix", transform);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

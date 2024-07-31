@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CatEngine/Core/Core.h"
+#include "CatEngine/Core/Shader/Texture.h"
+
 
 #include <glm/glm.hpp>
 
@@ -22,6 +24,8 @@ namespace CatEngine {
 
 		virtual void SetInt(const std::string& name, int value) = 0;
 
+		virtual void SetVec1(const std::string& name, const glm::vec1& value) = 0;
+		virtual void SetVec1(const std::string& name, float value) = 0;
 		virtual void SetVec2(const std::string& name, const glm::vec2& value) = 0;
 		virtual void SetVec3(const std::string& name, const glm::vec3& value) = 0;
 		virtual void SetVec4(const std::string& name, const glm::vec4& value) = 0;

@@ -14,7 +14,7 @@
 
 #include "CatEngine/ImGui/ImGuiLayer.h"
 
-// Renderer -----------------------------------------
+// Renderer ------------------------------------------
 #include "CatEngine/Core/Buffers/Buffer.h"
 #include "CatEngine/Core/Buffers/VertexArray.h"
 #include "CatEngine/Core/Shader/Shader.h"
@@ -26,3 +26,6 @@
 
 #include "CatEngine/Core/Camera/Camera.h"
 #include "CatEngine/Core/Camera/OrthographicCameraController.h"
+
+// Profiling -----------------------------------------
+#include "CatEngine/Core/Timer.h"
