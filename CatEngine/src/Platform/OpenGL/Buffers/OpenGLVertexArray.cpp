@@ -44,6 +44,7 @@ namespace CatEngine {
 	}
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
+		CE_PROFILE_FUNCTION();
 		API_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer Has no layout!!");
 
 		glBindVertexArray(m_RendererID);

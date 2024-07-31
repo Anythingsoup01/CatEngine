@@ -1,14 +1,13 @@
 #include "cepch.h"
 #include "OpenGLBuffer.h"
 
-#include "CatEngine/Core/Logging/Log.h"
-
 #include "glad/glad.h"
 
 namespace CatEngine {
 	// Vertex Buffer
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 	{
+		CE_PROFILE_FUNCTION();
 		GLCall(glCreateBuffers(1, &m_RendererID));
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
 		GLCall(glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW));
@@ -29,6 +28,7 @@ namespace CatEngine {
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
 		: m_Count(count)
 	{
+		CE_PROFILE_FUNCTION();
 		GLCall(glCreateBuffers(1, &m_RendererID));
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW));

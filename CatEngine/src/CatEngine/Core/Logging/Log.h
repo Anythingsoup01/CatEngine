@@ -36,7 +36,6 @@ namespace CatEngine {
 #define API_WARN(...)                 ::CatEngine::Log::GetAPILogger()->warn(__VA_ARGS__)
 #define API_INFO(...)                 ::CatEngine::Log::GetAPILogger()->info(__VA_ARGS__)
 #define API_TRACE(...)                ::CatEngine::Log::GetAPILogger()->trace(__VA_ARGS__)
-#define API_ASSERT(x, ...)if (!(x)) { ::CatEngine::Log::GetAPILogger()->critical(__VA_ARGS__); __debugbreak(); }
 
 // Client Log Macros
 #define CLI_CRITICAL(...)                ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
@@ -44,7 +43,6 @@ namespace CatEngine {
 #define CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
 #define CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
 #define CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
-#define CLI_ASSERT(x, ...)if (!(x)) { ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__); __debugbreak(); }
 #elif CE_RELEASE || CE_DIST
 // Core Log Macros
 #define API_CRITICAL(...)

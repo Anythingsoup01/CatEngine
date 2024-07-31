@@ -11,9 +11,12 @@ namespace CatEngine {
 
 	Application::Application()
 	{
+		CE_PROFILE_FUNCTION();
+
+		API_ASSERT(!s_Instance, "Application already open!");
 		s_Instance = this;
 
-		m_Window = Scope<CatEngine::Window>(CatEngine::Window::Create());
+		m_Window = CatEngine::Window::Create();
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
@@ -29,7 +32,6 @@ namespace CatEngine {
 	{
 		while (m_Running)
 		{
-
 			float time = Time::GetTime();
 			Time deltaTime = time - m_LastFrameTime;
 			m_LastFrameTime = time;

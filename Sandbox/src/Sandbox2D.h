@@ -25,14 +25,7 @@ private:
 	glm::vec4 m_BoxTwo = {1,1,1,1};
 	glm::vec1 m_TexTile = glm::vec1(1.f);
 
-	struct ProfileResult
-	{
-		const char* Name;
-		float Time;
-	};
-
-	std::vector<ProfileResult> m_ProfileResults;
-
-	CatEngine::Ref<CatEngine::Texture2D> m_Texture;
+	CatEngine::Ref<CatEngine::Texture2D> m_CatTexture;
+	CatEngine::Ref<CatEngine::Texture2D> m_CheckeredTexture;
 
 };

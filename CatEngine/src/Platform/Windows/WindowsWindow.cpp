@@ -1,9 +1,6 @@
 #include "cepch.h"
 #include "WindowsWindow.h"
 
-// Logging
-#include "CatEngine/Core/Logging/Log.h"
-
 // Graphics Contexts
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
 
@@ -25,14 +22,17 @@ namespace CatEngine {
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+		CE_PROFILE_FUNCTION();
 		Init(props);
 	}
 	WindowsWindow::~WindowsWindow()
 	{
+		CE_PROFILE_FUNCTION();
 		Shutdown();
 	}
 	void WindowsWindow::OnUpdate()
 	{
+		CE_PROFILE_FUNCTION();
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
@@ -52,12 +52,13 @@ namespace CatEngine {
 		return m_Window;
 	}
 	
-	Window* Window::Create(const WindowProps& props) {
-		return new WindowsWindow(props);
+	Scope<Window> Window::Create(const WindowProps& props) {
+		return CreateScope<WindowsWindow>(props);
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		CE_PROFILE_FUNCTION();
 		// Setting Data props to equal inputted props
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
@@ -120,7 +121,6 @@ namespace CatEngine {
 			}
 		});
 
-		// TODO : Make a window moved callback!
 
 		// Key Callback
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) 
@@ -201,6 +201,7 @@ namespace CatEngine {
 	}
 	void WindowsWindow::Shutdown()
 	{
+		CE_PROFILE_FUNCTION();
 		glfwDestroyWindow(m_Window);
 	}
 }

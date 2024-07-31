@@ -25,6 +25,7 @@ namespace CatEngine
 
 	void Renderer2D::Init()
 	{
+		CE_PROFILE_FUNCTION();
 		s_Data = new Renderer2DStorage();
 		s_Data->m_VertexArray = CatEngine::VertexArray::Create();
 
@@ -67,6 +68,7 @@ namespace CatEngine
 	}
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
+		CE_PROFILE_FUNCTION();
 		s_Data->m_TextureShader->Bind();
 		s_Data->m_TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		
@@ -81,6 +83,7 @@ namespace CatEngine
 	}
 	void Renderer2D::DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color)
 	{
+		CE_PROFILE_FUNCTION();
 		s_Data->m_TextureShader->SetVec4("u_Color", color);
 		s_Data->m_DefaultTexture->Bind();
 
@@ -99,6 +102,7 @@ namespace CatEngine
 	}
 	void Renderer2D::DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color, float tileMultiplier)
 	{
+		CE_PROFILE_FUNCTION();
 		s_Data->m_TextureShader->SetVec4("u_Color", color);
 		s_Data->m_TextureShader->SetVec1("u_TexTile", tileMultiplier);
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *

@@ -1,8 +1,6 @@
 #include "cepch.h"
 #include "OpenGLGraphicsContext.h"
 
-#include "CatEngine/Core/Logging/Log.h"
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -15,6 +13,7 @@ namespace CatEngine {
 
 	void OpenGLGraphicsContext::Init()
 	{
+		CE_PROFILE_FUNCTION();
 		glfwMakeContextCurrent(m_Window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		API_ASSERT(status, "Failed to load GLAD");
@@ -22,6 +21,7 @@ namespace CatEngine {
 
 	void OpenGLGraphicsContext::SwapBuffers()
 	{
+		CE_PROFILE_FUNCTION();
 		glfwSwapBuffers(m_Window);
 	}
 }

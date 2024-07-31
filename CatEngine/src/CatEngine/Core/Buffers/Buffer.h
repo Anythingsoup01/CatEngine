@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CatEngine/Core/Logging/Log.h"
-
 namespace CatEngine {
 
 	enum class ShaderDataType {

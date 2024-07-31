@@ -1,8 +1,6 @@
 #include "cepch.h"
 #include "OpenGLShader.h"
 
-#include "CatEngine/Core/Logging/Log.h"
-
 #include <fstream>
 
 #include "glm/gtc/type_ptr.hpp"
@@ -23,6 +21,7 @@ namespace CatEngine {
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource)
 		: m_Name(name)
 	{
+		CE_PROFILE_FUNCTION();
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSource;
 		sources[GL_FRAGMENT_SHADER] = fragmentSource;
@@ -30,6 +29,7 @@ namespace CatEngine {
 	}
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
@@ -38,6 +38,7 @@ namespace CatEngine {
 	}
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
@@ -57,6 +58,7 @@ namespace CatEngine {
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
 		std::string result;
 		std::fstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
@@ -76,6 +78,7 @@ namespace CatEngine {
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
+		CE_PROFILE_FUNCTION();
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -98,6 +101,7 @@ namespace CatEngine {
 
 	void OpenGLShader::Compile(std::unordered_map<GLenum, std::string>& shaderSources)
 	{
+		CE_PROFILE_FUNCTION();
 		GLuint program = glCreateProgram();
 		API_ASSERT(shaderSources.size() <= 2, "CatEngine Only Supports 2 Shaders at this moment!");
 		int glShaderIDIndex = 0;
@@ -218,43 +222,52 @@ namespace CatEngine {
 
 	void OpenGLShader::UploadUniformMat2(const std::string& name, const glm::mat2& value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniformMatrix2fv(GetLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniformMatrix3fv(GetLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniformMatrix4fv(GetLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	void OpenGLShader::UploadUniformInt(const std::string& name, int value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniform1i(GetLocation(name), value);
 	}
 
 	void OpenGLShader::UploadUniformVector4(const std::string& name, const glm::vec4& value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniform4f(GetLocation(name), value.x, value.y, value.z, value.w);
 	}
 	void OpenGLShader::UploadUniformVector3(const std::string& name, const glm::vec3& value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniform3f(GetLocation(name), value.x, value.y, value.z);
 	}
 	void OpenGLShader::UploadUniformVector2(const std::string& name, const glm::vec2& value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniform2f(GetLocation(name), value.x, value.y);
 	}
 	void OpenGLShader::UploadUniformVector1(const std::string& name, const glm::vec1& value)
 	{
+		CE_PROFILE_FUNCTION();
 		glUniform1f(GetLocation(name), value.x);
 	}
 
 	GLint OpenGLShader::GetLocation(const std::string& name)
 	{
+		CE_PROFILE_FUNCTION();
 		for (auto& item : m_Locations)
 		{
 			if (item.second == name)

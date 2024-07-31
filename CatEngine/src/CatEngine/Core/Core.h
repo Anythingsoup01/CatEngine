@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 
+#include "Logging/Log.h"
+
 #ifdef _WIN32
 /* Windows x64/x86 */
 #	ifdef _WIN64
@@ -58,12 +60,13 @@
 #endif // End of DLL support
 
 #ifdef CE_DEBUG
-#define CE_ENABLE_ASSERTS
+#define CE_ENABLE_ASSERTS 1
+#define CE_PROFILE 1
 #endif
 
 #ifdef CE_ENABLE_ASSERTS
-#define CE_ASSERT(x, ...) { if(!(x)) { CE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-#define CE_CORE_ASSERT(x, ...) { if(!(x)) { CE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define CLI_ASSERT(x, ...) { if(!(x)) { CLI_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define API_ASSERT(x, ...) { if(!(x)) { API_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
 #define CE_ASSERT(x, ...)
 #define CE_CORE_ASSERT(x, ...)

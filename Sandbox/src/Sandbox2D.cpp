@@ -12,7 +12,8 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-	m_Texture = CatEngine::Texture2D::Create("assets/textures/cat_texture.png");
+	m_CatTexture = CatEngine::Texture2D::Create("assets/textures/cat_texture.png");
+	m_CheckeredTexture = CatEngine::Texture2D::Create("assets/textures/checkered.png");
 }
 
 void Sandbox2D::OnDetach()
@@ -21,22 +22,22 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(CatEngine::Time time)
 {
-	PROFILE("Sandbox::OnUpdate");
+	CE_PROFILE_FUNCTION();
 	// Update
 	{
-		PROFILE("Sandbox2D::CameraController::OnUpdate");
+		CE_PROFILE_SCOPE("CameraController::OnUpdate");
 		m_CameraController.OnUpdate(time);
 	}
 	// Render
 	{
-		PROFILE("Sandbox2D::PrerenderCommands");
+		CE_PROFILE_SCOPE("Prerender Commands");
 		CatEngine::RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 	}
 	{
-		PROFILE("Sandbox2D::Render");
+		CE_PROFILE_SCOPE("Render");
 		CatEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
-		CatEngine::Renderer2D::DrawQuad({ 0, 0, 0 }, 0, { .5, .75 }, m_Texture, m_BoxOne, m_TexTile.x);
-		CatEngine::Renderer2D::DrawQuad({ 0, 0, -.2 }, 0, { 1, 1 }, m_BoxTwo);
+		CatEngine::Renderer2D::DrawQuad({ 0, 0, -.1f }, 0, { 1, 1 }, m_CheckeredTexture, m_BoxOne, m_TexTile.x);
+		CatEngine::Renderer2D::DrawQuad({ 0, 0, 0 }, 0, { .5, .75 }, m_CatTexture);
 
 		CatEngine::Renderer2D::EndScene();
 	}
@@ -44,22 +45,20 @@ void Sandbox2D::OnUpdate(CatEngine::Time time)
 
 void Sandbox2D::OnImGuiDraw()
 {
+	CE_PROFILE_FUNCTION();
+
 	ImGui::Begin("Inspector");
 
-	ImGui::ColorEdit4("Box One", glm::value_ptr(m_BoxOne));
-	ImGui::DragFloat("Tile Texture", glm::value_ptr(m_TexTile));
-	ImGui::ColorEdit4("Box Two", glm::value_ptr(m_BoxTwo));
 
-	for (auto& result : m_ProfileResults)
 	{
-		char label[50];
-		strcpy(label, " %.3fms ");
-		strcat(label, result.Name);
-		ImGui::Text(label, result.Time);
+		CE_PROFILE_SCOPE("ImGui Children");
+		ImGui::ColorEdit4("Box One", glm::value_ptr(m_BoxOne));
+		ImGui::DragFloat("Tile Texture", glm::value_ptr(m_TexTile), .25, 1, 100);
 	}
-	m_ProfileResults.clear();
-	
+
+
 	ImGui::End();
+
 }
 
 void Sandbox2D::OnEvent(CatEngine::Event& e)

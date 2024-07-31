@@ -15,6 +15,7 @@ namespace CatEngine
 	}
 	void OrthographicCameraController::OnUpdate(Time time)
 	{
+		CE_PROFILE_FUNCTION();
 		// Camera Up
 		m_CameraPosition.y += (Input::IsKeyPressed(CE_W)) ? m_CameraSpeed * time.deltaTime() : 0;
 		// Camera Down
@@ -42,6 +43,7 @@ namespace CatEngine
 	}
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		CE_PROFILE_FUNCTION();
 		m_ZoomLevel -= e.GetYOffset() * m_ZoomSpeed;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.1f);
 		
@@ -52,6 +54,7 @@ namespace CatEngine
 	}
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+		CE_PROFILE_FUNCTION();
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
