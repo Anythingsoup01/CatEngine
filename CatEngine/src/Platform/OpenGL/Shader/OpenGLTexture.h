@@ -22,6 +22,11 @@ namespace CatEngine
 		virtual void Bind(uint32_t slot) const override;
 		virtual void Unbind() const override;
 
+
+		virtual bool operator==(const Texture& other) const override;
+
+	private:
+		virtual unsigned int GetRendererID() const override { return m_RendererID; }
 	private:
 		std::string m_Path;
 		uint32_t m_Width, m_Height;

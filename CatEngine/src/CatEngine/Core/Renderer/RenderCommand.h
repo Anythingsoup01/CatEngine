@@ -16,8 +16,8 @@ namespace CatEngine {
 		static inline void Clear(const glm::vec4 clearColor) {
 			s_API->Clear(clearColor);
 		}
-		static inline void DrawIndexed(const Ref<VertexArray>& vertexArray) {
-			s_API->DrawIndexed(vertexArray);
+		static inline void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) {
+			s_API->DrawIndexed(vertexArray , indexCount);
 		}
 
 		static inline void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

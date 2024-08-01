@@ -8,11 +8,21 @@ namespace CatEngine {
 
 	Input* Input::s_Instance = new WindowsInput;
 
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	bool WindowsInput::KeyImpl(int keycode, int keyState)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, keycode);
-		return state == GLFW_PRESS || state == GLFW_REPEAT;
+		return state == keyState;
+	}
+
+	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	{
+		return KeyImpl(keycode, GLFW_PRESS);
+	}
+
+	bool WindowsInput::IsKeyReleasedImpl(int keycode)
+	{
+		return KeyImpl(keycode, GLFW_RELEASE);
 	}
 
 	bool WindowsInput::IsMouseButtonPressedImpl(int button)

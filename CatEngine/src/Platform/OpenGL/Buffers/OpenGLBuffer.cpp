@@ -4,6 +4,13 @@
 #include "glad/glad.h"
 
 namespace CatEngine {
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	{
+		CE_PROFILE_FUNCTION();
+		GLCall(glCreateBuffers(1, &m_RendererID));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW));
+	}
 	// Vertex Buffer
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 	{
@@ -15,6 +22,11 @@ namespace CatEngine {
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
 		glDeleteBuffers(1, &m_RendererID);
+	}
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
 	void OpenGLVertexBuffer::Bind() const
 	{

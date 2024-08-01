@@ -194,6 +194,10 @@ namespace CatEngine {
 	{
 		UploadUniformInt(name, value);
 	}
+	void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		UploadUniformIntArray(name, values, count);
+	}
 	void OpenGLShader::SetVec1(const std::string& name, const glm::vec1& value)
 	{
 		UploadUniformVector1(name, value);
@@ -242,6 +246,12 @@ namespace CatEngine {
 	{
 		CE_PROFILE_FUNCTION();
 		glUniform1i(GetLocation(name), value);
+	}
+
+	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		CE_PROFILE_FUNCTION();
+		glUniform1iv(GetLocation(name), count, values);
 	}
 
 	void OpenGLShader::UploadUniformVector4(const std::string& name, const glm::vec4& value)

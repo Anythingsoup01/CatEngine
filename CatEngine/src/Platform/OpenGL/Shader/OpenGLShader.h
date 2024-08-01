@@ -23,6 +23,7 @@ namespace CatEngine {
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
 
 		virtual void SetInt(const std::string& name, int value) override;
+		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
 
 		virtual void SetVec1(const std::string& name, const glm::vec1& value) override;
 		virtual void SetVec1(const std::string& name, float value) override;
@@ -37,6 +38,7 @@ namespace CatEngine {
 		void UploadUniformMat4(const std::string& name, const glm::mat4& value);
 
 		void UploadUniformInt(const std::string& name, int value);
+		void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);
 
 		void UploadUniformVector4(const std::string& name, const glm::vec4& value);
 		void UploadUniformVector3(const std::string& name, const glm::vec3& value);

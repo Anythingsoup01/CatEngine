@@ -19,7 +19,7 @@ namespace CatEngine {
 
 		virtual void Clear(const glm::vec4 clearColor) = 0;
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t count) = 0;
 
 		virtual void SetViewport(uint32_t left, uint32_t bottom, uint32_t right, uint32_t top) = 0;
 

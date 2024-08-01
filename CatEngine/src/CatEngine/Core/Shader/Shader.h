@@ -23,6 +23,7 @@ namespace CatEngine {
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
 
 		virtual void SetInt(const std::string& name, int value) = 0;
+		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) = 0;
 
 		virtual void SetVec1(const std::string& name, const glm::vec1& value) = 0;
 		virtual void SetVec1(const std::string& name, float value) = 0;
