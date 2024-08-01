@@ -23,7 +23,7 @@ private:
 
 	glm::vec4 m_BoxOne = {1,1,1,1};
 	glm::vec4 m_BoxTwo = {1,1,1,1};
-	glm::vec1 m_TexTile = glm::vec1(1.f);
+	float m_TexTile = 1.f;
 
 	CatEngine::Ref<CatEngine::Texture2D> m_CatTexture;
 	CatEngine::Ref<CatEngine::Texture2D> m_CheckeredTexture;

@@ -36,8 +36,8 @@ void Sandbox2D::OnUpdate(CatEngine::Time time)
 	{
 		CE_PROFILE_SCOPE("Render");
 		CatEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
-		CatEngine::Renderer2D::DrawQuad({ 0, 0, -.1f }, 0, { 1, 1 }, m_CheckeredTexture, m_BoxOne, m_TexTile.x);
-		CatEngine::Renderer2D::DrawQuad({ 0, 0, 0 }, 0, { .5, .75 }, m_CatTexture);
+		CatEngine::Renderer2D::DrawQuad({ 1, 1, -.1f }, 0, { 10, 10 }, m_CatTexture, m_BoxOne, m_TexTile);
+		CatEngine::Renderer2D::DrawQuad({ 0, 0, -.1f }, 0, { 1, 1 }, m_CatTexture, glm::vec4(1.0f), 10);
 
 		CatEngine::Renderer2D::EndScene();
 	}
@@ -53,7 +53,7 @@ void Sandbox2D::OnImGuiDraw()
 	{
 		CE_PROFILE_SCOPE("ImGui Children");
 		ImGui::ColorEdit4("Box One", glm::value_ptr(m_BoxOne));
-		ImGui::DragFloat("Tile Texture", glm::value_ptr(m_TexTile), .25, 1, 100);
+		ImGui::DragFloat("Tile Texture", &m_TexTile, .25, 1, 100);
 	}
 
 
@@ -65,3 +65,4 @@ void Sandbox2D::OnEvent(CatEngine::Event& e)
 {
 	m_CameraController.OnEvent(e);
 }
+
