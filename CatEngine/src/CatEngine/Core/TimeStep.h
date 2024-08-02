@@ -9,16 +9,16 @@ namespace CatEngine {
 		Time(float time = 0.0f)
 			: m_Time(time) {}
 
-		inline float deltaTime() { return m_Time; }
+		float deltaTime() { return m_Time; }
 
 		// Get Delta Time in milliseconds
-		inline float deltaTimeMS() { return m_Time * 1000; }
+		float deltaTimeMS() { return m_Time * 1000; }
 
 		static float GetTime();
 
 
 	private:
-		float m_Time;
+		float m_Time = 0.f;
 	};
 
 }

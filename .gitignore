@@ -12,6 +12,8 @@
 *.vs/
 *.filters
 
+*.json
+
 /bin/
 /bin-int/
 

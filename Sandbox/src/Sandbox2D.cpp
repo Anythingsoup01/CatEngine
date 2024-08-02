@@ -33,12 +33,29 @@ void Sandbox2D::OnUpdate(CatEngine::Time time)
 		CE_PROFILE_SCOPE("Prerender Commands");
 		CatEngine::RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 	}
+<<<<<<< HEAD
 	{
 		CE_PROFILE_SCOPE("Render");
 		CatEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
 		CatEngine::Renderer2D::DrawQuad({ 1, 1, -.1f }, 0, { 10, 10 }, m_CatTexture, m_BoxOne, m_TexTile);
 		CatEngine::Renderer2D::DrawQuad({ 0, 0, -.1f }, 0, { 1, 1 }, m_CatTexture, glm::vec4(1.0f), 10);
 
+=======
+	CatEngine::Renderer2D::ResetStats();
+	{
+		CE_PROFILE_SCOPE("Render");
+
+		CatEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
+		for (float x = -10.f; x < 10.f; x += .1f)
+		{
+			for (float y = -10.f; y < 10.f; y += .1f)
+			{
+				glm::vec2 color = { (x + 10.f) / 20.f, (y + 10.f) / 20.f };
+				CatEngine::Renderer2D::DrawQuad({ x , y }, 0, { .1f, .1f }, { color.r, 1.f, color.g, 1.f });
+			}
+		}
+
+>>>>>>> e0fb026 (Improved Batch Renderer)
 		CatEngine::Renderer2D::EndScene();
 	}
 }
@@ -49,6 +66,7 @@ void Sandbox2D::OnImGuiDraw()
 
 	ImGui::Begin("Inspector");
 
+<<<<<<< HEAD
 
 	{
 		CE_PROFILE_SCOPE("ImGui Children");
@@ -56,6 +74,18 @@ void Sandbox2D::OnImGuiDraw()
 		ImGui::DragFloat("Tile Texture", &m_TexTile, .25, 1, 100);
 	}
 
+=======
+	{
+		CE_PROFILE_SCOPE("ImGui Children");
+
+		CatEngine::Renderer2D::Statistics stats = CatEngine::Renderer2D::GetStats();
+		ImGui::Text("Render2D Stats:");
+		ImGui::Text("Draw Calls: %i", stats.DrawCalls);
+		ImGui::Text("Quads: %i", stats.QuadCount);
+		ImGui::Text("Vertex Count: %i", stats.GetTotalVertexCount());
+		ImGui::Text("Index Count: %i", stats.GetTotalIndexCount());
+	}
+>>>>>>> e0fb026 (Improved Batch Renderer)
 
 	ImGui::End();
 

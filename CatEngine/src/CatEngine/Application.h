@@ -35,7 +35,7 @@ namespace CatEngine {
 	private:
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
-		float m_LastFrameTime;
+		float m_LastFrameTime = 0.f;
 	private:
 		static Application* s_Instance;
 		bool m_Running = true;
