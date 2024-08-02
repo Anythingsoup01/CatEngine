@@ -16,31 +16,20 @@ namespace CatEngine
 {
 	struct QuadVertex
 	{
-<<<<<<< HEAD
+
 		glm::vec3 Position;
 		glm::vec4 Color;
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
 	};
-	struct Renderer2DData
-	{
-		const uint32_t MaxQuads = 10000;
-		const uint32_t MaxVertices = MaxQuads * 4;
-		const uint32_t MaxIndices = MaxQuads * 6;
-=======
-		glm::vec3 Position = { 0, 0, 0 };
-		glm::vec4 Color = { 0, 0, 0, 0 };
-		glm::vec2 TexCoord = { 0, 0 };
-		float TexIndex = 0;
-		float TilingFactor = 0;
-	};
+
 	struct Renderer2DData
 	{
 		static const uint32_t MaxQuads = 10000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 		static const uint32_t m_MaxTextureSlots = 32; // TODO: RenderCaps
 
 		Ref<VertexArray> QuadVertexArray;
@@ -54,13 +43,13 @@ namespace CatEngine
 
 		std::array<Ref<Texture2D>, m_MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = DefaultTexture
-<<<<<<< HEAD
-=======
+
+
 
 		glm::vec4 QuadVertexPositions[4];
 
 		Renderer2D::Statistics Stats;
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	};
 
 	static Renderer2DData s_Data;
@@ -123,21 +112,19 @@ namespace CatEngine
 		s_Data.TextureShader->SetIntArray("u_Texture", samplers, s_Data.m_MaxTextureSlots);
 
 		s_Data.TextureSlots[0] = s_Data.DefaultTexture;
-<<<<<<< HEAD
-=======
+
 
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	}
 	void Renderer2D::Shutdown()
 	{
 
 	}
-<<<<<<< HEAD
-=======
+
 
 	void Renderer2D::ResetData()
 	{
@@ -147,29 +134,28 @@ namespace CatEngine
 		s_Data.TextureSlotIndex = 1;
 	}
 
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		CE_PROFILE_FUNCTION();
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-<<<<<<< HEAD
+
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
-=======
+
 		ResetData();
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 		
 	}
 	void Renderer2D::Flush()
 	{
-<<<<<<< HEAD
-=======
+
 		CE_PROFILE_FUNCTION();
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 		// Bind Textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 		{
@@ -178,11 +164,9 @@ namespace CatEngine
 
 
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
-<<<<<<< HEAD
-	}
-=======
 		s_Data.Stats.DrawCalls++;
 	}
+
 
 	void Renderer2D::FlushAndReset()
 	{
@@ -191,7 +175,7 @@ namespace CatEngine
 		ResetData();
 	}
 
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	void Renderer2D::EndScene()
 	{
 		CE_PROFILE_FUNCTION();
@@ -209,53 +193,6 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 
-<<<<<<< HEAD
-		const float texIndex = 0.f;
-		const float tilingFactor = 0.f;
-
-		s_Data.QuadVertexBufferPtr->Position = position;
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.f, 0.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y, 0.f };
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.f, 0.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y + size.y, 0.f };
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.f, 1.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = { position.x, position.y + size.y, 0.f };
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.f, 1.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadIndexCount += 6;
-#if OLD_PATH
-		s_Data.m_TextureShader->SetVec1("u_TexTile", 1.0f);
-		s_Data.m_DefaultTexture->Bind();
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * 
-			glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-		s_Data.m_TextureShader->SetMat4("u_ModelMatrix", transform);
-
-		s_Data.m_QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray);
-#endif
-=======
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 		
@@ -280,7 +217,7 @@ namespace CatEngine
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	}
 	void Renderer2D::DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color, float tileMultiplier)
 	{
@@ -290,12 +227,11 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 
-<<<<<<< HEAD
-=======
+
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 		constexpr glm::vec4 defaultColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		float texIndex = 0.0f;
@@ -316,52 +252,7 @@ namespace CatEngine
 			s_Data.TextureSlotIndex++;
 		}
 
-<<<<<<< HEAD
-		s_Data.QuadVertexBufferPtr->Position = position;
-		s_Data.QuadVertexBufferPtr->Color = defaultColor * color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.f, 0.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
 
-		s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y, 0.f };
-		s_Data.QuadVertexBufferPtr->Color = defaultColor * color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.f, 0.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y + size.y, 0.f };
-		s_Data.QuadVertexBufferPtr->Color = defaultColor * color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.f, 1.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = { position.x, position.y + size.y, 0.f };
-		s_Data.QuadVertexBufferPtr->Color = defaultColor * color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.f, 1.f };
-		s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadIndexCount += 6;
-
-#if OLD_PATH
-		s_Data.m_TextureShader->SetVec4("u_Color", color);
-		s_Data.m_TextureShader->SetVec1("u_TexTile", tileMultiplier);
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-		s_Data.m_TextureShader->SetMat4("u_ModelMatrix", transform);
-
-		texture->Bind();
-
-		s_Data.m_QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray);
-#endif
-=======
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
 			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
@@ -389,6 +280,6 @@ namespace CatEngine
 	Renderer2D::Statistics Renderer2D::GetStats()
 	{
 		return s_Data.Stats;
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	}
 }

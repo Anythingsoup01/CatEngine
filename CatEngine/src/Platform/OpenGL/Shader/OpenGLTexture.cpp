@@ -87,10 +87,10 @@ namespace CatEngine
 	}
 	bool OpenGLTexture2D::operator==(const Texture& other) const
 	{
-<<<<<<< HEAD
+
 		return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
-=======
+
 		return m_RendererID == other.GetRendererID();
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	}
 }

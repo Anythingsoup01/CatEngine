@@ -22,8 +22,8 @@ namespace CatEngine
 		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color);
 		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f);
 		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f);
-<<<<<<< HEAD
-=======
+
+
 
 		struct Statistics
 		{
@@ -42,7 +42,7 @@ namespace CatEngine
 		static void ResetData();
 
 		static inline glm::vec2 m_TextureCoord[4] = { { 0.f, 0.f },{ 1.f, 0.f },{ 1.f, 1.f },{ 0.f, 1.f } };
->>>>>>> e0fb026 (Improved Batch Renderer)
+
 	};
 }
 
