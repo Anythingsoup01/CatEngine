@@ -1,9 +1,8 @@
 #include "cepch.h"
 #include "Application.h"
 
-#include "Core/Input/Input.h"
+#include "Core/Input.h"
 
-#include "Core/Logging/Log.h"
 
 namespace CatEngine {
 
@@ -75,6 +74,11 @@ namespace CatEngine {
 	{
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
+	}
+
+	void Application::CloseEditor()
+	{
+		m_Running = false;
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)

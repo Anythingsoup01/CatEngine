@@ -1,5 +1,5 @@
 #pragma once
-#include "CatEngine/Core/Input/Input.h"
+#include "CatEngine/Core/Input.h"
 
 namespace CatEngine {
 	class WindowsInput : public Input {

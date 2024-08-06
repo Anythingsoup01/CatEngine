@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CatEngine/Core/Core.h"
-#include "CatEngine/Core/Shader/Texture.h"
+#include "CatEngine/Core/Renderer/Texture.h"
 
 
 #include <glm/glm.hpp>

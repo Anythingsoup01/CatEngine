@@ -23,7 +23,10 @@ namespace CatEngine
 		inline OrthographicCamera& GetCamera() { return m_Camera; }
 		inline const OrthographicCamera& GetCamera() const { return m_Camera; }
 
+		void SetZoomLevel(float zoomLevel);
+
 	private:
+		void RecalculateView();
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 	private:

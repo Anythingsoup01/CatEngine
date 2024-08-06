@@ -1,10 +1,10 @@
 #pragma once
 
-#include "CatEngine/Core/Buffers/Buffer.h"
+#include "CatEngine/Core/Renderer/Buffer.h"
 
 #include "RenderCommand.h"
 
-#include "CatEngine/Core/Shader/Shader.h"
+#include "CatEngine/Core/Renderer/Shader.h"
 
 #include "CatEngine/Core/Camera/Camera.h"
 

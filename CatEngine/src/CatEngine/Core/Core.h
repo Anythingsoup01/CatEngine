@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Logging/Log.h"
+#include "Log.h"
 
 #ifdef _WIN32
 /* Windows x64/x86 */
@@ -60,8 +60,8 @@
 #endif // End of DLL support
 
 #ifdef CE_DEBUG
-#define CE_ENABLE_ASSERTS 1
-#define CE_PROFILE 1
+#define CE_ENABLE_ASSERTS
+#define CE_PROFILE
 #endif
 
 #ifdef CE_ENABLE_ASSERTS

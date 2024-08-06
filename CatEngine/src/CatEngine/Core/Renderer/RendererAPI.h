@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CatEngine/Core/Buffers/VertexArray.h"
+#include "CatEngine/Core/Renderer/VertexArray.h"
 
 #include "glm/glm.hpp"
 

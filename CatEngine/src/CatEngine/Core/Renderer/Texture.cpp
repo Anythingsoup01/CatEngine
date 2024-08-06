@@ -2,7 +2,7 @@
 #include "Texture.h"
 
 #include "CatEngine/Core/Renderer/Renderer.h"
-#include "Platform/OpenGL/Shader/OpenGLTexture.h"
+#include "Platform/OpenGL/Renderer/OpenGLTexture.h"
 
 namespace CatEngine
 {

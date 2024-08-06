@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "CatEngine/Core/Logging/Log.h"
+#include "CatEngine/Core/Log.h"
 
 #include "CatEngine/Debug/Instrumentor.h"
 

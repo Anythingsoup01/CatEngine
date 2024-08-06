@@ -28,6 +28,8 @@ namespace CatEngine {
 
 		inline Window& GetWindow() { return *m_Window; }
 
+		void CloseEditor();
+
 	private:
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);

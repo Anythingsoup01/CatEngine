@@ -1,10 +1,10 @@
 #include "cepch.h"
 #include "OrthographicCameraController.h"
 
-#include "CatEngine/Core/Input/Input.h"
+#include "CatEngine/Core/Input.h"
 
-#include "CatEngine/Core/Input/MouseButtonCodes.h"
-#include "CatEngine/Core/Input/KeyCodes.h"
+#include "CatEngine/Core/MouseButtonCodes.h"
+#include "CatEngine/Core/KeyCodes.h"
 
 namespace CatEngine
 {
@@ -41,13 +41,22 @@ namespace CatEngine
 		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
 	}
+	void OrthographicCameraController::SetZoomLevel(float zoomLevel)
+	{
+		m_ZoomLevel = zoomLevel;
+		RecalculateView();
+	}
+	void OrthographicCameraController::RecalculateView()
+	{
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+	}
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		CE_PROFILE_FUNCTION();
 		m_ZoomLevel -= e.GetYOffset() * m_ZoomSpeed;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.1f);
 		
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		RecalculateView();
 
 		m_CameraSpeed = m_ZoomLevel;
 		return false;
@@ -56,7 +65,7 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		RecalculateView();
 		return false;
 	}
 }

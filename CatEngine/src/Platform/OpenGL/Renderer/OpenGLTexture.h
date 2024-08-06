@@ -3,7 +3,7 @@
 #include <string>
 
 #include <glad/glad.h>
-#include "CatEngine/Core/Shader/Texture.h"
+#include "CatEngine/Core/Renderer/Texture.h"
 
 namespace CatEngine
 {
@@ -26,7 +26,7 @@ namespace CatEngine
 		virtual bool operator==(const Texture& other) const override;
 
 	private:
-		virtual unsigned int GetRendererID() const override { return m_RendererID; }
+		virtual uint32_t GetRendererID() const override { return m_RendererID; }
 	private:
 		std::string m_Path;
 		uint32_t m_Width, m_Height;

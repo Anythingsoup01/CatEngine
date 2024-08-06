@@ -53,7 +53,7 @@ namespace CatEngine
 		:m_Width(width), m_Height(height)
 	{
 		CE_PROFILE_FUNCTION();
-		m_InternalFormat = GL_RGBA8; 
+		m_InternalFormat = GL_RGBA8;
 		m_Format = GL_RGBA;
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
@@ -89,8 +89,6 @@ namespace CatEngine
 	{
 
 		return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
-
-		return m_RendererID == other.GetRendererID();
 
 	}
 }
