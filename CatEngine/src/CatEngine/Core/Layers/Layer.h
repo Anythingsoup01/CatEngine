@@ -9,11 +9,11 @@ namespace CatEngine {
 		Layer(const std::string& name = "Layer");
 		virtual ~Layer();
 
-		virtual void OnAttach() {}
-		virtual void OnDetach() {}
-		virtual void OnUpdate(Time deltaTime) {}
-		virtual void OnImGuiDraw() {}
-		virtual void OnEvent(Event& event) {}
+		virtual void OnAttach() = 0;
+		virtual void OnDetach() = 0;
+		virtual void OnUpdate(Time deltaTime) = 0;
+		virtual void OnImGuiDraw() = 0;
+		virtual void OnEvent(Event& event) = 0;
 
 		inline const std::string& GetName() const { return m_DebugName; }
 	protected:

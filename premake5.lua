@@ -1,5 +1,6 @@
 workspace "CatEngine"
 	architecture "x64"
+	startproject "CatEditor"
 
 	configurations {
 		"Debug",
@@ -15,10 +16,53 @@ IncludeDir["Glad"] = "CatEngine/vendors/Glad/include"
 IncludeDir["ImGui"] = "CatEngine/vendors/ImGui"
 IncludeDir["glm"] = "CatEngine/vendors/glm"
 IncludeDir["stb"] = "CatEngine/vendors/stb"
+group "Dependencies"
+	include "CatEngine/vendors/GLFW"
+	include "CatEngine/vendors/Glad"
+	include "CatEngine/vendors/ImGui"
+group ""
 
-include "CatEngine/vendors/GLFW"
-include "CatEngine/vendors/Glad"
-include "CatEngine/vendors/ImGui"
+project "CatEditor"
+	location "CatEditor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" ..outputdir.. "/%{prj.name}")
+	objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
+
+	files {
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs{
+		"CatEngine/src",
+		"CatEngine/vendors/spdlog/include",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
+	}
+
+	links{
+		"CatEngine"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+
+	filter "configurations:Debug"
+		defines "CE_DEBUG"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "CE_RELEASE"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "CE_DIST"
+		optimize "on"
 
 project "Sandbox"
 	location "Sandbox"

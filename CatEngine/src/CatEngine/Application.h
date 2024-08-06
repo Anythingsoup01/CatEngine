@@ -15,7 +15,7 @@
 namespace CatEngine {
 	class Application {
 	public:
-		Application();
+		Application(const std::string& name = "CatEngine");
 		virtual ~Application();
 
 		void Run();

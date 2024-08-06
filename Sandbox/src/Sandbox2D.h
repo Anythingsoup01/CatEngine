@@ -17,8 +17,8 @@ public:
 private:
 
 	CatEngine::OrthographicCameraController m_CameraController;
+
 	CatEngine::Ref<CatEngine::Texture2D> m_CheckeredTexture;
-	uint32_t m_MapWidth, m_MapHeight;
 
 
 };

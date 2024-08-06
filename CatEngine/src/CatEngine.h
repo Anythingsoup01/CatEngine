@@ -16,6 +16,7 @@
 
 // Renderer ------------------------------------------
 #include "CatEngine/Core/Renderer/Buffer.h"
+#include "CatEngine/Core/Renderer/FrameBuffer.h"
 #include "CatEngine/Core/Renderer/VertexArray.h"
 #include "CatEngine/Core/Renderer/Shader.h"
 #include "CatEngine/Core/Renderer/Texture.h"

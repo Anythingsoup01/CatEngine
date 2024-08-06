@@ -58,9 +58,11 @@ namespace CatEngine {
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnImGuiDraw()
+	void ImGuiLayer::OnEvent(Event& e)
 	{
-
+		/*ImGuiIO& io = ImGui::GetIO();
+		e.Handled |= e.IsInCategory(CategoryMouseEvent) & io.WantCaptureMouse;
+		e.Handled |= e.IsInCategory(CategoryKeyboardEvent) & io.WantCaptureKeyboard;*/
 	}
 
 	

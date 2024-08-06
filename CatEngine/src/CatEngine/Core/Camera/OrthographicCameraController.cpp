@@ -41,6 +41,11 @@ namespace CatEngine
 		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
 	}
+	void OrthographicCameraController::OnResizeBounds(float width, float height)
+	{
+		m_AspectRatio = width / height;
+		RecalculateView();
+	}
 	void OrthographicCameraController::SetZoomLevel(float zoomLevel)
 	{
 		m_ZoomLevel = zoomLevel;
@@ -64,7 +69,7 @@ namespace CatEngine
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
 		CE_PROFILE_FUNCTION();
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
+		OnResizeBounds((float)e.GetWidth(), (float)e.GetHeight());
 		RecalculateView();
 		return false;
 	}

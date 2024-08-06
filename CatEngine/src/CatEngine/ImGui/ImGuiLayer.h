@@ -15,7 +15,9 @@ namespace CatEngine {
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnImGuiDraw() override;
+		virtual void OnUpdate(Time deltaTime) override {};
+		virtual void OnImGuiDraw() override {};
+		virtual void OnEvent(Event& event) override;
 
 		void Begin();
 		void End();

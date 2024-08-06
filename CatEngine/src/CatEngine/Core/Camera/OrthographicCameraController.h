@@ -20,6 +20,8 @@ namespace CatEngine
 		void OnUpdate(Time deltaTime);
 		void OnEvent(Event& e);
 
+		void OnResizeBounds(float width, float height);
+
 		inline OrthographicCamera& GetCamera() { return m_Camera; }
 		inline const OrthographicCamera& GetCamera() const { return m_Camera; }
 
