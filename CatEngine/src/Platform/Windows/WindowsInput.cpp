@@ -1,38 +1,32 @@
 #include "cepch.h"
-#include "WindowsInput.h"
+#include "CatEngine/Core/Input.h"
 #include "CatEngine/Application.h"
 
 #include "GLFW/glfw3.h"
 
 namespace CatEngine {
-
-	Input* Input::s_Instance = new WindowsInput;
-
-	bool WindowsInput::KeyImpl(int keycode, int keyState)
+	bool Input::IsKeyPressed(KeyCode keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-		auto state = glfwGetKey(window, keycode);
-		return state == keyState;
+		auto state = glfwGetKey(window, static_cast<int32_t>(keycode));
+		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
-	{
-		return KeyImpl(keycode, GLFW_PRESS);
-	}
-
-	bool WindowsInput::IsKeyReleasedImpl(int keycode)
-	{
-		return KeyImpl(keycode, GLFW_RELEASE);
-	}
-
-	bool WindowsInput::IsMouseButtonPressedImpl(int button)
+	bool Input::IsKeyReleased(KeyCode keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-		auto state = glfwGetMouseButton(window, button);
+		auto state = glfwGetKey(window, static_cast<int32_t>(keycode));
+		return state == GLFW_RELEASE;
+	}
+
+	bool Input::IsMouseButtonPressed(MouseCode button)
+	{
+		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
 
-	std::pair<float, float> WindowsInput::GetMousePositionImpl()
+	std::pair<float, float> Input::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
@@ -41,16 +35,16 @@ namespace CatEngine {
 		return { (float)xpos, (float)ypos };
 	}
 
-	float WindowsInput::GetMouseXImpl()
+	float Input::GetMouseX()
 	{
-		auto[x, y] = GetMousePositionImpl();
+		auto[x, y] = GetMousePosition();
 
 		return x;
 	}
 
-	float WindowsInput::GetMouseYImpl()
+	float Input::GetMouseY()
 	{
-		auto [x, y] = GetMousePositionImpl();
+		auto [x, y] = GetMousePosition();
 
 		return y;
 	}
