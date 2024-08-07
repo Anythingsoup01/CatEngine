@@ -66,7 +66,7 @@ namespace CatEngine
 			{ ShaderDataType::Vec3, "a_Position" },
 			{ ShaderDataType::Vec4, "a_Color" },
 			{ ShaderDataType::Vec2, "a_TexCoord" },
-			{ ShaderDataType::Vec, "a_TexID" },
+			{ ShaderDataType::Vec, "a_TexIndex" },
 			{ ShaderDataType::Vec, "a_TilingFactor" }
 		});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);

@@ -2,7 +2,7 @@
 
 #include "CatEngine/Core/Window.h"
 
-#include "CatEngine/Core/GraphicsAPIContext.h"
+#include "CatEngine/Core/GraphicsContext.h"
 
 #include "GLFW/glfw3.h"
 
@@ -26,7 +26,7 @@ namespace CatEngine {
 
 	private:
 		GLFWwindow* m_Window;
-		GraphicsAPIContext* m_Context;
+		GraphicsContext* m_Context;
 
 		struct WindowData {
 			std::string Title;

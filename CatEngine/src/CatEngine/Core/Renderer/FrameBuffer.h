@@ -16,7 +16,7 @@ namespace CatEngine
 	{
 	public:
 		//virtual FrameBufferSpecification& GetSpecification() = 0;
-
+		virtual ~FrameBuffer() = default;
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 

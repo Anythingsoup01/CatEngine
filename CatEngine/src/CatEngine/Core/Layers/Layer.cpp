@@ -6,7 +6,4 @@ namespace CatEngine {
 		:m_DebugName(name)
 	{
 	}
-	Layer::~Layer()
-	{
-	}
 }

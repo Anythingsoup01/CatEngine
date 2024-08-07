@@ -31,6 +31,9 @@ This can range from CategoryApplicationEvent, CategoryInputEvent, CategoryKeyboa
 
 	class Event {
 	public:
+
+		virtual ~Event() = default;
+
 		bool Handled = false;
 
 		virtual EventType GetEventType() const = 0;

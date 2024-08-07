@@ -1,11 +1,11 @@
 #pragma once
-#include "CatEngine/Core/GraphicsAPIContext.h"
+#include "CatEngine/Core/GraphicsContext.h"
 
 struct GLFWwindow;
 
 namespace CatEngine {
 
-	class OpenGLGraphicsContext : public GraphicsAPIContext {
+	class OpenGLGraphicsContext : public GraphicsContext {
 	public:
 		OpenGLGraphicsContext(GLFWwindow* windowHandle);
 		virtual void Init() override;

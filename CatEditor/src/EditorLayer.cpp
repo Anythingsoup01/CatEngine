@@ -30,6 +30,15 @@ namespace CatEngine
     void EditorLayer::OnUpdate(Time time)
     {
         CE_PROFILE_FUNCTION();
+
+        //Resize
+        if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+        {
+            m_FrameBuffer->SetSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_CameraController.OnResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
+        }
         // Update
         {
             CE_PROFILE_SCOPE("CameraController::OnUpdate");
@@ -109,24 +118,44 @@ namespace CatEngine
 
                 ImGui::EndMenuBar();
             }
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
             ImGui::Begin("Scene");
             {
                 ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-                if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
-                {
-                    m_FrameBuffer->SetSize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-                    m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-                    m_CameraController.OnResizeBounds(viewportPanelSize.x, viewportPanelSize.y);
-                }
+                m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
                 uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
                 ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
             }
-            ImGui::PopStyleVar();
             ImGui::End();
+
+            ImGui::Begin("Heirarchy");
+            {
+            
+            }
+            ImGui::End();
+            ImGui::Begin("Console");
+            {
+
+            }
+            ImGui::End();
+            ImGui::Begin("Inspector");
+            {
+
+            }
+            ImGui::End();
+            ImGui::Begin("Debug");
+            {
+                auto stats = CatEngine::Renderer2D::GetStats();
+                ImGui::Text("Renderer2D Stats:");
+                ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+                ImGui::Text("Quads: %d", stats.QuadCount);
+                ImGui::Text("Vertices:", stats.GetTotalVertexCount());
+                ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+            }
+            ImGui::End();
+            ImGui::PopStyleVar();
 
         }
         ImGui::End();

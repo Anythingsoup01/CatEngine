@@ -7,7 +7,7 @@ namespace CatEngine {
 	class Layer {
 	public:
 		Layer(const std::string& name = "Layer");
-		virtual ~Layer();
+		virtual ~Layer() = default;
 
 		virtual void OnAttach() = 0;
 		virtual void OnDetach() = 0;
