@@ -14,8 +14,6 @@ namespace CatEngine
 
     void EditorLayer::OnAttach()
     {
-        m_CameraController.SetZoomLevel(5.f);
-
         FrameBufferSpecification fbSpec;
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
@@ -30,7 +28,11 @@ namespace CatEngine
     void EditorLayer::OnUpdate(Time time)
     {
         CE_PROFILE_FUNCTION();
-
+        {
+            CE_PROFILE_SCOPE("Camera::OnUpdate")
+            if (m_ViewportFocused && m_ViewportHovered)
+                m_CameraController.OnUpdate(time);
+        }
         //Resize
         if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
@@ -38,11 +40,6 @@ namespace CatEngine
         {
             m_FrameBuffer->SetSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_CameraController.OnResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
-        }
-        // Update
-        {
-            CE_PROFILE_SCOPE("CameraController::OnUpdate");
-            m_CameraController.OnUpdate(time);
         }
         // Render
         {
@@ -121,6 +118,9 @@ namespace CatEngine
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
             ImGui::Begin("Scene");
+            m_ViewportFocused = ImGui::IsWindowFocused();
+            m_ViewportHovered = ImGui::IsWindowHovered();
+            Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
             {
                 ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
                 m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -142,7 +142,13 @@ namespace CatEngine
             ImGui::End();
             ImGui::Begin("Inspector");
             {
-
+                ImGui::BeginChild("Transform");
+                {
+                    ImGui::DragFloat3("Position ", glm::value_ptr(m_Transform));
+                    ImGui::DragFloat3("Rotation ", glm::value_ptr(m_Rotation));
+                    ImGui::DragFloat3("Scale ", glm::value_ptr(m_Scale));
+                }
+                ImGui::EndChild();
             }
             ImGui::End();
             ImGui::Begin("Debug");

@@ -18,6 +18,12 @@ namespace CatEngine
 		virtual void OnEvent(CatEngine::Event& e) override;
 	private:
 
+		bool m_ViewportFocused = false, m_ViewportHovered = false;
+
+		glm::vec3 m_Transform = { 0,0,0 };
+		glm::vec3 m_Rotation = { 0,0,0 };
+		glm::vec3 m_Scale = { 0,0,0 };
+
 		OrthographicCameraController m_CameraController;
 		Ref<FrameBuffer> m_FrameBuffer;
 

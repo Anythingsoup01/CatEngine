@@ -13,28 +13,30 @@ namespace CatEngine
 	{
 
 	}
+	bool IsShiftPressed()
+	{
+		return (Input::IsKeyPressed(CE_LEFT_SHIFT) || Input::IsKeyPressed(CE_RIGHT_SHIFT));
+	}
 	void OrthographicCameraController::OnUpdate(Time time)
 	{
 		CE_PROFILE_FUNCTION();
-		// Camera Up
-		m_CameraPosition.y += (Input::IsKeyPressed(CE_W)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Down
-		m_CameraPosition.y -= (Input::IsKeyPressed(CE_S)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Right
-		m_CameraPosition.x += (Input::IsKeyPressed(CE_D)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Left
-		m_CameraPosition.x -= (Input::IsKeyPressed(CE_A)) ? m_CameraSpeed * time.deltaTime() : 0;
-		// Camera Rotate Right
-		m_CameraRotation += Input::IsKeyPressed(CE_E) ? m_CameraRotationSpeed * time.deltaTime() : 0;
-		// Camera Rotate Left
-		m_CameraRotation -= Input::IsKeyPressed(CE_Q) ? m_CameraRotationSpeed * time.deltaTime() : 0;
-		// Camera Rotate Reset
-		m_CameraRotation = Input::IsKeyPressed(CE_R) ? 0 : m_CameraRotation;
 
+
+		if ((IsShiftPressed() && Input::IsMouseButtonPressed(CE_MOUSE_BUTTON_RIGHT)) || m_Panning)
+		{
+			m_Panning = true;
+			m_CameraPosition += glm::vec3((Input::GetMouseXOffset() * m_CameraSpeed) * time.deltaTime(), (Input::GetMouseYOffset() * -m_CameraSpeed) * time.deltaTime(), 0);
+		}
+		if (Input::IsMouseButtonReleased(CE_MOUSE_BUTTON_RIGHT))
+		{
+			m_Panning = false;
+			Input::ResetMouseOffset();
+		}
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetRotation(m_CameraRotation);
 
 	}
+
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
@@ -63,7 +65,7 @@ namespace CatEngine
 		
 		RecalculateView();
 
-		m_CameraSpeed = m_ZoomLevel;
+		m_CameraSpeed = m_ZoomLevel / 2.f;
 		return false;
 	}
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)

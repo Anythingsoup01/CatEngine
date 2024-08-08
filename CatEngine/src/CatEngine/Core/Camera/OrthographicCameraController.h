@@ -32,16 +32,18 @@ namespace CatEngine
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 	private:
+		bool m_Panning = false;
+
 		float m_AspectRatio;
 		float m_ZoomLevel = 1.0f;
 		float m_ZoomSpeed = 0.1f;
-		OrthographicCamera m_Camera;
-
-		float m_CameraSpeed = 1.0f;
+		float m_CameraRotation = 0.f;
 		float m_CameraRotationSpeed = 2.0f;
+		float m_CameraSpeed = 1.f;
 
 		glm::vec3 m_CameraPosition = { 0, 0, 0 };
-		float m_CameraRotation = 0.f;
+
+		OrthographicCamera m_Camera;
 
 	};
 

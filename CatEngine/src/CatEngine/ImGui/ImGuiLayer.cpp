@@ -26,15 +26,11 @@ namespace CatEngine {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		//io.ConfigFlags |= ImGuiConfigFlags_NoTaskBarIcons;
-		//io.ConfigFlags |= ImGuiConfigFlags_ViewporsNoMerge;
 
 		// ImGui Style
 		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsLight();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
@@ -60,9 +56,11 @@ namespace CatEngine {
 
 	void ImGuiLayer::OnEvent(Event& e)
 	{
-		/*ImGuiIO& io = ImGui::GetIO();
-		e.Handled |= e.IsInCategory(CategoryMouseEvent) & io.WantCaptureMouse;
-		e.Handled |= e.IsInCategory(CategoryKeyboardEvent) & io.WantCaptureKeyboard;*/
+		if (m_BlockEvents) {
+			ImGuiIO& io = ImGui::GetIO();
+			e.Handled |= e.IsInCategory(CategoryMouseEvent) & io.WantCaptureMouse;
+			e.Handled |= e.IsInCategory(CategoryKeyboardEvent) & io.WantCaptureKeyboard;
+		}
 	}
 
 	

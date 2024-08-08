@@ -30,6 +30,8 @@ namespace CatEngine {
 
 		void CloseEditor();
 
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+
 	private:
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);
