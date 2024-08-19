@@ -5,9 +5,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "CatEngine/Core/Renderer/VertexArray.h"
-#include "CatEngine/Core/Renderer/Shader.h"
-#include "CatEngine/Core/Renderer/RenderCommand.h"
+#include "CatEngine/Renderer/VertexArray.h"
+#include "CatEngine/Renderer/Shader.h"
+#include "CatEngine/Renderer/RenderCommand.h"
 
 #include "CatEngine/Core/Timer.h"
 
@@ -187,7 +187,10 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 
-		IncrementData(position, rotation, size, color, nullptr, nullptr);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
+			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		DrawQuad(transform, color);
 
 	}
 
@@ -195,16 +198,85 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 
-		IncrementData(position, rotation, size, color, texture, nullptr, tilingFactor);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
+			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		DrawQuad(transform, texture, color, tilingFactor);
 
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<SubTexture2D>& subTexture,const glm::vec4& color, float tilingFactor)
 	{
-		IncrementData(position, rotation, size, color, nullptr, subTexture, tilingFactor);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
+			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		DrawQuad(transform, subTexture, color, tilingFactor);
 	}
 
-	
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	{
+		constexpr glm::vec4 d_Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
+		float texIndex = 0.f;
+		const float tilingFactor = 1.f;
+
+
+		IncrementData(transform, color, textureCoords, tilingFactor, texIndex);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor)
+	{
+		glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
+		float texIndex = 0.f;
+
+		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+		{
+			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			{
+				texIndex = (float)i;
+				break;
+			}
+		}
+
+		if (texIndex == 0.0f)
+		{
+			texIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlotIndex++;
+		}
+
+		IncrementData(transform, color, textureCoords, tilingFactor, texIndex);
+
+	}
+
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<SubTexture2D>& subTexture, const glm::vec4& color, float tilingFactor)
+	{
+		Ref<Texture2D> texture;
+		const glm::vec2* textureCoords;
+		float texIndex = 0.f;
+
+		textureCoords = subTexture->GetTexCoord();
+		texture = subTexture->GetTexture();
+		
+		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+		{
+			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			{
+				texIndex = (float)i;
+				break;
+			}
+		}
+
+		if (texIndex == 0.0f)
+		{
+			texIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlotIndex++;
+		}
+
+		IncrementData(transform, color, textureCoords, tilingFactor, texIndex);
+	}
 	
 	void Renderer2D::ResetStats()
 	{
@@ -216,55 +288,18 @@ namespace CatEngine
 
 	}
 
-	void Renderer2D::IncrementData(const glm::vec3& position, float rotation, const glm::vec2& size, glm::vec4 color, Ref<Texture2D> texture, Ref<SubTexture2D> subTexture, float tilingFactor)
+	void Renderer2D::IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex)
 	{
-		constexpr glm::vec4 d_Color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		glm::vec2 d_TextureCoords[4] = {{0,0}, {1,0}, {1,1}, {0,1}};
-		const glm::vec2* TextureCoords;
-		float d_TexIndex = 0.f;
-		const float d_TilingFactor = 1.f;
-
-		if (subTexture && !texture)
-		{
-			TextureCoords = subTexture->GetTexCoord();
-			texture = subTexture->GetTexture();
-			d_TextureCoords[0] = TextureCoords[0];
-			d_TextureCoords[1] = TextureCoords[1];
-			d_TextureCoords[2] = TextureCoords[2];
-			d_TextureCoords[3] = TextureCoords[3];
-		}
-
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
-			{
-				d_TexIndex = (float)i;
-				break;
-			}
-		}
-
- 		if (d_TexIndex == 0.0f && texture)
-		{
-			d_TexIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
-		}
-
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
 
 		for (int i = 0; i < 4; i++)
 		{
 			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = d_Color * color;
-			s_Data.QuadVertexBufferPtr->TexCoord = d_TextureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = d_TexIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = d_TilingFactor * tilingFactor;
+			s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
 		}
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "CatEngine/Core/Camera/Camera.h"
+#include "CatEngine/Camera/Camera.h"
 
-#include "CatEngine/Core/Renderer/Texture.h"
-#include "CatEngine/Core/Renderer/SubTexture2D.h"
+#include "CatEngine/Renderer/Texture.h"
+#include "CatEngine/Renderer/SubTexture2D.h"
 
 
 namespace CatEngine
@@ -37,10 +37,12 @@ namespace CatEngine
 		// Primitives -- 3 component position
 		
 		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color);
-
 		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f);
-
 		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<SubTexture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f);	
+
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color = glm::vec4(1.0f));	
+		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.f), float tilingFactor = 1.f);
+		static void DrawQuad(const glm::mat4& transform, Ref<SubTexture2D>& texture, const glm::vec4& color = glm::vec4(1.f), float tilingFactor = 1.f);
 
 
 		struct Statistics
@@ -58,8 +60,7 @@ namespace CatEngine
 	private:
 		static void FlushAndReset();
 		static void ResetData();
-
-		static void IncrementData(const glm::vec3& position, float rotation, const glm::vec2& size, glm::vec4 color, Ref<Texture2D> texture = nullptr, Ref<SubTexture2D> subTexture = nullptr, float tilingFactor = 1.f);
+		static void IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex);
 
 
 	};

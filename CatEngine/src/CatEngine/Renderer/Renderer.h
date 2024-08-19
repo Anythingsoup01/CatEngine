@@ -1,12 +1,12 @@
 #pragma once
 
-#include "CatEngine/Core/Renderer/Buffer.h"
+#include "CatEngine/Renderer/Buffer.h"
 
 #include "RenderCommand.h"
 
-#include "CatEngine/Core/Renderer/Shader.h"
+#include "CatEngine/Renderer/Shader.h"
 
-#include "CatEngine/Core/Camera/Camera.h"
+#include "CatEngine/Camera/Camera.h"
 
 namespace CatEngine {
 

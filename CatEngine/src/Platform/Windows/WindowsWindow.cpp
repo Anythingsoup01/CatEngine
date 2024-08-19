@@ -73,7 +73,7 @@ namespace CatEngine {
 			glfwSetErrorCallback(GLFWErrorCallback);
 			API_ASSERT(success, "Could not load GLFW!");
 		}
-
+		
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 
 		m_Context = new OpenGLGraphicsContext(m_Window);

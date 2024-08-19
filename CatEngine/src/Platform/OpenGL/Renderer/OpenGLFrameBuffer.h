@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CatEngine/Core/Renderer/FrameBuffer.h"
+#include "CatEngine/Renderer/FrameBuffer.h"
 
 #include <glm/glm.hpp>
 

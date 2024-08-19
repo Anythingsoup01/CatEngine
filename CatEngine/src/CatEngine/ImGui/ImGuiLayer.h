@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CatEngine/Core/Layers/Layer.h"
+#include "CatEngine/Layers/Layer.h"
 #include "CatEngine/Events/MouseEvent.h"
 #include "CatEngine/Events/KeyEvent.h"
 #include "CatEngine/Events/ApplicationEvent.h"

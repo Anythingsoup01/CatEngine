@@ -3,7 +3,7 @@
 #include <string>
 
 #include <glad/glad.h>
-#include "CatEngine/Core/Renderer/Texture.h"
+#include "CatEngine/Renderer/Texture.h"
 
 namespace CatEngine
 {

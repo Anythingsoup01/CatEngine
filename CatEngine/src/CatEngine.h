@@ -3,7 +3,7 @@
 // For use by CatEngine Applications
 
 #include "CatEngine/Application.h"
-#include "CatEngine/Core/Layers/Layer.h"
+#include "CatEngine/Layers/Layer.h"
 #include "CatEngine/Core/Log.h"
 
 #include "CatEngine/Core/TimeStep.h"
@@ -15,19 +15,23 @@
 #include "CatEngine/ImGui/ImGuiLayer.h"
 
 // Renderer ------------------------------------------
-#include "CatEngine/Core/Renderer/Buffer.h"
-#include "CatEngine/Core/Renderer/FrameBuffer.h"
-#include "CatEngine/Core/Renderer/VertexArray.h"
-#include "CatEngine/Core/Renderer/Shader.h"
-#include "CatEngine/Core/Renderer/Texture.h"
-#include "CatEngine/Core/Renderer/SubTexture2D.h"
+#include "CatEngine/Renderer/Buffer.h"
+#include "CatEngine/Renderer/FrameBuffer.h"
+#include "CatEngine/Renderer/VertexArray.h"
+#include "CatEngine/Renderer/Shader.h"
+#include "CatEngine/Renderer/Texture.h"
+#include "CatEngine/Renderer/SubTexture2D.h"
 
-#include "CatEngine/Core/Renderer/Renderer.h"
-#include "CatEngine/Core/Renderer/Renderer2D.h"
-#include "CatEngine/Core/Renderer/RenderCommand.h"
+#include "CatEngine/Renderer/Renderer.h"
+#include "CatEngine/Renderer/Renderer2D.h"
+#include "CatEngine/Renderer/RenderCommand.h"
 
-#include "CatEngine/Core/Camera/Camera.h"
-#include "CatEngine/Core/Camera/OrthographicCameraController.h"
+#include "CatEngine/Camera/Camera.h"
+#include "CatEngine/Camera/OrthographicCameraController.h"
+
+// Scene ---------------------------------------------
+#include "CatEngine/Scene/Scene.h"
+#include "CatEngine/Scene/Components.h"
 
 // Profiling -----------------------------------------
 #include "CatEngine/Core/Timer.h"

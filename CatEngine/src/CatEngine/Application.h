@@ -6,10 +6,11 @@
 #include "ImGui/ImGuiLayer.h"
 
 #include "Core/Core.h"
-#include "Core/Layers/LayerStack.h"
-#include "Core/Renderer/Renderer.h"
 #include "Core/TimeStep.h"
 #include "Core/Window.h"
+
+#include "Layers/LayerStack.h"
+#include "Renderer/Renderer.h"
 
 
 namespace CatEngine {
@@ -32,6 +33,7 @@ namespace CatEngine {
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
+		bool m_Minimized = false;
 	private:
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);
@@ -43,7 +45,6 @@ namespace CatEngine {
 	private:
 		static Application* s_Instance;
 		bool m_Running = true;
-		bool m_Minimized = false;
 	};
 
 	// Defined in client

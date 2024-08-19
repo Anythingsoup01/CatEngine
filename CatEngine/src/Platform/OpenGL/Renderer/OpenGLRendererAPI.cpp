@@ -1,5 +1,6 @@
 #include "cepch.h"
 #include "OpenGLRendererAPI.h"
+#include "OpenGLFrameBuffer.h"
 
 #include "CatEngine/Core/Core.h"
 

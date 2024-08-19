@@ -19,6 +19,17 @@ namespace CatEngine
         fbSpec.Height = 720;
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
+
+        m_ActiveScene = CreateRef<Scene>();
+
+
+        m_Texture = Texture2D::Create("assets/textures/checkered.png");
+
+        m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity);
+        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4{ 0.f,1.f,0.f,1.f });
+
+
+
     }
 
     void EditorLayer::OnDetach()
@@ -28,12 +39,19 @@ namespace CatEngine
     void EditorLayer::OnUpdate(Time time)
     {
         CE_PROFILE_FUNCTION();
+
+        if (m_Minimized)
         {
-            CE_PROFILE_SCOPE("Camera::OnUpdate")
-            if (m_ViewportFocused && m_ViewportHovered)
-                m_CameraController.OnUpdate(time);
+            m_CameraController.OnResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
+            m_Minimized = false;
         }
+
+        if (m_ViewportFocused && m_ViewportHovered)
+            m_CameraController.OnUpdate(time);
+
+
         //Resize
+
         if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
@@ -41,30 +59,25 @@ namespace CatEngine
             m_FrameBuffer->SetSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_CameraController.OnResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
         }
+
         // Render
-        {
-            CE_PROFILE_SCOPE("Prerender Commands");
-            m_FrameBuffer->Bind();
-            RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
-        }
+
+        m_FrameBuffer->Bind();
+        RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
+
         Renderer2D::ResetStats();
-        {
-            CE_PROFILE_SCOPE("Render");
 
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
+        // Update Scene
 
-            for (float y = -5.f; y < 5.f; y += .5f)
-            {
-                for (float x = -5.f; x < 5.f; x += .5f)
-                {
-                    glm::vec2 color = { {(x + 5.f) / 10.f}, {(y + 5.f) / 10.f} };
-                    Renderer2D::DrawQuad({ x, y }, 0, { .45f, .45f }, { color.x, 1.f, color.y, 1.f });
-                }
-            }
+        Renderer2D::BeginScene(m_CameraController.GetCamera());
+        m_ActiveScene->OnUpdate(time);
 
-            Renderer2D::EndScene();
-            m_FrameBuffer->Unbind();
-        }
+        Renderer2D::DrawQuad({ 1,1 }, 0, { 1,1 }, m_SquareColor);
+
+
+        Renderer2D::EndScene();
+        m_FrameBuffer->Unbind();
+
     }
     void EditorLayer::OnImGuiDraw()
     {
@@ -142,13 +155,7 @@ namespace CatEngine
             ImGui::End();
             ImGui::Begin("Inspector");
             {
-                ImGui::BeginChild("Transform");
-                {
-                    ImGui::DragFloat3("Position ", glm::value_ptr(m_Transform));
-                    ImGui::DragFloat3("Rotation ", glm::value_ptr(m_Rotation));
-                    ImGui::DragFloat3("Scale ", glm::value_ptr(m_Scale));
-                }
-                ImGui::EndChild();
+                ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
             }
             ImGui::End();
             ImGui::Begin("Debug");
@@ -170,6 +177,21 @@ namespace CatEngine
     void EditorLayer::OnEvent(Event& e)
     {
         m_CameraController.OnEvent(e);
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResize));
     }
+
+    bool EditorLayer::OnWindowResize(WindowResizeEvent& e)
+    {
+        if (e.GetWidth() == 0 || e.GetHeight() == 0)
+        {
+            m_Minimized = true;
+            return false;
+        }
+
+        return false;
+    }
+
+    
 
 }

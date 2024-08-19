@@ -1,7 +1,7 @@
 #include "cepch.h"
 #include "FrameBuffer.h"
 
-#include "CatEngine/Core/Renderer/Renderer.h"
+#include "CatEngine/Renderer/Renderer.h"
 #include "Platform/OpenGL/Renderer/OpenGLFrameBuffer.h"
 
 namespace CatEngine

@@ -16,6 +16,7 @@ IncludeDir["Glad"] = "CatEngine/vendors/Glad/include"
 IncludeDir["ImGui"] = "CatEngine/vendors/ImGui"
 IncludeDir["glm"] = "CatEngine/vendors/glm"
 IncludeDir["stb"] = "CatEngine/vendors/stb"
+IncludeDir["EnTT"] = "CatEngine/vendors/EnTT/include"
 group "Dependencies"
 	include "CatEngine/vendors/GLFW"
 	include "CatEngine/vendors/Glad"
@@ -42,6 +43,7 @@ project "CatEditor"
 		"CatEngine/vendors/spdlog/include",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.EnTT}",
 	}
 
 	links{
@@ -84,6 +86,7 @@ project "Sandbox"
 		"CatEngine/vendors/spdlog/include",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.EnTT}",
 	}
 
 	links{
@@ -136,6 +139,7 @@ project "CatEngine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb}",
+		"%{IncludeDir.EnTT}",
 	}
 
 		defines

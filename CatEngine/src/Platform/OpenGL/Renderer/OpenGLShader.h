@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CatEngine/Core/Renderer/Shader.h"
+#include "CatEngine/Renderer/Shader.h"
 #include <glm/glm.hpp>
 
 
