@@ -29,6 +29,8 @@ namespace CatEngine
 
 		Entity m_SquareEntity;
 
+		Entity m_CameraEntity;
+
 		Ref<Texture2D> m_Texture;
 
 		glm::vec4 m_SquareColor{ 1.f,1.f,1.f,1.f };

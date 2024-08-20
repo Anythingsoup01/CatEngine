@@ -28,7 +28,7 @@ namespace CatEngine
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 
-		static const uint32_t m_MaxTextureSlots = 32; // TODO: RenderCaps
+		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
 
 		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
@@ -39,7 +39,7 @@ namespace CatEngine
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
 
-		std::array<Ref<Texture2D>, m_MaxTextureSlots> TextureSlots;
+		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = DefaultTexture
 
 
@@ -99,15 +99,15 @@ namespace CatEngine
 		uint32_t defaultTextureData = 0xffffffff;
 		s_Data.DefaultTexture->SetData(&defaultTextureData, sizeof(uint32_t));
 
-		int32_t samplers[s_Data.m_MaxTextureSlots];
-		for (uint32_t i = 0; i < s_Data.m_MaxTextureSlots; i++)
+		int32_t samplers[s_Data.MaxTextureSlots];
+		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 		{
 			samplers[i] = i;
 		}
 
 		s_Data.TextureShader = Shader::Create("assets/shaders/TextureShader.glsl");
 		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_Texture", samplers, s_Data.m_MaxTextureSlots);
+		s_Data.TextureShader->SetIntArray("u_Texture", samplers, s_Data.MaxTextureSlots);
 
 		s_Data.TextureSlots[0] = s_Data.DefaultTexture;
 
@@ -131,6 +131,25 @@ namespace CatEngine
 	}
 
 
+	void Renderer2D::BeginScene(const Camera& camera, glm::mat4& transform)
+	{
+		CE_PROFILE_FUNCTION();
+
+		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+
+		ResetData();
+	}
+
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		CE_PROFILE_FUNCTION();
@@ -145,7 +164,6 @@ namespace CatEngine
 
 		ResetData();
 
-		
 	}
 	void Renderer2D::Flush()
 	{
@@ -194,7 +212,7 @@ namespace CatEngine
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor)
 	{
-		glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
+		constexpr glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
 		float texIndex = 0.f;
 
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
@@ -208,6 +226,7 @@ namespace CatEngine
 
 		if (texIndex == 0.0f)
 		{
+
 			texIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
@@ -254,7 +273,7 @@ namespace CatEngine
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
-		for (int i = 0; i < 4; i++)
+		for (size_t i = 0; i < 4; i++)
 		{
 			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
 			s_Data.QuadVertexBufferPtr->Color = color;
@@ -263,7 +282,6 @@ namespace CatEngine
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
 		}
-
 
 		s_Data.QuadIndexCount += 6;
 

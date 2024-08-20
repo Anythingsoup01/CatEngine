@@ -14,10 +14,12 @@ namespace CatEngine
 	class Renderer2D
 	{
 	public:
+
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(const OrthographicCamera& camera);
+		static void BeginScene(const Camera& camera, glm::mat4& transform);
+		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
 		static void Flush();
 		static void EndScene();
 

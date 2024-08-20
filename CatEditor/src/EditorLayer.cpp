@@ -27,6 +27,10 @@ namespace CatEngine
 
         m_SquareEntity = m_ActiveScene->CreateEntity();
         m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
+        m_SquareEntity.GetComponent<SpriteRendererComponent>().Texture = m_Texture;
+
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f));
 
     }
 
@@ -60,20 +64,14 @@ namespace CatEngine
 
         // Render
 
+        Renderer2D::ResetStats();
         m_FrameBuffer->Bind();
         RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
-        Renderer2D::ResetStats();
-
         // Update Scene
-
-        Renderer2D::BeginScene(m_CameraController.GetCamera());
         m_ActiveScene->OnUpdate(time);
 
-
-        Renderer2D::EndScene();
         m_FrameBuffer->Unbind();
-
     }
     void EditorLayer::OnImGuiDraw()
     {
@@ -151,12 +149,20 @@ namespace CatEngine
             ImGui::End();
             ImGui::Begin("Inspector");
             {
-
+                ImGui::Separator();
                 auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
                 auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-                
+                auto& transform = m_SquareEntity.GetComponent<TransformComponent>().Transform;
+
+
                 ImGui::Text("%s", tag.c_str());
+                ImGui::DragFloat3("Square Position", glm::value_ptr(transform[3]));
                 ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+                ImGui::Separator();
+                ImGui::Separator();
+
+                ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+
             }
             ImGui::End();
             ImGui::Begin("Debug");
