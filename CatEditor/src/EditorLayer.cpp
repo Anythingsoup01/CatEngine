@@ -19,16 +19,14 @@ namespace CatEngine
         fbSpec.Height = 720;
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
+        m_Texture = Texture2D::Create("assets/textures/checkered.png");
+
+        // Entity
 
         m_ActiveScene = CreateRef<Scene>();
 
-
-        m_Texture = Texture2D::Create("assets/textures/checkered.png");
-
-        m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity);
-        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4{ 0.f,1.f,0.f,1.f });
-
-
+        m_SquareEntity = m_ActiveScene->CreateEntity();
+        m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
 
     }
 
@@ -71,8 +69,6 @@ namespace CatEngine
 
         Renderer2D::BeginScene(m_CameraController.GetCamera());
         m_ActiveScene->OnUpdate(time);
-
-        Renderer2D::DrawQuad({ 1,1 }, 0, { 1,1 }, m_SquareColor);
 
 
         Renderer2D::EndScene();
@@ -155,7 +151,12 @@ namespace CatEngine
             ImGui::End();
             ImGui::Begin("Inspector");
             {
-                ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
+                auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+                auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+                
+                ImGui::Text("%s", tag.c_str());
+                ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
             }
             ImGui::End();
             ImGui::Begin("Debug");

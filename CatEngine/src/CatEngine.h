@@ -32,6 +32,7 @@
 // Scene ---------------------------------------------
 #include "CatEngine/Scene/Scene.h"
 #include "CatEngine/Scene/Components.h"
+#include "CatEngine/Scene/Entity.h"
 
 // Profiling -----------------------------------------
 #include "CatEngine/Core/Timer.h"

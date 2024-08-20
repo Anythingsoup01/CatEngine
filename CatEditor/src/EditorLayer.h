@@ -26,8 +26,9 @@ namespace CatEngine
 		bool m_Minimized = false;
 		
 		Ref<Scene> m_ActiveScene;
-		entt::entity m_SquareEntity;
-		
+
+		Entity m_SquareEntity;
+
 		Ref<Texture2D> m_Texture;
 
 		glm::vec4 m_SquareColor{ 1.f,1.f,1.f,1.f };

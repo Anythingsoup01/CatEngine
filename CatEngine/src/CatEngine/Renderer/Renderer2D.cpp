@@ -3,8 +3,6 @@
 
 #include "CatEngine/Core/Core.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "CatEngine/Renderer/VertexArray.h"
 #include "CatEngine/Renderer/Shader.h"
 #include "CatEngine/Renderer/RenderCommand.h"
@@ -182,36 +180,6 @@ namespace CatEngine
 
 		Flush();
 	}
-	
-	void Renderer2D::DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color)
-	{
-		CE_PROFILE_FUNCTION();
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		DrawQuad(transform, color);
-
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor)
-	{
-		CE_PROFILE_FUNCTION();
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		DrawQuad(transform, texture, color, tilingFactor);
-
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<SubTexture2D>& subTexture,const glm::vec4& color, float tilingFactor)
-	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		DrawQuad(transform, subTexture, color, tilingFactor);
-	}
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
 	{
@@ -278,15 +246,8 @@ namespace CatEngine
 		IncrementData(transform, color, textureCoords, tilingFactor, texIndex);
 	}
 	
-	void Renderer2D::ResetStats()
-	{
-		memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics));
-	}
-	Renderer2D::Statistics Renderer2D::GetStats()
-	{
-		return s_Data.Stats;
-
-	}
+	void Renderer2D::ResetStats() { memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics)); }
+	Renderer2D::Statistics Renderer2D::GetStats() { return s_Data.Stats; }
 
 	void Renderer2D::IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex)
 	{
