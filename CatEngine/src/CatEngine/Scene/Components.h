@@ -2,7 +2,7 @@
 
 #include "CatEngine/Renderer/Texture.h"
 
-#include "CatEngine/Camera/Camera.h"
+#include "SceneCamera.h"
 
 #include <glm/glm.hpp>
 
@@ -46,14 +46,12 @@ namespace CatEngine
 
 	struct CameraComponent
 	{
-		CatEngine::Camera Camera;
+		CatEngine::SceneCamera Camera;
 		bool Primary = true;
-		bool FixedAspectRation = false;
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection)
-			: Camera(projection) {}
 	};
 
 }

@@ -49,10 +49,10 @@ namespace CatEngine
 		Camera* mainCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;
 		{
-			auto group = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : group)
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
 			{
-				auto& [transform, camera] = group.get<TransformComponent, CameraComponent>(entity);
+				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 				if (camera.Primary)
 				{
@@ -77,6 +77,23 @@ namespace CatEngine
 			Renderer2D::EndScene();
 		}
 
+	}
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	{
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+
+		// Resize non-fixed aspect ratios
+
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (!cameraComponent.FixedAspectRatio)
+			{
+				cameraComponent.Camera.SetViewportSize(width, height);
+			}
+		}
 	}
 	Entity Scene::CreateEntity(const std::string& name)
 	{

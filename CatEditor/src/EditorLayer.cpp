@@ -30,7 +30,10 @@ namespace CatEngine
         m_SquareEntity.GetComponent<SpriteRendererComponent>().Texture = m_Texture;
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f));
+        m_CameraEntity.AddComponent<CameraComponent>();
+
+        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Camera");
+        m_SecondCameraEntity.AddComponent<CameraComponent>().Primary = false;
 
     }
 
@@ -60,6 +63,8 @@ namespace CatEngine
         {
             m_FrameBuffer->SetSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_CameraController.OnResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
         // Render
@@ -163,6 +168,28 @@ namespace CatEngine
 
                 ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
 
+                if (ImGui::Checkbox("Change Primary Camera", &m_PrimaryCamera))
+                {
+                    m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+                    m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+                }
+                else
+                {
+                    m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+                    m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+                }
+                {
+                    auto& camera = m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
+                    float orthoSize = camera.GetOrthographicSize();
+                    if (ImGui::DragFloat("Second Camera Size", &orthoSize, 0.25f, 0.f))
+                    {
+                        camera.SetOrthographicSize(orthoSize);
+                    }
+                }
+
+
+
+                ImGui::Separator();
             }
             ImGui::End();
             ImGui::Begin("Debug");
