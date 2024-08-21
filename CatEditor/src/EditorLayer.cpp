@@ -32,9 +32,26 @@ namespace CatEngine
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
         m_CameraEntity.AddComponent<CameraComponent>();
 
-        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Camera");
-        m_SecondCameraEntity.AddComponent<CameraComponent>().Primary = false;
+        class CameraController : public SoloAction
+        {
+        public:
 
+
+
+            void Update(Time time)
+            {
+                auto& transform = GetComponent<TransformComponent>().Transform;
+
+                float cameraSpeed = 5.f;
+
+                transform[3][1] += Input::IsKeyPressed(KeyCode::W) ? cameraSpeed * time.deltaTime() : 0;
+                transform[3][1] += Input::IsKeyPressed(KeyCode::S) ? -cameraSpeed * time.deltaTime() : 0;
+                transform[3][0] += Input::IsKeyPressed(KeyCode::D) ? cameraSpeed * time.deltaTime() : 0;
+                transform[3][0] += Input::IsKeyPressed(KeyCode::A) ? -cameraSpeed * time.deltaTime() : 0;
+
+            }
+        };
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()
@@ -167,27 +184,6 @@ namespace CatEngine
                 ImGui::Separator();
 
                 ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-
-                if (ImGui::Checkbox("Change Primary Camera", &m_PrimaryCamera))
-                {
-                    m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-                    m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-                }
-                else
-                {
-                    m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-                    m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-                }
-                {
-                    auto& camera = m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
-                    float orthoSize = camera.GetOrthographicSize();
-                    if (ImGui::DragFloat("Second Camera Size", &orthoSize, 0.25f, 0.f))
-                    {
-                        camera.SetOrthographicSize(orthoSize);
-                    }
-                }
-
-
 
                 ImGui::Separator();
             }

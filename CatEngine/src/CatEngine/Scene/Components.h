@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CatEngine/Renderer/Texture.h"
+#include "SoloAction.h"
 
 #include "SceneCamera.h"
 
@@ -52,6 +53,22 @@ namespace CatEngine
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct NativeScriptComponent
+	{
+		SoloAction* Instance = nullptr;
+
+
+		SoloAction*(*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateScript = []() { return static_cast<SoloAction*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		}
 	};
 
 }

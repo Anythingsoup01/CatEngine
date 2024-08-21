@@ -13,9 +13,9 @@ namespace CatEngine
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 
-		virtual void OnUpdate(CatEngine::Time time) override;
+		virtual void OnUpdate(Time time) override;
 		virtual void OnImGuiDraw() override;
-		virtual void OnEvent(CatEngine::Event& e) override;
+		virtual void OnEvent(Event& e) override;
 
 		bool OnWindowResize(WindowResizeEvent& e);
 
@@ -30,9 +30,6 @@ namespace CatEngine
 		Entity m_SquareEntity;
 
 		Entity m_CameraEntity;
-		Entity m_SecondCameraEntity;
-
-		bool m_PrimaryCamera = true;
 
 		Ref<Texture2D> m_Texture;
 

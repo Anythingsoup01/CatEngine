@@ -33,6 +33,7 @@
 #include "CatEngine/Scene/Scene.h"
 #include "CatEngine/Scene/Components.h"
 #include "CatEngine/Scene/Entity.h"
+#include "CatEngine/Scene/SoloAction.h"
 
 // Profiling -----------------------------------------
 #include "CatEngine/Core/Timer.h"
