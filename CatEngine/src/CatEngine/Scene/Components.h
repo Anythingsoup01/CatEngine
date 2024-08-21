@@ -10,6 +10,17 @@
 namespace CatEngine
 {
 
+	struct NameComponent
+	{
+		std::string Name;
+
+		NameComponent() = default;
+		NameComponent(const NameComponent&) = default;
+		NameComponent(const std::string& name)
+			: Name(name) {}
+
+	};
+
 	struct TagComponent
 	{
 		std::string Tag;
@@ -53,6 +64,7 @@ namespace CatEngine
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+
 	};
 
 	struct NativeScriptComponent

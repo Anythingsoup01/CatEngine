@@ -1,7 +1,6 @@
 #include "EditorLayer.h"
 
 #include <imgui.h>
-#include <glm/gtc/type_ptr.hpp>
 
 #define PROFILE(name) PROFILE_SCOPE(name, [&](ProfileResult profileResult) {m_ProfileResults.push_back(profileResult);})
 
@@ -25,18 +24,22 @@ namespace CatEngine
 
         m_ActiveScene = CreateRef<Scene>();
 
-        m_SquareEntity = m_ActiveScene->CreateEntity();
+        m_SquareEntity = m_ActiveScene->CreateEntity("Square Entity");
         m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
-        m_SquareEntity.GetComponent<SpriteRendererComponent>().Texture = m_Texture;
 
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-        m_CameraEntity.AddComponent<CameraComponent>();
+        m_SecondSquareEntity = m_ActiveScene->CreateEntity("Square Entity");
+        m_SecondSquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
 
-        class CameraController : public SoloAction
+        m_MainCameraEntity = m_ActiveScene->CreateEntity("Main Camera");
+        m_MainCameraEntity.AddComponent<CameraComponent>().Primary = false;
+
+        m_SceneCameraEntity = m_ActiveScene->CreateEntity("Scene Camera");
+        m_SceneCameraEntity.AddComponent<CameraComponent>();
+
+
+        class SceneCameraController : public SoloAction
         {
         public:
-
-
 
             void Update(Time time)
             {
@@ -51,7 +54,9 @@ namespace CatEngine
 
             }
         };
-        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+        m_SceneCameraEntity.AddComponent<NativeScriptComponent>().Bind<SceneCameraController>();
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach()
@@ -69,8 +74,8 @@ namespace CatEngine
         }
 
         if (m_ViewportFocused && m_ViewportHovered)
-            m_CameraController.OnUpdate(time);
-
+        {
+        }
 
         //Resize
 
@@ -83,10 +88,9 @@ namespace CatEngine
 
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
-
         // Render
-
         Renderer2D::ResetStats();
+
         m_FrameBuffer->Bind();
         RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
@@ -159,43 +163,11 @@ namespace CatEngine
             }
             ImGui::End();
 
-            ImGui::Begin("Heirarchy");
-            {
+            m_SceneHierarchyPanel.OnImGuiRender();
             
-            }
-            ImGui::End();
             ImGui::Begin("Console");
             {
 
-            }
-            ImGui::End();
-            ImGui::Begin("Inspector");
-            {
-                ImGui::Separator();
-                auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-                auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-                auto& transform = m_SquareEntity.GetComponent<TransformComponent>().Transform;
-
-
-                ImGui::Text("%s", tag.c_str());
-                ImGui::DragFloat3("Square Position", glm::value_ptr(transform[3]));
-                ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-                ImGui::Separator();
-                ImGui::Separator();
-
-                ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-
-                ImGui::Separator();
-            }
-            ImGui::End();
-            ImGui::Begin("Debug");
-            {
-                auto stats = CatEngine::Renderer2D::GetStats();
-                ImGui::Text("Renderer2D Stats:");
-                ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-                ImGui::Text("Quads: %d", stats.QuadCount);
-                ImGui::Text("Vertices:", stats.GetTotalVertexCount());
-                ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
             }
             ImGui::End();
             ImGui::PopStyleVar();

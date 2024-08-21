@@ -10,7 +10,6 @@
 
 namespace CatEngine
 {
-
 	Scene::Scene()
 	{
 	}
@@ -18,6 +17,7 @@ namespace CatEngine
 	Scene::~Scene()
 	{
 	}
+
 	void Scene::OnUpdate(Time time)
 	{
 		// Update Scripts
@@ -57,7 +57,6 @@ namespace CatEngine
 		{
 			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
 
-
 			auto group = m_Registry.group<TransformComponent>   (entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
@@ -66,7 +65,6 @@ namespace CatEngine
 			}
 			Renderer2D::EndScene();
 		}
-
 	}
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
@@ -74,7 +72,6 @@ namespace CatEngine
 		m_ViewportHeight = height;
 
 		// Resize non-fixed aspect ratios
-
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
@@ -88,10 +85,14 @@ namespace CatEngine
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = { m_Registry.create(), this };
-		entity.AddComponent<TransformComponent>();
 
 		auto& tag = entity.AddComponent<TagComponent>();
-		tag.Tag = name.empty() ? "Undefined" : name;
+		tag.Tag = "Undefined";
+
+		auto& entityName = entity.AddComponent<NameComponent>();
+		entityName.Name = name.empty() ? "GameObject" : name;
+
+		entity.AddComponent<TransformComponent>();
 
 		return entity;
 	}

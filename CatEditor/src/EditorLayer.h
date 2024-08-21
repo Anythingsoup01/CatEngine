@@ -1,5 +1,6 @@
 #pragma once
 #include "CatEngine.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace CatEngine
 {
@@ -28,8 +29,12 @@ namespace CatEngine
 		Ref<Scene> m_ActiveScene;
 
 		Entity m_SquareEntity;
+		Entity m_SecondSquareEntity;
 
-		Entity m_CameraEntity;
+		Entity m_TestSquare;
+
+		Entity m_SceneCameraEntity;
+		Entity m_MainCameraEntity;
 
 		Ref<Texture2D> m_Texture;
 
@@ -39,6 +44,7 @@ namespace CatEngine
 		Ref<FrameBuffer> m_FrameBuffer;
 
 		glm::vec2 m_ViewportSize = { 0.f,0.f };
-
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
 }
