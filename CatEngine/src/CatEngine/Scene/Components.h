@@ -6,6 +6,7 @@
 #include "SceneCamera.h"
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace CatEngine
 {
@@ -34,14 +35,25 @@ namespace CatEngine
 	
 	struct TransformComponent
 	{
-		glm::mat4 Transform{ 1.f };
+		glm::vec3 Position = { 0.f, 0.f, 0.f };
+		glm::vec3 Rotation = { 0.f, 0.f, 0.f };
+		glm::vec3 Scale = { 1.f, 1.f, 1.f };
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::mat4& transform)
-			: Transform(transform) {}
+		TransformComponent(const glm::vec3& position)
+			: Position(position) {}
 
-		operator const glm::mat4& () { return Transform; }
+		glm::mat4& GetTransform() const
+		{
+			glm::mat4 rotation = glm::rotate(glm::mat4(1.f), Rotation.x, { 1, 0, 0 })
+				* glm::rotate(glm::mat4(1.f), Rotation.y, { 0, 1, 0 })
+				* glm::rotate(glm::mat4(1.f), Rotation.z, { 0, 0, 1 });
+
+			return glm::translate(glm::mat4(1.f), Position)
+				* rotation
+				* glm::scale(glm::mat4(1.f), Scale);
+		}
 	};
 	struct SpriteRendererComponent
 	{

@@ -43,14 +43,14 @@ namespace CatEngine
 
             void Update(Time time)
             {
-                auto& transform = GetComponent<TransformComponent>().Transform;
+                auto& position = GetComponent<TransformComponent>().Position;
 
                 float cameraSpeed = 5.f;
 
-                transform[3][1] += Input::IsKeyPressed(KeyCode::W) ? cameraSpeed * time.deltaTime() : 0;
-                transform[3][1] += Input::IsKeyPressed(KeyCode::S) ? -cameraSpeed * time.deltaTime() : 0;
-                transform[3][0] += Input::IsKeyPressed(KeyCode::D) ? cameraSpeed * time.deltaTime() : 0;
-                transform[3][0] += Input::IsKeyPressed(KeyCode::A) ? -cameraSpeed * time.deltaTime() : 0;
+                position.y += Input::IsKeyPressed(KeyCode::W) ? cameraSpeed * time.deltaTime() : 0;
+                position.y += Input::IsKeyPressed(KeyCode::S) ? -cameraSpeed * time.deltaTime() : 0;
+                position.x += Input::IsKeyPressed(KeyCode::D) ? cameraSpeed * time.deltaTime() : 0;
+                position.x += Input::IsKeyPressed(KeyCode::A) ? -cameraSpeed * time.deltaTime() : 0;
 
             }
         };
