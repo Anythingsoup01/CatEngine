@@ -24,15 +24,6 @@ namespace CatEngine
 
         m_ActiveScene = CreateRef<Scene>();
 
-        m_SquareEntity = m_ActiveScene->CreateEntity("Square Entity");
-        m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
-
-        m_SecondSquareEntity = m_ActiveScene->CreateEntity("Square Entity");
-        m_SecondSquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
-
-        m_MainCameraEntity = m_ActiveScene->CreateEntity("Main Camera");
-        m_MainCameraEntity.AddComponent<CameraComponent>().Primary = false;
-
         m_SceneCameraEntity = m_ActiveScene->CreateEntity("Scene Camera");
         m_SceneCameraEntity.AddComponent<CameraComponent>();
 

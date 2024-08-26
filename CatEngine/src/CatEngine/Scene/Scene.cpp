@@ -96,4 +96,8 @@ namespace CatEngine
 
 		return entity;
 	}
+	void Scene::DeleteEntity(Entity entity)
+	{
+		m_Registry.destroy(entity);
+	}
 }

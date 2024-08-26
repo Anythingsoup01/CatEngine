@@ -29,11 +29,40 @@ namespace CatEngine
 		{
 			m_SelectionContext = {};
 		}
+
+		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
+		{
+			if (ImGui::MenuItem("Create Empty GameObject"))
+				m_Context->CreateEntity("GameObject");
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 		ImGui::Begin("Inspector");
 		if (m_SelectionContext)
 		{
 			DrawComponents(m_SelectionContext);
+
+			if (ImGui::Button("Add Component"))
+				ImGui::OpenPopup("AddComponent");
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectionContext.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::MenuItem("Sprite Renderer"))
+				{
+					m_SelectionContext.AddComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+
+
 		}
 		ImGui::End();
 	}
@@ -48,12 +77,25 @@ namespace CatEngine
 		{
 			m_SelectionContext = entity;
 		}
+		bool entityDeleted = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Delete"))
+				entityDeleted = true;
+
+			ImGui::EndPopup();
+		}
 		
 		if (opened)
 		{
 			ImGui::TreePop();
 		}
-
+		if (entityDeleted)
+		{
+			m_Context->DeleteEntity(entity);
+			if (m_SelectionContext == entity)
+				m_SelectionContext = {};
+		}
 	}
 
 	template<typename T, typename UIFunction>
