@@ -33,7 +33,15 @@ namespace CatEngine
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 		{
 			if (ImGui::MenuItem("Create Empty GameObject"))
+			{
 				m_Context->CreateEntity("GameObject");
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("Create Camera"))
+			{
+				m_Context->CreateEntity("Camera").AddComponent<CameraComponent>().Primary = false;
+				ImGui::CloseCurrentPopup();
+			}
 
 			ImGui::EndPopup();
 		}
@@ -51,7 +59,7 @@ namespace CatEngine
 			{
 				if (ImGui::MenuItem("Camera"))
 				{
-					m_SelectionContext.AddComponent<CameraComponent>();
+					m_SelectionContext.AddComponent<CameraComponent>().Primary = false;
 					ImGui::CloseCurrentPopup();
 				}
 				if (ImGui::MenuItem("Sprite Renderer"))
@@ -99,7 +107,7 @@ namespace CatEngine
 	}
 
 	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
+	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, bool canRemove = true)
 	{
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
 
@@ -110,19 +118,21 @@ namespace CatEngine
 
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			ImGui::Separator();
-
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
-			bool removeComponent = false;
-			if (ImGui::Button("+", ImVec2{ 15, 15 }))
+			ImGui::SameLine(contentRegionAvailable.x - lineHeight);
+			if (ImGui::Button(":", ImVec2{ lineHeight, lineHeight }))
 			{
 				ImGui::OpenPopup("Component Settings");
 			}
+			bool removeComponent = false;
 			if (ImGui::BeginPopup("Component Settings"))
 			{
-				if (ImGui::MenuItem("Remove Component"))
-					removeComponent = true;
+				if (canRemove)
+					if (ImGui::MenuItem("Remove Component"))
+						removeComponent = true;
 				ImGui::EndPopup();
 			}
 
@@ -213,10 +223,7 @@ namespace CatEngine
 			{
 				name = std::string(nameBuffer);
 			}
-
 		}
-
-
 
 		DrawComponent<TransformComponent>("Transform", selection, [](auto& component) {
 			auto& tc = component;
@@ -226,7 +233,7 @@ namespace CatEngine
 			DrawVec3Control("Rotation", rotation);
 			tc.Rotation = glm::radians(rotation);
 			DrawVec3Control("Scale", tc.Scale, 1.0f);
-		});
+		}, false);
 		 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", selection, [](auto& component) 
 		{
