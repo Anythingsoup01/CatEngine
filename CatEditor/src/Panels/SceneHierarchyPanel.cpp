@@ -43,6 +43,7 @@ namespace CatEngine
 
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, name.c_str());
+
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectionContext = entity;
@@ -54,6 +55,47 @@ namespace CatEngine
 		}
 
 	}
+
+	template<typename T, typename UIFunction>
+	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
+	{
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
+
+		if (entity.HasComponent<T>())
+		{
+			auto& component = entity.GetComponent<T>();
+			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+			ImGui::Separator();
+
+			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
+			ImGui::PopStyleVar();
+
+			if (ImGui::Button("+", ImVec2{ 15, 15 }))
+			{
+				ImGui::OpenPopup("Component Settings");
+			}
+			bool removeComponent = false;
+			if (ImGui::BeginPopup("Component Settings"))
+			{
+				if (ImGui::MenuItem("Remove Component"))
+					removeComponent = true;
+				ImGui::EndPopup();
+			}
+
+			if (open)
+			{
+				uiFunction(component);
+				ImGui::TreePop();
+			}
+			if (removeComponent)
+				entity.RemoveComponent<T>();
+		}
+	}
+
+
 	void SceneHierarchyPanel::DrawComponents(Entity selection)
 	{
 		{
@@ -80,46 +122,22 @@ namespace CatEngine
 
 		}
 
-		if (selection.HasComponent<TransformComponent>())
-		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
-			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), flags, "Transform"))
-			{
-				auto& transform = selection.GetComponent<TransformComponent>().Transform;
+		DrawComponent<TransformComponent>("Transform", selection, [](auto& component) {
+			auto& transform = component.Transform;
 
-				ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
-				ImGui::TreePop();
-			}
+			ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
+		});
 
-		}
-		if (selection.HasComponent<SpriteRendererComponent>())
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", selection, [](auto& component) 
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
-			if (ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), flags, "Sprite"))
-			{
-				auto& spriteColor = selection.GetComponent<SpriteRendererComponent>().Color;
+				auto& src = component;
+				ImGui::ColorEdit4("Color", glm::value_ptr(src.Color), 0.1f);
+		});
 
-				ImGui::ColorEdit4("Color", glm::value_ptr(spriteColor), 0.1f);
-				ImGui::TreePop();
-			}
-		}
-		if (selection.HasComponent<NativeScriptComponent>())
+		DrawComponent<CameraComponent>("Camera", selection, [](auto& component) 
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
-			if (ImGui::TreeNodeEx((void*)typeid(NativeScriptComponent).hash_code(), flags, "Script"))
-			{
-				auto& spriteColor = selection.GetComponent<NativeScriptComponent>().Instance;
-
-				ImGui::TreePop();
-			}
-		}
-		if (selection.HasComponent<CameraComponent>())
-		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
-			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), flags, "Camera"))
-			{
-				auto& cameraComponent = selection.GetComponent<CameraComponent>();
-				auto& camera = selection.GetComponent<CameraComponent>().Camera;
+				auto& cameraComponent = component;
+				auto& camera = component.Camera;
 
 				const char* projectionTypeString[] = { "Perspective", "Orthographic" };
 				const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
@@ -136,7 +154,7 @@ namespace CatEngine
 
 						if (isSelected)
 							ImGui::SetItemDefaultFocus();
-						
+
 					}
 					ImGui::EndCombo();
 				}
@@ -163,18 +181,20 @@ namespace CatEngine
 					auto size = camera.GetOrthographicSize();
 					if (ImGui::DragFloat("FOV", &size))
 						camera.SetOrthographicSize(size);
-					
+
 					auto nearClip = camera.GetOrthographicNearClip();
-					if(ImGui::DragFloat("Near Clip", &nearClip, .01f, 0.f))
+					if (ImGui::DragFloat("Near Clip", &nearClip, .01f, 0.f))
 						camera.SetOrthographicNearClip(nearClip);
 
 					auto farClip = camera.GetOrthographicFarClip();
 					if (ImGui::DragFloat("Far Clip", &farClip, .01f, 0.f))
 						camera.SetOrthographicFarClip(farClip);
 				}
+		});
 
-				ImGui::TreePop();
-			}
-		}
+		DrawComponent<NativeScriptComponent>("Script", selection, [](auto& component) 
+		{
+			auto& nsc = component;
+		});
 	}
 }
