@@ -87,7 +87,10 @@ namespace CatEngine
 		Entity entity = { m_Registry.create(), this };
 
 		auto& tag = entity.AddComponent<TagComponent>();
-		tag.Tag = "Undefined";
+		tag.Tag = "None";
+
+		auto& layer = entity.AddComponent<LayerComponent>();
+		layer.Layer = "Default";
 
 		auto& entityName = entity.AddComponent<NameComponent>();
 		entityName.Name = name.empty() ? "GameObject" : name;
@@ -108,6 +111,10 @@ namespace CatEngine
 	}
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<LayerComponent>(Entity entity, LayerComponent& component)
 	{
 	}
 	template<>

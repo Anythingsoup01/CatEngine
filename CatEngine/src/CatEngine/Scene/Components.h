@@ -32,6 +32,17 @@ namespace CatEngine
 			: Tag(tag) {}
 
 	};
+
+	struct LayerComponent
+	{
+		std::string Layer;
+
+		LayerComponent() = default;
+		LayerComponent(const LayerComponent&) = default;
+		LayerComponent(const std::string& layer)
+			: Layer(layer) {}
+
+	};
 	
 	struct TransformComponent
 	{

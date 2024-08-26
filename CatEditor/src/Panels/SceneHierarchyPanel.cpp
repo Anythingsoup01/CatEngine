@@ -78,7 +78,7 @@ namespace CatEngine
 	{
 		auto& name = entity.GetComponent<NameComponent>().Name;
 
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, name.c_str());
 
 		if (ImGui::IsItemClicked())
@@ -148,6 +148,9 @@ namespace CatEngine
 
 	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.f, float columnWidth = 100.f)
 	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+
 		ImGui::PushID(label.c_str());
 
 		ImGui::Columns(2);
@@ -164,8 +167,10 @@ namespace CatEngine
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("X", buttonSize))
 			values.x = resetValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##X", &values.x, 0.1f, 0.f, 0.f, "%.2f");
@@ -175,8 +180,10 @@ namespace CatEngine
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Y", buttonSize))
 			values.y = resetValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.f, 0.f, "%.2f");
@@ -186,8 +193,10 @@ namespace CatEngine
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Z", buttonSize))
 			values.z = resetValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.f, 0.f, "%.2f");
@@ -202,27 +211,51 @@ namespace CatEngine
 
 	void SceneHierarchyPanel::DrawComponents(Entity selection)
 	{
+		// TODO: Make a Layers Component and Put Tag & Layer Above Name
 		{
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 10,1 });
+			ImGui::Columns(2);
 
 			auto& tag = selection.GetComponent<TagComponent>().Tag;
 
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, tag.c_str());
-			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+			char tagBuffer[256];
+			memset(tagBuffer, 0, sizeof(tagBuffer));
+			strcpy_s(tagBuffer, tag.c_str());
+			ImGui::Text("Tag");
+			ImGui::SameLine();
+			if (ImGui::InputText("##T", tagBuffer, sizeof(tagBuffer)))
 			{
-				tag = std::string(buffer);
+				tag = std::string(tagBuffer);
 			}
+
+			ImGui::NextColumn();
+
+			auto& layer = selection.GetComponent<LayerComponent>().Layer;
+
+			char layerBuffer[256];
+			memset(layerBuffer, 0, sizeof(layerBuffer));
+			strcpy_s(layerBuffer, layer.c_str());
+			ImGui::Text("Layer");
+			ImGui::SameLine();
+			if (ImGui::InputText("##L", layerBuffer, sizeof(layerBuffer)))
+			{
+				layer = std::string(layerBuffer);
+			}
+
+			ImGui::Columns(1);
 
 			auto& name = selection.GetComponent<NameComponent>().Name;
 
 			char nameBuffer[256];
 			memset(nameBuffer, 0, sizeof(nameBuffer));
 			strcpy_s(nameBuffer, name.c_str());
-			if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer)))
+			ImGui::Text("Name");
+			ImGui::SameLine();
+			if (ImGui::InputText("##N", nameBuffer, sizeof(nameBuffer)))
 			{
 				name = std::string(nameBuffer);
 			}
+			ImGui::PopStyleVar();
 		}
 
 		DrawComponent<TransformComponent>("Transform", selection, [](auto& component) {

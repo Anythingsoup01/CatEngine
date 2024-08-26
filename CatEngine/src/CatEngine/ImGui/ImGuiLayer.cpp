@@ -29,6 +29,9 @@ namespace CatEngine {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/static/OpenSans-Bold.ttf", 16.f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/static/OpenSans-Regular.ttf", 16.f);
+
 		// ImGui Style
 		ImGui::StyleColorsDark();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
