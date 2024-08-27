@@ -19,7 +19,7 @@ namespace CatEngine
 		NameComponent(const NameComponent&) = default;
 		NameComponent(const std::string& name)
 			: Name(name) {}
-
+		virtual void ResetComponent() {};
 	};
 
 	struct TagComponent
@@ -31,6 +31,8 @@ namespace CatEngine
 		TagComponent(const std::string& tag)
 			: Tag(tag) {}
 
+		virtual void ResetComponent() {};
+
 	};
 
 	struct LayerComponent
@@ -41,6 +43,8 @@ namespace CatEngine
 		LayerComponent(const LayerComponent&) = default;
 		LayerComponent(const std::string& layer)
 			: Layer(layer) {}
+
+		virtual void ResetComponent() {};
 
 	};
 	
@@ -65,6 +69,13 @@ namespace CatEngine
 				* rotation
 				* glm::scale(glm::mat4(1.f), Scale);
 		}
+
+		virtual void ResetComponent()
+		{
+			Position = {};
+			Rotation = {};
+			Scale = { 1, 1, 1 };
+		}
 	};
 	struct SpriteRendererComponent
 	{
@@ -77,6 +88,13 @@ namespace CatEngine
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+
+		virtual void ResetComponent()
+		{
+			Color = { 1.f, 1.f, 1.f, 1.f };
+			Texture = nullptr;
+			TilingFactor = 1.0f;
+		}
 	};
 
 	struct CameraComponent
@@ -87,7 +105,23 @@ namespace CatEngine
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-
+		virtual void ResetComponent()
+		{
+			if (Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+			{
+				Camera.SetOrthographicFarClip(1.f);
+				Camera.SetOrthographicNearClip(-1.f);
+				Camera.SetOrthographicSize(10.f);
+				Camera.SetOrthographic(10.f, -1.f, 1.f);
+			}
+			else
+			{
+				Camera.SetPerspectiveFarClip(10000.f);
+				Camera.SetPerspectiveNearClip(.01f);
+				Camera.SetPerspectiveVerticalFov(glm::radians(45.f));
+				Camera.SetPerspective(glm::radians(45.f), 0.01f, 10000.f);
+			}
+		}
 	};
 
 	struct NativeScriptComponent
@@ -104,6 +138,7 @@ namespace CatEngine
 			InstantiateScript = []() { return static_cast<SoloAction*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
+		virtual void ResetComponent() {}
 	};
 
 }

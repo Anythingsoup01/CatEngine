@@ -50,11 +50,16 @@ namespace CatEngine
 		ImGui::Begin("Inspector");
 		if (m_SelectionContext)
 		{
+			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+
 			DrawComponents(m_SelectionContext);
 
-			if (ImGui::Button("Add Component"))
-				ImGui::OpenPopup("AddComponent");
+			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ((contentRegionAvailable.x - (contentRegionAvailable.x / 2)) * .5));
+
+			if (ImGui::Button("Add Component", ImVec2{contentRegionAvailable.x / 2.f, lineHeight}))
+				ImGui::OpenPopup("AddComponent");
 			if (ImGui::BeginPopup("AddComponent"))
 			{
 				if (ImGui::MenuItem("Camera"))
@@ -117,7 +122,7 @@ namespace CatEngine
 			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 
 
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 10, 4 });
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			ImGui::Separator();
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
@@ -131,8 +136,19 @@ namespace CatEngine
 			if (ImGui::BeginPopup("Component Settings"))
 			{
 				if (canRemove)
+				{
 					if (ImGui::MenuItem("Remove Component"))
+					{
 						removeComponent = true;
+						ImGui::CloseCurrentPopup();
+					}
+				}
+				if (ImGui::MenuItem("Reset Component"))
+				{
+					component.ResetComponent();
+					ImGui::CloseCurrentPopup();
+				}
+
 				ImGui::EndPopup();
 			}
 
@@ -211,7 +227,6 @@ namespace CatEngine
 
 	void SceneHierarchyPanel::DrawComponents(Entity selection)
 	{
-		// TODO: Make a Layers Component and Put Tag & Layer Above Name
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 10,1 });
 			ImGui::Columns(2);
@@ -259,77 +274,73 @@ namespace CatEngine
 		}
 
 		DrawComponent<TransformComponent>("Transform", selection, [](auto& component) {
-			auto& tc = component;
-
-			DrawVec3Control("Position", tc.Position);
-			glm::vec3 rotation = glm::degrees(tc.Rotation);
+			DrawVec3Control("Position", component.Position);
+			glm::vec3 rotation = glm::degrees(component.Rotation);
 			DrawVec3Control("Rotation", rotation);
-			tc.Rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", tc.Scale, 1.0f);
+			component.Rotation = glm::radians(rotation);
+			DrawVec3Control("Scale", component.Scale, 1.0f);
 		}, false);
 		 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", selection, [](auto& component) 
 		{
-				auto& src = component;
-				ImGui::ColorEdit4("Color", glm::value_ptr(src.Color), 0.1f);
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), 0.1f);
 		});
 
 		DrawComponent<CameraComponent>("Camera", selection, [](auto& component) 
 		{
-				auto& cameraComponent = component;
-				auto& camera = component.Camera;
+			auto& camera = component.Camera;
 
-				const char* projectionTypeString[] = { "Perspective", "Orthographic" };
-				const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
-				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+			const char* projectionTypeString[] = { "Perspective", "Orthographic" };
+			const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
+			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+			{
+				for (int i = 0; i < 2; i++)
 				{
-					for (int i = 0; i < 2; i++)
+					bool isSelected = currentProjectionTypeString == projectionTypeString[i];
+					if (ImGui::Selectable(projectionTypeString[i], &isSelected))
 					{
-						bool isSelected = currentProjectionTypeString == projectionTypeString[i];
-						if (ImGui::Selectable(projectionTypeString[i], &isSelected))
-						{
-							currentProjectionTypeString = projectionTypeString[i];
-							camera.SetProjectionType((SceneCamera::ProjectionType)i);
-						}
-
-						if (isSelected)
-							ImGui::SetItemDefaultFocus();
-
+						currentProjectionTypeString = projectionTypeString[i];
+						camera.SetProjectionType((SceneCamera::ProjectionType)i);
 					}
-					ImGui::EndCombo();
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+
 				}
-				auto& primary = cameraComponent.Primary;
-				ImGui::Checkbox("Primary Camera", &primary);
+				ImGui::EndCombo();
+			}
+			auto& primary = component.Primary;
+			ImGui::Checkbox("Primary Camera", &primary);
 
-				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspectice)
-				{
-					auto vertFov = glm::degrees(camera.GetPerspectiveVerticalFov());
-					if (ImGui::DragFloat("Vertical FOV", &vertFov))
-						camera.SetPerspectiveVerticalFov(glm::radians(vertFov));
+			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspectice)
+			{
+				auto vertFov = glm::degrees(camera.GetPerspectiveVerticalFov());
+				if (ImGui::DragFloat("Vertical FOV", &vertFov))
+					camera.SetPerspectiveVerticalFov(glm::radians(vertFov));
 
-					auto nearClip = camera.GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near Clip", &nearClip, .01f, 0.f))
-						camera.SetPerspectiveNearClip(nearClip);
+				auto nearClip = camera.GetPerspectiveNearClip();
+				if (ImGui::DragFloat("Near Clip", &nearClip, .01f, 0.f))
+					camera.SetPerspectiveNearClip(nearClip);
 
-					auto farClip = camera.GetPerspectivecFarClip();
-					if (ImGui::DragFloat("Far Clip", &farClip, .01f, 0.f))
-						camera.SetPerspectiveFarClip(farClip);
-				}
+				auto farClip = camera.GetPerspectivecFarClip();
+				if (ImGui::DragFloat("Far Clip", &farClip, .01f, 0.f))
+					camera.SetPerspectiveFarClip(farClip);
+			}
 
-				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-				{
-					auto size = camera.GetOrthographicSize();
-					if (ImGui::DragFloat("FOV", &size))
-						camera.SetOrthographicSize(size);
+			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+			{
+				auto size = camera.GetOrthographicSize();
+				if (ImGui::DragFloat("FOV", &size))
+					camera.SetOrthographicSize(size);
 
-					auto nearClip = camera.GetOrthographicNearClip();
-					if (ImGui::DragFloat("Near Clip", &nearClip, .01f, 0.f))
-						camera.SetOrthographicNearClip(nearClip);
+				auto nearClip = camera.GetOrthographicNearClip();
+				if (ImGui::DragFloat("Near Clip", &nearClip, .01f, 0.f))
+					camera.SetOrthographicNearClip(nearClip);
 
-					auto farClip = camera.GetOrthographicFarClip();
-					if (ImGui::DragFloat("Far Clip", &farClip, .01f, 0.f))
-						camera.SetOrthographicFarClip(farClip);
-				}
+				auto farClip = camera.GetOrthographicFarClip();
+				if (ImGui::DragFloat("Far Clip", &farClip, .01f, 0.f))
+					camera.SetOrthographicFarClip(farClip);
+			}
 		});
 
 		DrawComponent<NativeScriptComponent>("Script", selection, [](auto& component) 

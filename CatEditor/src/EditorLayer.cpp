@@ -18,8 +18,6 @@ namespace CatEngine
         fbSpec.Height = 720;
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
-        m_Texture = Texture2D::Create("assets/textures/checkered.png");
-
         // Entity
 
         m_ActiveScene = CreateRef<Scene>();
@@ -119,6 +117,8 @@ namespace CatEngine
         {
             // Submit the DockSpace
             ImGuiIO& io = ImGui::GetIO();
+            ImGuiStyle& style = ImGui::GetStyle();
+            style.WindowMinSize.x = 360.f;
             if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
             {
                 ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
