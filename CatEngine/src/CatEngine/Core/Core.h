@@ -65,8 +65,8 @@
 #endif
 
 #ifdef CE_ENABLE_ASSERTS
-#define CLI_ASSERT(x, ...) { if(!(x)) { CLI_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-#define API_ASSERT(x, ...) { if(!(x)) { API_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define CLI_ASSERT(x, ...) { if(!(x)) { CE_CLI_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define API_ASSERT(x, ...) { if(!(x)) { CE_API_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
 #define CE_ASSERT(x, ...)
 #define CE_CORE_ASSERT(x, ...)

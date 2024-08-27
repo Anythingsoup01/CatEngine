@@ -17,28 +17,24 @@ namespace CatEngine
 		virtual void OnUpdate(Time time) override;
 		virtual void OnImGuiDraw() override;
 		virtual void OnEvent(Event& e) override;
-
+	private:
 		bool OnWindowResize(WindowResizeEvent& e);
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void SaveSceneAs();
+		void SaveScene();
+		void OpenScene();
+		void NewScene();
 
 	private:
+
+		std::string m_SceneFilePath;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 
 		bool m_Minimized = false;
 		
 		Ref<Scene> m_ActiveScene;
-
-		Entity m_SquareEntity;
-		Entity m_SecondSquareEntity;
-
-		Entity m_TestSquare;
-
-		Entity m_SceneCameraEntity;
-		Entity m_MainCameraEntity;
-
-		Ref<Texture2D> m_Texture;
-
-		glm::vec4 m_SquareColor{ 1.f,1.f,1.f,1.f };
 
 		OrthographicCameraController m_CameraController;
 		Ref<FrameBuffer> m_FrameBuffer;

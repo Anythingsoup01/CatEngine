@@ -1,0 +1,108 @@
+Scene: SampleScene
+Entities:
+  - Entity: 462367853784535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Camera
+    TransformComponent:
+      Position: [0, 2.5, 4.80000019]
+      Rotation: [-0.445058942, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 10000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 462367853784535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Right
+    TransformComponent:
+      Position: [0.354999989, 0.5, 0.354999989]
+      Rotation: [0, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.1012659, 0.666666627, 0, 1]
+      Tiling: 1
+  - Entity: 462367853784535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Front
+    TransformComponent:
+      Position: [-0.354999989, 0.5, 0.354999989]
+      Rotation: [0, -0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.227848053, 1, 0, 1]
+      Tiling: 1
+  - Entity: 462367853784535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Top
+    TransformComponent:
+      Position: [0, 1, 0]
+      Rotation: [1.57079637, 0, 0.785398185]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.18816486, 0.890295386, 0, 1]
+      Tiling: 1
+  - Entity: 462367853784535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Bottom
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [1.57079637, 0, 0.785398185]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.00134682655, 1, 0, 1]
+      Tiling: 1
+  - Entity: 462367853784535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Back
+    TransformComponent:
+      Position: [0.349999994, 0.5, -0.349999994]
+      Rotation: [0, -0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0, 0.202587128, 1, 1]
+      Tiling: 1
+  - Entity: 462367853784535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Left
+    TransformComponent:
+      Position: [-0.349999994, 0.5, -0.349999994]
+      Rotation: [0, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      Tiling: 1

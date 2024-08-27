@@ -13,6 +13,8 @@ namespace CatEngine
 		Entity(entt::entity handle, Scene* scene);
 		Entity(const Entity& other) = default;
 
+		entt::entity& GetEntityID() { return m_EntityHandle; }
+
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
@@ -28,6 +30,18 @@ namespace CatEngine
 			API_ASSERT(HasComponent<T>(), "Entity does not have component!");
 
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
+		}
+
+		template<typename T>
+		T& GetOrAddComponent()
+		{
+			if (HasComponent<T>())
+			{
+				return GetComponent<T>();
+			}
+			
+			return AddComponent<T>();
+			
 		}
 
 		template<typename T>

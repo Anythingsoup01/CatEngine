@@ -14,7 +14,9 @@ namespace CatEngine
 	}
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
 	{
+		m_SelectionContext = {};
 		m_Context = scene;
+
 	}
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
@@ -322,7 +324,7 @@ namespace CatEngine
 				if (ImGui::DragFloat("Near Clip", &nearClip, .01f, 0.f))
 					camera.SetPerspectiveNearClip(nearClip);
 
-				auto farClip = camera.GetPerspectivecFarClip();
+				auto farClip = camera.GetPerspectiveFarClip();
 				if (ImGui::DragFloat("Far Clip", &farClip, .01f, 0.f))
 					camera.SetPerspectiveFarClip(farClip);
 			}

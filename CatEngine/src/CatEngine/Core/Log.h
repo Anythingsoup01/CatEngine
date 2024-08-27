@@ -31,33 +31,33 @@ namespace CatEngine {
 #ifdef CE_DEBUG
 
 // Core Log Macros
-#define API_CRITICAL(...)             ::CatEngine::Log::GetAPILogger()->critical(__VA_ARGS__)
-#define API_ERROR(...)                ::CatEngine::Log::GetAPILogger()->error(__VA_ARGS__)
-#define API_WARN(...)                 ::CatEngine::Log::GetAPILogger()->warn(__VA_ARGS__)
-#define API_INFO(...)                 ::CatEngine::Log::GetAPILogger()->info(__VA_ARGS__)
-#define API_TRACE(...)                ::CatEngine::Log::GetAPILogger()->trace(__VA_ARGS__)
+#define CE_API_CRITICAL(...)             ::CatEngine::Log::GetAPILogger()->critical(__VA_ARGS__)
+#define CE_API_ERROR(...)                ::CatEngine::Log::GetAPILogger()->error(__VA_ARGS__)
+#define CE_API_WARN(...)                 ::CatEngine::Log::GetAPILogger()->warn(__VA_ARGS__)
+#define CE_API_INFO(...)                 ::CatEngine::Log::GetAPILogger()->info(__VA_ARGS__)
+#define CE_API_TRACE(...)                ::CatEngine::Log::GetAPILogger()->trace(__VA_ARGS__)
 
 // Client Log Macros
-#define CLI_CRITICAL(...)                ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
-#define CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
-#define CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
-#define CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
-#define CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
+#define CE_CLI_CRITICAL(...)                ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
+#define CE_CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
+#define CE_CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
+#define CE_CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
+#define CE_CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
 #elif CE_RELEASE || CE_DIST
 // Core Log Macros
-#define API_CRITICAL(...)
-#define API_ERROR(...)
-#define API_WARN(...)
-#define API_INFO(...)
-#define API_TRACE(...)
+#define CE_API_CRITICAL(...)
+#define CE_API_ERROR(...)
+#define CE_API_WARN(...)
+#define CE_API_INFO(...)
+#define CE_API_TRACE(...)
 #define API_ASSERT(x, ...)
 
 // Client Log Macros
-#define CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
-#define CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
-#define CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
-#define CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
-#define CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
+#define CE_CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
+#define CE_CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
+#define CE_CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
+#define CE_CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
+#define CE_CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
 #define CLI_ASSERT(x, ...)if (!(x)) { ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__); __debugbreak(); }
 
 #endif // CE_DEBUG

@@ -17,7 +17,7 @@ namespace CatEngine {
 	static bool s_GLFWInitialized = false;
 
 	static void GLFWErrorCallback(int error, const char* description) {
-		API_ERROR("GLFW Error ({0}) : {1}", error, description);
+		CE_API_ERROR("GLFW Error ({0}) : {1}", error, description);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -64,7 +64,7 @@ namespace CatEngine {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		API_INFO("Creating Window {0}({1}, {2})", props.Title, props.Width, props.Height);
+		CE_API_INFO("Creating Window {0}({1}, {2})", props.Title, props.Width, props.Height);
 
 
 		// Initializing GLFW

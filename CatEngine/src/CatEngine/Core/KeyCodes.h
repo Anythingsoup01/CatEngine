@@ -3,6 +3,7 @@
 
 namespace CatEngine
 {
+
 	typedef enum class KeyCode : uint16_t
 	{
 		// From glfw3.h

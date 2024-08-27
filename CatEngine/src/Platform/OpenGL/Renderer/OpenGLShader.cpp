@@ -71,7 +71,7 @@ namespace CatEngine {
 		}
 		else
 		{
-			CLI_ERROR("Could not open file '{0}'", filepath);
+			CE_CLI_ERROR("Could not open file '{0}'", filepath);
 		}
 		return result;
 	}
@@ -130,7 +130,7 @@ namespace CatEngine {
 
 				glDeleteShader(shader);
 
-				API_ERROR("{0}", infoLog.data());
+				CE_API_ERROR("{0}", infoLog.data());
 				API_ASSERT(false, "'{0}' compilation failure!", type);
 				break;
 			}
@@ -156,7 +156,7 @@ namespace CatEngine {
 			for (auto id : glShaderIDs)
 				glDeleteShader(id);
 
-			API_ERROR("{0}", infoLog.data());
+			CE_API_ERROR("{0}", infoLog.data());
 			API_ASSERT(false, "Shader link failure!");
 			return;
 		}

@@ -1,5 +1,7 @@
 #include "EditorLayer.h"
 
+#include "CatEngine/Utils/PlatformUtils.h"
+
 #include <imgui.h>
 
 #define PROFILE(name) PROFILE_SCOPE(name, [&](ProfileResult profileResult) {m_ProfileResults.push_back(profileResult);})
@@ -19,32 +21,8 @@ namespace CatEngine
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
         // Entity
-
         m_ActiveScene = CreateRef<Scene>();
-
-        m_SceneCameraEntity = m_ActiveScene->CreateEntity("Scene Camera");
-        m_SceneCameraEntity.AddComponent<CameraComponent>();
-
-
-        class SceneCameraController : public SoloAction
-        {
-        public:
-
-            void Update(Time time)
-            {
-                auto& position = GetComponent<TransformComponent>().Position;
-
-                float cameraSpeed = 5.f;
-
-                position.y += Input::IsKeyPressed(KeyCode::W) ? cameraSpeed * time.deltaTime() : 0;
-                position.y += Input::IsKeyPressed(KeyCode::S) ? -cameraSpeed * time.deltaTime() : 0;
-                position.x += Input::IsKeyPressed(KeyCode::D) ? cameraSpeed * time.deltaTime() : 0;
-                position.x += Input::IsKeyPressed(KeyCode::A) ? -cameraSpeed * time.deltaTime() : 0;
-
-            }
-        };
-        m_SceneCameraEntity.AddComponent<NativeScriptComponent>().Bind<SceneCameraController>();
-
+    
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
@@ -88,6 +66,7 @@ namespace CatEngine
 
         m_FrameBuffer->Unbind();
     }
+
     void EditorLayer::OnImGuiDraw()
     {
         CE_PROFILE_FUNCTION();
@@ -129,11 +108,14 @@ namespace CatEngine
             {
                 if (ImGui::BeginMenu("File"))
                 {
-                    if (ImGui::MenuItem("Exit"))
-                    {
-                        Application::Get().CloseEditor();
+                    if (ImGui::MenuItem("New", "Ctrl+N")) NewScene();
+                    
+                    if (ImGui::MenuItem("Open...", "Ctrl+O")) OpenScene();
 
-                    }
+                    if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
+                   
+
+                    if (ImGui::MenuItem("Exit" )) Application::Get().CloseEditor();
                     ImGui::EndMenu();
                 }
 
@@ -172,6 +154,7 @@ namespace CatEngine
         m_CameraController.OnEvent(e);
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResize));
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
     }
 
     bool EditorLayer::OnWindowResize(WindowResizeEvent& e)
@@ -185,6 +168,82 @@ namespace CatEngine
         return false;
     }
 
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+    {   
+        // Shortcuts
+        if (e.GetRepeatCount() > 0)
+            return false;
+
+        bool control = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
+        bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
+        switch (e.GetKeyCode())
+        {
+            case (int)KeyCode::S :
+            {
+                if (control && shift)
+                    SaveSceneAs();
+                else if (control)
+                    SaveScene();
+                break;
+            }
+            case (int)KeyCode::O:
+            {
+                if (control)
+                    OpenScene();
+                break;
+            }
+            case (int)KeyCode::N:
+            {
+                if (control) 
+                    NewScene();
+                break;
+            }
+        }
+    }
+
+    void EditorLayer::SaveSceneAs()
+    {
+        m_SceneFilePath = FileDialogs::SaveFile("CatEngine Scene (*.catengine)\0*.catengine\0");
+        if (!m_SceneFilePath.empty())
+        {
+            SceneSerializer serializer(m_ActiveScene);
+
+            serializer.Serialize(m_SceneFilePath);
+        }
+    }
+
+    void EditorLayer::SaveScene()
+    {
+        if (!m_SceneFilePath.empty())
+        {
+            SceneSerializer serializer(m_ActiveScene);
+
+            serializer.Serialize(m_SceneFilePath);
+        }
+        else SaveSceneAs();
+    }
+
+    void EditorLayer::OpenScene()
+    {
+        std::string filepath = FileDialogs::OpenFile("CatEngine Scene (*.catengine)\0*.catengine\0");
+        if (!filepath.empty())
+        {
+            m_ActiveScene = CreateRef<Scene>();
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+            SceneSerializer serializer(m_ActiveScene);
+
+            serializer.Deserialize(filepath);
+        }
+    }
+
+    void EditorLayer::NewScene()
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
     
 
 }

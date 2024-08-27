@@ -27,8 +27,11 @@ namespace CatEngine
 		void SetPerspectiveVerticalFov(float verticalFov) { m_PerspectiveFOV = verticalFov; RecalculateProjection(); }
 		float GetPerspectiveNearClip() const { return m_PerspectiveNear; }
 		void SetPerspectiveNearClip(float nearClip) { m_PerspectiveNear = nearClip; RecalculateProjection(); }
-		float GetPerspectivecFarClip() const { return m_PerspectiveFar; }
+		float GetPerspectiveFarClip() const { return m_PerspectiveFar; }
 		void SetPerspectiveFarClip(float farClip) { m_PerspectiveFar = farClip; RecalculateProjection(); }
+
+		float GetAspectRatio() const { return m_AspectRatio; }
+		void SetAspectRatio(float aspectRatio) { m_AspectRatio = aspectRatio; }
 
 		ProjectionType GetProjectionType() const { return m_ProjectionType; }
 		void SetProjectionType(ProjectionType projectionType) { m_ProjectionType = projectionType; RecalculateProjection(); }
