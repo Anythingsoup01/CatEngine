@@ -13,3 +13,6 @@
 [submodule "CatEngine/vendors/yaml-cpp"]
 	path = CatEngine/vendors/yaml-cpp
 	url = https://github.com/Anythingsoup01/yaml-cpp.git
+[submodule "CatEngine/vendors/ImGuizmo"]
+	path = CatEngine/vendors/ImGuizmo
+	url = https://github.com/Anythingsoup01/ImGuizmo.git

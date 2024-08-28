@@ -30,8 +30,8 @@ Entities:
     NameComponent:
       Name: Right
     TransformComponent:
-      Position: [0.354999989, 0.5, 0.354999989]
-      Rotation: [0, 0.785398185, 0]
+      Position: [0.714922786, 0.5, 0.714922726]
+      Rotation: [0, 0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
@@ -44,8 +44,8 @@ Entities:
     NameComponent:
       Name: Front
     TransformComponent:
-      Position: [-0.354999989, 0.5, 0.354999989]
-      Rotation: [0, -0.785398185, 0]
+      Position: [-0.659516275, 0.5, 0.6595155]
+      Rotation: [0, -0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0, 0.253164768, 1, 1]
@@ -58,9 +58,9 @@ Entities:
     NameComponent:
       Name: Top
     TransformComponent:
-      Position: [0, 1, 0]
-      Rotation: [1.57079637, 0.785398185, 0]
-      Scale: [1, 1, 1]
+      Position: [-4.67039953e-08, 1.52237535, -9.34079907e-08]
+      Rotation: [2.18446875, 0.785398245, 4.21468513e-08]
+      Scale: [0.999999881, 0.999999106, 0.999994516]
     SpriteRendererComponent:
       Color: [0.211351037, 1, 0, 1]
       Tiling: 1
@@ -72,9 +72,9 @@ Entities:
     NameComponent:
       Name: Bottom
     TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [1.57079637, 0.785398185, 0]
-      Scale: [1, 1, 1]
+      Position: [3.8672173e-08, -0.432540685, 7.7344346e-08]
+      Rotation: [2.07894897, 0.785398424, 3.37174868e-07]
+      Scale: [0.999999881, 0.999997854, 0.999995351]
     SpriteRendererComponent:
       Color: [0.00134682655, 1, 0, 1]
       Tiling: 1
@@ -86,8 +86,8 @@ Entities:
     NameComponent:
       Name: Back
     TransformComponent:
-      Position: [0.349999994, 0.5, -0.349999994]
-      Rotation: [0, -0.785398185, 0]
+      Position: [0.643435419, 0.5, -0.643435061]
+      Rotation: [0, -0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0, 0.202587128, 1, 1]
@@ -100,8 +100,8 @@ Entities:
     NameComponent:
       Name: Left
     TransformComponent:
-      Position: [-0.349999994, 0.5, -0.349999994]
-      Rotation: [0, 0.785398185, 0]
+      Position: [-0.699144304, 0.5, -0.699143589]
+      Rotation: [0, 0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]

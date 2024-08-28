@@ -6,10 +6,10 @@ Entities:
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Sample Entity
+      Name: GameObject
     TransformComponent:
       Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
+      Rotation: [0, -0.34382987, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
@@ -20,14 +20,14 @@ Entities:
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Scene Camera
+      Name: Camera
     TransformComponent:
-      Position: [-0.17236948, -0.587559938, 0]
+      Position: [0, 0, 7.5999999]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       Camera:
-        ProjectionType: 1
+        ProjectionType: 0
         PerspectiveFOV: 0.785398185
         PerspectiveNear: 0.00999999978
         PerspectiveFar: 10000

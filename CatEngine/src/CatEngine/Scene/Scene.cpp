@@ -82,6 +82,17 @@ namespace CatEngine
 			}
 		}
 	}
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			const auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (cameraComponent.Primary)
+				return Entity{ entity, this };
+		}
+		return {};
+	}
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = { m_Registry.create(), this };

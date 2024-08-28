@@ -11,6 +11,8 @@
 
 #include "CatEngine/Application.h"
 
+#include "ImGuizmo.h"
+
 namespace CatEngine {
 	
 
@@ -74,6 +76,7 @@ namespace CatEngine {
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 	
 	void ImGuiLayer::End()

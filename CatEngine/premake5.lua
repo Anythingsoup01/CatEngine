@@ -17,6 +17,8 @@ project "CatEngine"
 		"vendors/glm/glm/**.ini",
 		"vendors/stb/**.cpp",
 		"vendors/stb/**.h",
+		"vendors/ImGuizmo/ImGuizmo.cpp",
+		"vendors/ImGuizmo/ImGuizmo.h",
 	}
 
 	includedirs{
@@ -29,12 +31,13 @@ project "CatEngine"
 		"%{IncludeDir.stb}",
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.yaml}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
-		defines
-		{
-			"_CRT_SECURE_NO_WARNINGS",
-		}
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS",
+	}
 
 	links{
 		"GLFW",
@@ -43,6 +46,9 @@ project "CatEngine"
 		"yaml-cpp",
 		"opengl32.lib"
 	}
+
+	filter "files:vendors/ImGuizmo/**.cpp"
+	flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"

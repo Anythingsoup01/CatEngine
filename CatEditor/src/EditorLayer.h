@@ -39,6 +39,8 @@ namespace CatEngine
 		OrthographicCameraController m_CameraController;
 		Ref<FrameBuffer> m_FrameBuffer;
 
+		int m_GizmoType = -1;
+
 		glm::vec2 m_ViewportSize = { 0.f,0.f };
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;

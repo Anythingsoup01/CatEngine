@@ -21,6 +21,7 @@ project "CatEditor"
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links
