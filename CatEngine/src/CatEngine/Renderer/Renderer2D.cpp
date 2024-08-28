@@ -141,11 +141,18 @@ namespace CatEngine
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
+		ResetData();
+	}
 
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		CE_PROFILE_FUNCTION();
 
-		s_Data.TextureSlotIndex = 1;
+		glm::mat4 viewProj = camera.GetViewProjection();
+
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
 		ResetData();
 	}
@@ -155,12 +162,6 @@ namespace CatEngine
 		CE_PROFILE_FUNCTION();
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
-
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
 
 		ResetData();
 

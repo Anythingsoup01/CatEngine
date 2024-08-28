@@ -18,6 +18,9 @@ namespace CatEngine
 		virtual void OnImGuiDraw() override;
 		virtual void OnEvent(Event& e) override;
 	private:
+
+		void ImGuizmoDraw(Entity selectedEntity,const glm::mat4& cameraProjection, glm::mat4 cameraView);
+
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
 
@@ -33,7 +36,11 @@ namespace CatEngine
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 
 		bool m_Minimized = false;
+		bool m_RuntimeActive = false;
+		bool m_CameraPreviewActive = false;
 		
+
+		EditorCamera m_EditorCamera;
 		Ref<Scene> m_ActiveScene;
 
 		OrthographicCameraController m_CameraController;

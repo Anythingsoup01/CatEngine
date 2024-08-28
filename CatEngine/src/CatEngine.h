@@ -27,6 +27,7 @@
 #include "CatEngine/Renderer/RenderCommand.h"
 
 #include "CatEngine/Camera/Camera.h"
+#include "CatEngine/Camera/EditorCamera.h"
 #include "CatEngine/Camera/OrthographicCameraController.h"
 
 // Scene ---------------------------------------------

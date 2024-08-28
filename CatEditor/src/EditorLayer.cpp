@@ -27,7 +27,9 @@ namespace CatEngine
 
         // Entity
         m_ActiveScene = CreateRef<Scene>();
-    
+        
+        m_EditorCamera = EditorCamera(30.f, 1.778f, 0.1f, 1000.f);
+
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
@@ -39,15 +41,7 @@ namespace CatEngine
     {
         CE_PROFILE_FUNCTION();
 
-        if (m_Minimized)
-        {
-            m_CameraController.OnResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
-            m_Minimized = false;
-        }
 
-        if (m_ViewportFocused && m_ViewportHovered)
-        {
-        }
 
         //Resize
 
@@ -60,6 +54,13 @@ namespace CatEngine
 
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
+        
+        
+        // Update Camera
+        if (m_ViewportFocused)
+            m_EditorCamera.OnUpdate(time);
+
+
         // Render
         Renderer2D::ResetStats();
 
@@ -67,7 +68,7 @@ namespace CatEngine
         RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
         // Update Scene
-        m_ActiveScene->OnUpdate(time);
+        m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
 
         m_FrameBuffer->Unbind();
     }
@@ -158,40 +159,23 @@ namespace CatEngine
 
                 // Camera
 
-               auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-                if (cameraEntity)
+                // Runtime Camera
+                auto runtimeCameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+                if (runtimeCameraEntity && (m_RuntimeActive || m_CameraPreviewActive))
                 {
-                    const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+                    const auto& camera = runtimeCameraEntity.GetComponent<CameraComponent>().Camera;
                     const glm::mat4& cameraProjection = camera.GetProjection();
-                    glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
-
-                    // Entity transform
-                    auto& tc = selectedEntity.GetComponent<TransformComponent>();
-                    glm::mat4 transform = tc.GetTransform();
-
-                    // Snapping
-                    bool snap = Input::IsKeyPressed(Key::LeftControl);
-                    float snapValue = 0.5f; // Snap to 0.5m for translation/scale
-                    // Snap to 45 degrees for rotation
-                    if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-                        snapValue = 45.0f;
-
-                    float snapValues[3] = { snapValue, snapValue, snapValue };
-
-                    ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
-
-                    if (ImGuizmo::IsUsing())
-                    {
-                        glm::vec3 position, rotation, scale;
-                        Math::DecomposeTransform(transform, position, rotation, scale);
-
-                        glm::vec3 deltaRotation = rotation - tc.Rotation;
-                        tc.Position = position;
-                        tc.Rotation += deltaRotation;
-                        tc.Scale = scale;
-
-                    }
+                    glm::mat4 cameraView = glm::inverse(runtimeCameraEntity.GetComponent<TransformComponent>().GetTransform ());
+                    ImGuizmoDraw(selectedEntity, cameraProjection, cameraView);
                 }
+                if (!m_RuntimeActive)
+                {                
+                    // Editor Camera
+                    const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+                    glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+                    ImGuizmoDraw(selectedEntity, cameraProjection, cameraView);
+                }
+
             }
             ImGui::End();
 
@@ -212,10 +196,40 @@ namespace CatEngine
 
     void EditorLayer::OnEvent(Event& e)
     {
-        m_CameraController.OnEvent(e);
+        m_EditorCamera.OnEvent(e);
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResize));
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+    }
+
+    void EditorLayer::ImGuizmoDraw(Entity selectedEntity, const glm::mat4& cameraProjection, glm::mat4 cameraView)
+    {
+        // Entity transform
+        auto& tc = selectedEntity.GetComponent<TransformComponent>();
+        glm::mat4 transform = tc.GetTransform();
+
+        // Snapping
+        bool snap = Input::IsKeyPressed(Key::LeftControl);
+        float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+        // Snap to 45 degrees for rotation
+        if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+            snapValue = 45.0f;
+
+        float snapValues[3] = { snapValue, snapValue, snapValue };
+
+        ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
+
+        if (ImGuizmo::IsUsing())
+        {
+            glm::vec3 position, rotation, scale;
+            Math::DecomposeTransform(transform, position, rotation, scale);
+
+            glm::vec3 deltaRotation = rotation - tc.Rotation;
+            tc.Position = position;
+            tc.Rotation += deltaRotation;
+            tc.Scale = scale;
+
+        }
     }
 
     bool EditorLayer::OnWindowResize(WindowResizeEvent& e)

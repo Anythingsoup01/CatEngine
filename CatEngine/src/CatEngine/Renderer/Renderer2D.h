@@ -4,9 +4,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "CatEngine/Camera/Camera.h"
+#include "CatEngine/Camera/EditorCamera.h"
 
 #include "CatEngine/Renderer/Texture.h"
 #include "CatEngine/Renderer/SubTexture2D.h"
+
 
 
 namespace CatEngine
@@ -19,6 +21,7 @@ namespace CatEngine
 		static void Shutdown();
 
 		static void BeginScene(const Camera& camera, glm::mat4& transform);
+		static void BeginScene(const EditorCamera& camera); 
 		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
 		static void Flush();
 		static void EndScene();
