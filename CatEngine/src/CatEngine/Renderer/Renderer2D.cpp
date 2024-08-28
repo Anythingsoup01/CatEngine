@@ -42,8 +42,6 @@ namespace CatEngine
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = DefaultTexture
 
-
-
 		glm::vec4 QuadVertexPositions[4];
 
 		Renderer2D::Statistics Stats;

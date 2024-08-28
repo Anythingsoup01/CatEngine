@@ -21,6 +21,7 @@ namespace CatEngine
     void EditorLayer::OnAttach()
     {
         FrameBufferSpecification fbSpec;
+        fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::Depth };
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
@@ -50,7 +51,6 @@ namespace CatEngine
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
             m_FrameBuffer->SetSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_CameraController.OnResizeBounds(m_ViewportSize.x, m_ViewportSize.y);
 
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
