@@ -10,6 +10,7 @@ namespace CatEngine {
 		Vec4,
 		Mat3,
 		Mat4,
+		U32,
 		Int,
 		Int2,
 		Int3,

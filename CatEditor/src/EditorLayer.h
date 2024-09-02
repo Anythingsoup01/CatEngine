@@ -49,6 +49,7 @@ namespace CatEngine
 		int m_GizmoType = -1;
 
 		glm::vec2 m_ViewportSize = { 0.f,0.f };
+		glm::vec2 m_ViewportBounds[2];
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};

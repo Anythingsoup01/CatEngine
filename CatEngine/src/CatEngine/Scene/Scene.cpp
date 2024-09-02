@@ -18,16 +18,18 @@ namespace CatEngine
 	{
 	}
 
-	void Scene::OnUpdateEditor(Time time, EditorCamera& camera)
+	void Scene::OnUpdateEditor(Time ts, EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
 
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group)
 		{
-			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color, (int)entity);
 		}
+
 		Renderer2D::EndScene();
 	}
 
@@ -74,7 +76,7 @@ namespace CatEngine
 			for (auto entity : group)
 			{
 				auto& [transform, sprite] = group.get<TransformComponent,	SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color, (int)entity);
 			}
 			Renderer2D::EndScene();
 		}

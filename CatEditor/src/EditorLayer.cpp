@@ -21,7 +21,7 @@ namespace CatEngine
     void EditorLayer::OnAttach()
     {
         FrameBufferSpecification fbSpec;
-        fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::Depth };
+        fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
@@ -51,14 +51,14 @@ namespace CatEngine
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
             m_FrameBuffer->SetSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
+            m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
         
         
         // Update Camera
-        if (m_ViewportFocused)
-            m_EditorCamera.OnUpdate(time);
+
+        m_EditorCamera.OnUpdate(time);
 
 
         // Render
@@ -69,6 +69,25 @@ namespace CatEngine
 
         // Update Scene
         m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
+
+        auto [mx, my] = ImGui::GetMousePos();
+        mx -= m_ViewportBounds[0].x;
+        my -= m_ViewportBounds[0].y;
+        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        my = viewportSize.y - my;
+
+
+        int mouseX = (int)mx;
+        int mouseY = (int)my;
+
+        if (Input::IsMouseButtonPressed(MouseCode::ButtonLeft) && (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y))
+        {
+            int pixelData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
+            m_SceneHierarchyPanel.SetSelectedEntity(Entity((entt::entity)pixelData, m_ActiveScene.get()));
+            CE_API_WARN("EntityID = {0}", pixelData);
+
+        }
+
 
         m_FrameBuffer->Unbind();
     }
@@ -97,7 +116,7 @@ namespace CatEngine
             window_flags |= ImGuiWindowFlags_NoBackground;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace", &dockspaceOpen, window_flags);
+        ImGui::Begin("MyDockSpace", &dockspaceOpen, window_flags);
         ImGui::PopStyleVar(3);
         {
             // Submit the DockSpace
@@ -134,17 +153,29 @@ namespace CatEngine
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
             ImGui::Begin("Scene");
+            auto viewportOffset = ImGui::GetCursorPos(); // Includes tab bar
+
+
+
+
             m_ViewportFocused = ImGui::IsWindowFocused();
             m_ViewportHovered = ImGui::IsWindowHovered();
             Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
-            {
-                ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-                m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+            
+            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-                uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
-                ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
-            }
+            uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
+            ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+            
+            auto windowSize = ImGui::GetWindowSize();
+            ImVec2 minBound = ImGui::GetWindowPos();
+            minBound.x += viewportOffset.x;
+            minBound.y += viewportOffset.y;
 
+            ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+            m_ViewportBounds[0] = { minBound.x, minBound.y };
+            m_ViewportBounds[1] = { maxBound.x, maxBound.y }; 
 
             // Gizmos
             Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();

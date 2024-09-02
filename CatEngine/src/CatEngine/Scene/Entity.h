@@ -11,6 +11,7 @@ namespace CatEngine
 	public:
 		Entity() = default;
 		Entity(entt::entity handle, Scene* scene);
+		Entity(uint32_t handle, Scene* scene);
 		Entity(const Entity& other) = default;
 
 		entt::entity& GetEntityID() { return m_EntityHandle; }

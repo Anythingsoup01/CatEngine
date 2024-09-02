@@ -14,12 +14,12 @@ namespace CatEngine
 {
 	struct QuadVertex
 	{
-
 		glm::vec3 Position;
 		glm::vec4 Color;
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
+		int EntityID;
 	};
 
 	struct Renderer2DData
@@ -63,7 +63,8 @@ namespace CatEngine
 			{ ShaderDataType::Vec4, "a_Color" },
 			{ ShaderDataType::Vec2, "a_TexCoord" },
 			{ ShaderDataType::Vec, "a_TexIndex" },
-			{ ShaderDataType::Vec, "a_TilingFactor" }
+			{ ShaderDataType::Vec, "a_TilingFactor" },
+			{ ShaderDataType::Int, "a_EntityID" }
 		});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -198,18 +199,17 @@ namespace CatEngine
 		Flush();
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
-		constexpr glm::vec4 d_Color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
 		float texIndex = 0.f;
 		const float tilingFactor = 1.f;
 
 
-		IncrementData(transform, color, textureCoords, tilingFactor, texIndex);
+		IncrementData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID)
 	{
 		constexpr glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
 		float texIndex = 0.f;
@@ -231,12 +231,12 @@ namespace CatEngine
 			s_Data.TextureSlotIndex++;
 		}
 
-		IncrementData(transform, color, textureCoords, tilingFactor, texIndex);
+		IncrementData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
 
 	}
 
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<SubTexture2D>& subTexture, const glm::vec4& color, float tilingFactor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<SubTexture2D>& subTexture, const glm::vec4& color, float tilingFactor, int entityID)
 	{
 		Ref<Texture2D> texture;
 		const glm::vec2* textureCoords;
@@ -261,13 +261,13 @@ namespace CatEngine
 			s_Data.TextureSlotIndex++;
 		}
 
-		IncrementData(transform, color, textureCoords, tilingFactor, texIndex);
+		IncrementData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
 	}
 	
 	void Renderer2D::ResetStats() { memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics)); }
 	Renderer2D::Statistics Renderer2D::GetStats() { return s_Data.Stats; }
 
-	void Renderer2D::IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex)
+	void Renderer2D::IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex, int entityID)
 	{
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
@@ -279,6 +279,7 @@ namespace CatEngine
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
 
