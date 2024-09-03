@@ -19,8 +19,8 @@ namespace CatEngine {
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffer; }
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
 	private:
+		uint32_t m_RendererID, m_VertexBufferIndex = 0;
 		std::vector<Ref<VertexBuffer>> m_VertexBuffer;
 		Ref<IndexBuffer> m_IndexBuffer;
-		uint32_t m_RendererID;
 	};
 }
