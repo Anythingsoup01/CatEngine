@@ -24,6 +24,7 @@ namespace CatEngine {
 
 		void BlockEvents(bool block) { m_BlockEvents = block; }
 		void SetDarkThemeColors();
+		void SetDefaultEditorStyle();
 	private:
 	private:
 		bool m_BlockEvents = true;

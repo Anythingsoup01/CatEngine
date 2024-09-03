@@ -36,12 +36,15 @@ namespace CatEngine
 		{
 			if (ImGui::MenuItem("Create Empty GameObject"))
 			{
-				m_Context->CreateEntity("GameObject");
+				auto& entity = m_Context->CreateEntity("GameObject");
+				m_SelectionContext = entity;
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("Create Camera"))
 			{
-				m_Context->CreateEntity("Camera").AddComponent<CameraComponent>().Primary = false;
+				auto& entity = m_Context->CreateEntity("Camera");
+				entity.AddComponent<CameraComponent>().Primary = false;
+				m_SelectionContext = entity;
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -58,7 +61,7 @@ namespace CatEngine
 
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ((contentRegionAvailable.x - (contentRegionAvailable.x / 2)) * .5));
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (((float)contentRegionAvailable.x - ((float)contentRegionAvailable.x / 2)) * .5));
 
 			if (ImGui::Button("Add Component", ImVec2{contentRegionAvailable.x / 2.f, lineHeight}))
 				ImGui::OpenPopup("AddComponent");

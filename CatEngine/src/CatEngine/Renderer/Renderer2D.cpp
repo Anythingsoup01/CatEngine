@@ -6,6 +6,7 @@
 #include "CatEngine/Renderer/VertexArray.h"
 #include "CatEngine/Renderer/Shader.h"
 #include "CatEngine/Renderer/RenderCommand.h"
+#include "CatEngine/Renderer/UniformBuffer.h"
 
 #include "CatEngine/Core/Timer.h"
 
@@ -19,7 +20,9 @@ namespace CatEngine
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
-		int EntityID;
+
+		// Editor Only
+		int EntityID = 0;
 	};
 
 	struct Renderer2DData
@@ -45,6 +48,13 @@ namespace CatEngine
 		glm::vec4 QuadVertexPositions[4];
 
 		Renderer2D::Statistics Stats;
+
+		struct CameraData
+		{
+			glm::mat4 ViewProjection;
+		};
+		CameraData CameraBuffer;
+		Ref<UniformBuffer> CameraUniformBuffer;
 
 	};
 
@@ -116,6 +126,8 @@ namespace CatEngine
 		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
+		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
+
 	}
 	void Renderer2D::Shutdown()
 	{
@@ -134,11 +146,8 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
-
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		ResetData();
 	}
@@ -147,11 +156,8 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = camera.GetViewProjection();
-
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.CameraBuffer.ViewProjection = camera.GetProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		ResetData();
 	}
@@ -262,6 +268,11 @@ namespace CatEngine
 		}
 
 		IncrementData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
+	{
+		DrawQuad(transform, src.Color, entityID);
 	}
 	
 	void Renderer2D::ResetStats() { memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics)); }

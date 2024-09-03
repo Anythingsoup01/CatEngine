@@ -126,7 +126,7 @@ namespace CatEngine
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << "462367853784535";
+		out << YAML::Key << "Entity" << YAML::Value << 435738945769384;
 		if (entity.HasComponent<TagComponent>())
 		{
 			out << YAML::Key << "TagComponent";

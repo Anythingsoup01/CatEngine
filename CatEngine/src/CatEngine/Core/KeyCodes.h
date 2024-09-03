@@ -4,7 +4,7 @@
 namespace CatEngine
 {
 
-	typedef enum class KeyCode : uint16_t
+	enum class KeyCode : uint16_t
 	{
 		// From glfw3.h
 		Space              = 32,
@@ -137,7 +137,7 @@ namespace CatEngine
 		ModCapsLock       = 0x0010,
 		ModNumLock        = 0x0020,
 
-	} Key;
+	};
 
 	inline std::ostream& operator<<(std::ostream& os, KeyCode keyCode)
 	{

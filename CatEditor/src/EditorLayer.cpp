@@ -67,6 +67,8 @@ namespace CatEngine
         m_FrameBuffer->Bind();
         RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
+        m_FrameBuffer->ClearColorAttachmentI(1, -1);
+
         // Update Scene
         m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
 
@@ -80,12 +82,10 @@ namespace CatEngine
         int mouseX = (int)mx;
         int mouseY = (int)my;
 
-        if (Input::IsMouseButtonPressed(MouseCode::ButtonLeft) && (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y))
+        if ((mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y))
         {
             int pixelData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
-            m_SceneHierarchyPanel.SetSelectedEntity(Entity((entt::entity)pixelData, m_ActiveScene.get()));
-            CE_API_WARN("EntityID = {0}", pixelData);
-
+            m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }
 
 
@@ -153,8 +153,11 @@ namespace CatEngine
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
             ImGui::Begin("Scene");
-            auto viewportOffset = ImGui::GetCursorPos(); // Includes tab bar
-
+            auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+            auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+            auto viewportOffset = ImGui::GetWindowPos();
+            m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+            m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 
 
@@ -167,15 +170,6 @@ namespace CatEngine
 
             uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
             ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
-            
-            auto windowSize = ImGui::GetWindowSize();
-            ImVec2 minBound = ImGui::GetWindowPos();
-            minBound.x += viewportOffset.x;
-            minBound.y += viewportOffset.y;
-
-            ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
-            m_ViewportBounds[0] = { minBound.x, minBound.y };
-            m_ViewportBounds[1] = { maxBound.x, maxBound.y }; 
 
             // Gizmos
             Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
@@ -212,6 +206,8 @@ namespace CatEngine
 
             m_SceneHierarchyPanel.OnImGuiRender();
 
+            ImGui::ShowDemoWindow();
+
             ImGui::Begin("Console");
             {
 
@@ -231,6 +227,7 @@ namespace CatEngine
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResize));
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
     }
 
     void EditorLayer::ImGuizmoDraw(Entity selectedEntity, const glm::mat4& cameraProjection, glm::mat4 cameraView)
@@ -240,7 +237,7 @@ namespace CatEngine
         glm::mat4 transform = tc.GetTransform();
 
         // Snapping
-        bool snap = Input::IsKeyPressed(Key::LeftControl);
+        bool snap = Input::IsKeyPressed(KeyCode::LeftControl);
         float snapValue = 0.5f; // Snap to 0.5m for translation/scale
         // Snap to 45 degrees for rotation
         if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
@@ -319,7 +316,20 @@ namespace CatEngine
                 m_GizmoType = ImGuizmo::OPERATION::SCALE;
                 break;
             }
+            default:
+                break;
         }
+        return false;
+    }
+
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        if (e.GetMouseButton() == MouseCode::ButtonLeft)
+        {
+            if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(KeyCode::LeftAlt))
+                m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+        }
+        return false;
     }
 
     void EditorLayer::SaveSceneAs()

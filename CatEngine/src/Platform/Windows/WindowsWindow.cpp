@@ -166,19 +166,19 @@ namespace CatEngine {
 			{
 				case GLFW_PRESS:
 				{
-					MouseButtonPressedEvent event(button);
+					MouseButtonPressedEvent event((MouseCode)button);
 					data.EventCallback(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					MouseButtonReleasedEvent event(button);
+					MouseButtonReleasedEvent event((MouseCode)button);
 					data.EventCallback(event);
 					break;
 				}
 				case GLFW_REPEAT:
 				{
-					MouseButtonPressedEvent event(button);
+					MouseButtonPressedEvent event((MouseCode)button);
 					data.EventCallback(event);
 					break;
 				}

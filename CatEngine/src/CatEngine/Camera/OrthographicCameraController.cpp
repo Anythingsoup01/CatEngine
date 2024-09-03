@@ -13,28 +13,9 @@ namespace CatEngine
 	{
 
 	}
-	bool IsShiftPressed()
-	{
-		return (Input::IsKeyPressed(CE_LEFT_SHIFT) || Input::IsKeyPressed(CE_RIGHT_SHIFT));
-	}
 	void OrthographicCameraController::OnUpdate(Time time)
 	{
 		CE_PROFILE_FUNCTION();
-
-
-		if ((IsShiftPressed() && Input::IsMouseButtonPressed(CE_MOUSE_BUTTON_RIGHT)) || m_Panning)
-		{
-			m_Panning = true;
-			m_CameraPosition += glm::vec3((Input::GetMouseXOffset() * m_CameraSpeed) * time.deltaTime(), (Input::GetMouseYOffset() * -m_CameraSpeed) * time.deltaTime(), 0);
-		}
-		if (Input::IsMouseButtonReleased(CE_MOUSE_BUTTON_RIGHT))
-		{
-			m_Panning = false;
-			Input::ResetMouseOffset();
-		}
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)

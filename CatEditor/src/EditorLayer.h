@@ -23,6 +23,7 @@ namespace CatEngine
 
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
 		void SaveSceneAs();
 		void SaveScene();
@@ -39,6 +40,7 @@ namespace CatEngine
 		bool m_RuntimeActive = false;
 		bool m_CameraPreviewActive = false;
 		
+		Entity m_HoveredEntity;
 
 		EditorCamera m_EditorCamera;
 		Ref<Scene> m_ActiveScene;

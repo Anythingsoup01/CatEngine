@@ -1,24 +1,26 @@
 #pragma once
 
 #include "Events.h"
+#include "CatEngine/Core/MouseButtonCodes.h"
+
 //MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 namespace CatEngine {
 	// Base Mouse Button Event
-	class MouseOnButtonEvent : public Event {
+	class OnMouseButtonEvent : public Event {
 	public:
-		inline int GetMouseButton() const { return m_Button; }
+		inline MouseCode GetMouseButton() const { return m_Button; }
 
 		EVENT_CLASS_CATEGORY(CategoryMouseButtonEvent | CategoryInputEvent)
 	protected:
-		MouseOnButtonEvent(int button)
+		OnMouseButtonEvent(MouseCode button)
 			: m_Button(button) {}
-		int m_Button;
+		MouseCode m_Button;
 	};
-	// Mouse Button Pressed Event, using MouseOnButtonEvent
-	class MouseButtonPressedEvent : public MouseOnButtonEvent {
+	// Mouse Button Pressed Event, using OnMouseButtonEvent
+	class MouseButtonPressedEvent : public OnMouseButtonEvent {
 	public:
-		MouseButtonPressedEvent(int button)
-			: MouseOnButtonEvent(button) {}
+		MouseButtonPressedEvent(MouseCode button)
+			: OnMouseButtonEvent(button) {}
 		std::string ToString() const override {
 			std::stringstream ss;
 			ss << "Mouse Button Pressed Event " << m_Button;
@@ -26,11 +28,11 @@ namespace CatEngine {
 		}
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
-	// Mouse Button Pressed Event, using MouseOnButtonEvent
-	class MouseButtonReleasedEvent : public MouseOnButtonEvent {
+	// Mouse Button Pressed Event, using OnMouseButtonEvent
+	class MouseButtonReleasedEvent : public OnMouseButtonEvent {
 	public:
-		MouseButtonReleasedEvent(int button)
-			: MouseOnButtonEvent(button) {}
+		MouseButtonReleasedEvent(MouseCode button)
+			: OnMouseButtonEvent(button) {}
 		std::string ToString() const override {
 			std::stringstream ss;
 			ss << "Mouse Button Released Event " << m_Button;

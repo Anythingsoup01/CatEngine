@@ -64,6 +64,7 @@ namespace CatEngine
 		float m_Pitch = 0.f, m_Yaw = 0.f;
 
 		float m_ViewportWidth = 1280, m_ViewportHeight = 720;
+
 	};
 
 }

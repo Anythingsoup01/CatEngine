@@ -47,6 +47,7 @@ namespace CatEngine {
 		}
 
 		SetDarkThemeColors();
+		SetDefaultEditorStyle();
 
 		Application& app = Application::Get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
@@ -100,7 +101,7 @@ namespace CatEngine {
 	{
 
 		auto& colors = ImGui::GetStyle().Colors;
-		colors[ImGuiCol_WindowBg] = ImVec4{ 0.125f, 0.125f, 0.125f, 1.0f };
+		colors[ImGuiCol_WindowBg] = ImVec4{ 0.13f, 0.13f, 0.13f, 1.0f };
 
 		// Headers
 		colors[ImGuiCol_Header] = ImVec4{ 0.143f, 0.143f, 0.143f, 1.0f };
@@ -128,5 +129,49 @@ namespace CatEngine {
 		colors[ImGuiCol_TitleBg] = ImVec4{ 0.175f, 0.175f, 0.175f, 1.0f };
 		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.175f, 0.175f, 0.175f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.175f, 0.175f, 0.175f, 1.0f };
+	}
+	void ImGuiLayer::SetDefaultEditorStyle()
+	{
+		auto& style = ImGui::GetStyle();
+
+		style.WindowPadding = { 0, 0 };
+		style.WindowBorderSize = 0;
+		style.WindowRounding = 2;
+
+		style.ChildBorderSize = 0;
+		style.ChildRounding = 2;
+
+		style.PopupBorderSize = 0;
+		style.PopupRounding = 1;
+
+		style.FramePadding = { 1, 2 };
+		style.FrameBorderSize = 0;
+		style.FrameRounding = 2;
+
+		style.TabBorderSize = 0;
+		style.TabBarBorderSize = 1;
+		style.TabRounding = 6;
+
+		style.ScrollbarSize = 10;
+		style.ScrollbarRounding = 0;
+
+		style.GrabMinSize = 5;
+		style.GrabRounding = 0;
+
+		style.WindowTitleAlign = { 0.5, 0.75f };
+		style.WindowMenuButtonPosition = ImGuiDir_Right;
+
+		style.ButtonTextAlign = { 0.5f, 0.5f };
+
+		style.SeparatorTextBorderSize = 1;
+		style.SeparatorTextAlign = { 0, 0 };
+		style.SeparatorTextPadding = { 20, 0 };
+
+		style.DockingSeparatorSize = 0;
+
+		style.ItemSpacing = { 0, 5 };
+		style.ItemInnerSpacing = { 0, 0 };
+		style.TouchExtraPadding = { 0, 0 };
+		style.IndentSpacing = 10;
 	}
 }

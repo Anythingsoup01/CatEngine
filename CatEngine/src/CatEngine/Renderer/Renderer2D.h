@@ -9,6 +9,8 @@
 #include "CatEngine/Renderer/Texture.h"
 #include "CatEngine/Renderer/SubTexture2D.h"
 
+#include "CatEngine/Scene/Components.h"
+
 
 
 namespace CatEngine
@@ -27,36 +29,36 @@ namespace CatEngine
 		static void EndScene();
 
 		// Primitives -- 2 component position
-		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color, int entityID)
+		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color)
 		{
-			DrawQuad({ position.x ,position.y, 0.0f }, rotation, size, color, entityID);
+			DrawQuad({ position.x ,position.y, 0.0f }, rotation, size, color);
 		}
 
-		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID)
+		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor)
 		{
-			DrawQuad({ position.x ,position.y, 0.0f }, rotation, size, texture, color, tilingFactor, entityID);
+			DrawQuad({ position.x ,position.y, 0.0f }, rotation, size, texture, color, tilingFactor);
 		}
 
-		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, Ref<SubTexture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID)
+		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, Ref<SubTexture2D>& texture, const glm::vec4& color, float tilingFactor)
 		{
-			DrawQuad({ position.x, position.y , 0.f }, rotation, size, texture, color, tilingFactor, entityID);
+			DrawQuad({ position.x, position.y , 0.f }, rotation, size, texture, color, tilingFactor);
 		}
 		
 		// Primitives -- 3 component position
 		
-		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color, int entityID)
+		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color)
 		{
-			DrawQuad(GetTransform(position, rotation, size), color, entityID);
+			DrawQuad(GetTransform(position, rotation, size), color, -1);
 		}
 		
-		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID)
+		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor)
 		{
-			DrawQuad(GetTransform(position, rotation, size), texture, color, tilingFactor, entityID);
+			DrawQuad(GetTransform(position, rotation, size), texture, color, tilingFactor, -1);
 		}
 		
-		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<SubTexture2D>& subTexture, const glm::vec4& color, float tilingFactor, int entityID)
+		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, Ref<SubTexture2D>& subTexture, const glm::vec4& color, float tilingFactor)
 		{
-			DrawQuad(GetTransform(position, rotation, size), subTexture, color, tilingFactor, entityID);
+			DrawQuad(GetTransform(position, rotation, size), subTexture, color, tilingFactor, -1);
 		}
 
 		// Primitives -- Transform Matrix
@@ -65,6 +67,10 @@ namespace CatEngine
 		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID);
 		static void DrawQuad(const glm::mat4& transform, Ref<SubTexture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID);
 
+
+		// Sprites
+
+		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
 
 		struct Statistics
 		{

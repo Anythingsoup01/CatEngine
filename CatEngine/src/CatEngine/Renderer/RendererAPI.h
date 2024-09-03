@@ -13,6 +13,7 @@ namespace CatEngine {
 		{
 			None = 0,
 			OpenGL = 1,
+
 		};
 	public:
 		virtual void Init() = 0;

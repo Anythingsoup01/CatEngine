@@ -41,11 +41,11 @@ void Sandbox2D::OnUpdate(CatEngine::Time time)
 
 		CatEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-		for (float y = -5.f; y < 5.f; y += .5f)
+		for (float y = -10.f; y < 10.f; y += .5f)
 		{
-			for (float x = -5.f; x < 5.f; x += .5f) 
+			for (float x = -10.f; x < 10.f; x += .5f) 
 			{
-				glm::vec2 color = { {(x + 5.f) / 10.f}, {(y + 5.f) / 10.f} };
+				glm::vec2 color = { {(x + 10.f) / 20.f}, {(y + 10.f) / 20.f} };
 				CatEngine::Renderer2D::DrawQuad({ x, y }, 0, { .45f, .45f }, { color.x, 1.f, color.y, 1.f });
 			}
 		}
