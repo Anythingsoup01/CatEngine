@@ -381,3 +381,4 @@ FodyWeavers.xsd
 /Sandbox/Sandbox.vcxproj
 /CatEngine/CatEngine.vcxproj.filters
 /CatEngine/CatEngine.vcxproj
+/CatEngine/vendors/VulkanSDK
