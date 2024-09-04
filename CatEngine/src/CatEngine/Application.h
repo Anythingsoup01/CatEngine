@@ -14,9 +14,23 @@
 
 
 namespace CatEngine {
+
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			API_ASSERT(index < Count, "");
+			return Args[index];
+		}
+	};
 	class Application {
+
+
 	public:
-		Application(const std::string& name = "CatEngine");
+		Application(const std::string& name = "CatEngine", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 
 		void Run();
@@ -35,6 +49,7 @@ namespace CatEngine {
 
 		bool m_Minimized = false;
 	private:
+		ApplicationCommandLineArgs m_CommandLineArgs;
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
@@ -48,5 +63,5 @@ namespace CatEngine {
 	};
 
 	// Defined in client
-	Application* CreateApplication();
+	Application* CreateApplication(ApplicationCommandLineArgs args);
 }

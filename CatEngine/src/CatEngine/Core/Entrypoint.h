@@ -2,13 +2,13 @@
 
 #ifdef CE_PLATFORM_WINDOWS
 
-extern CatEngine::Application* CatEngine::CreateApplication();
+extern CatEngine::Application* CatEngine::CreateApplication(CatEngine::ApplicationCommandLineArgs args);
 
 int main(int argc, char** argv) {
 	CatEngine::Log::Init();
 
 	CE_PROFILE_BEGIN_SESSION("Startup", "CatEngine-Startup.json");
-	auto app = CatEngine::CreateApplication();
+	auto app = CatEngine::CreateApplication({argc, argv});
 	CE_PROFILE_END_SESSION();
 
 	CE_PROFILE_BEGIN_SESSION("Runtime", "CatEngine-Runtime.json");
