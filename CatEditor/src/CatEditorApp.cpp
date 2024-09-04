@@ -19,7 +19,7 @@ namespace CatEngine
 		}
 	};
 
-	Application* CreateApplication() {
+	Application* CreateApplication(AppllicationCommandLineArgs args) {
 		return new CatEditor();
 	}
 }
