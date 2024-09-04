@@ -8,7 +8,11 @@ layout(location = 3) in float a_TexIndex;
 layout(location = 4) in float a_TilingFactor;
 layout(location = 5) in int a_EntityID;
 
-uniform mat4 u_ViewProjection;
+layout (std140, binding = 0) uniform Camera
+{
+	mat4 u_ViewProjection
+};
+
 
 struct VertexOutput
 {
@@ -49,7 +53,7 @@ layout (location = 0) in VertexOutput Input;
 layout (location = 3) in flat float v_TexIndex;
 layout (location = 4) in flat int v_EntityID;
 
-uniform sampler2D u_Textures[32];
+layout (binding = 0) uniform sampler2D u_Textures[32];
 
 
 void main()

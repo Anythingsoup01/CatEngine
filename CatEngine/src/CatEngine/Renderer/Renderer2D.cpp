@@ -8,7 +8,8 @@
 #include "CatEngine/Renderer/RenderCommand.h"
 #include "CatEngine/Renderer/UniformBuffer.h"
 
-#include "CatEngine/Core/Timer.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 namespace CatEngine
@@ -182,7 +183,7 @@ namespace CatEngine
 			s_Data.TextureSlots[i]->Bind(i);
 		}
 
-
+		s_Data.TextureShader->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
 	}

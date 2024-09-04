@@ -8,7 +8,8 @@ namespace CatEngine {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application(const std::string& name)
+	Application::Application(const std::string& name, AppllicationCommandLineArgs args)
+		: m_CommandLineArgs(args)
 	{
 		CE_PROFILE_FUNCTION();
 

@@ -28,6 +28,14 @@ namespace CatEngine
 
         // Entity
         m_ActiveScene = CreateRef<Scene>();
+
+        auto commandLineArgs = Application::Get().GetCommandLineArgs();
+        if (commandLineArgs.Count > 1)
+        {
+            auto sceneFilePath = commandLineArgs[1];
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Deserialize(sceneFilePath);
+        }
         
         m_EditorCamera = EditorCamera(30.f, 1.778f, 0.1f, 1000.f);
 
@@ -338,7 +346,6 @@ namespace CatEngine
         if (!m_SceneFilePath.empty())
         {
             SceneSerializer serializer(m_ActiveScene);
-
             serializer.Serialize(m_SceneFilePath);
         }
     }

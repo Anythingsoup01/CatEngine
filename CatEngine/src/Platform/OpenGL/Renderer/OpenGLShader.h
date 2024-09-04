@@ -50,12 +50,20 @@ namespace CatEngine {
 		inline GLint GetLocation(const std::string& name);
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<unsigned int, std::string> PreProcess(const std::string& source);
-		void Compile(std::unordered_map<unsigned int, std::string>& shaderSources);
+
+		void CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources);
+		void CompileOrGetOpenGLBinaries();
+		void CreateProgram();
+		void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
 
 	private:
 		uint32_t m_RendererID;
-		std::string m_Name;
+		std::string m_Name, m_FilePath;
 
 		std::unordered_map<GLint, std::string> m_Locations;
+		std::unordered_map<GLenum, std::vector<uint32_t>> m_VulkanSPIRV;
+		std::unordered_map<GLenum, std::vector<uint32_t>> m_OpenGLSPIRV;
+
+		std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;
 	};
 }
