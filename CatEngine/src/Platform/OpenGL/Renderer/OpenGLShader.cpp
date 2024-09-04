@@ -180,19 +180,22 @@ namespace CatEngine
 
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
-		size_t pos = source.find(typeToken, 0);
+		size_t pos = source.find(typeToken, 0); //Start of shader type declaration line
 		while (pos != std::string::npos)
 		{
-			size_t eol = source.find_first_of("\r\n", pos);
-			API_ASSERT(eol != std::string::npos, "Syntax Error");
-			size_t begin = pos + typeTokenLength + 1;
+			size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
+			API_ASSERT(eol != std::string::npos, "Syntax error");
+			size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
 			std::string type = source.substr(begin, eol - begin);
-			API_ASSERT(type == "vertex" || type == "fragment" || type == "pixel", "Invalid shader type specified!");
+			API_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified");
 
-			size_t nextLinePos = source.find_first_not_of("/r/n", eol);
-			pos = source.find(typeToken, nextLinePos);
-			shaderSources[Utils::ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
+			size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
+			API_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+			pos = source.find(typeToken, nextLinePos); //Start of next shader type declaration line
+
+			shaderSources[Utils::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
 		}
+
 		return shaderSources;
 	}
 
@@ -232,8 +235,7 @@ namespace CatEngine
 				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					CE_API_ERROR(module.GetErrorMessage());
-					API_ASSERT(false, "");
+					API_ASSERT(false, module.GetErrorMessage());
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());

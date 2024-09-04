@@ -23,7 +23,7 @@ namespace CatEngine
 		float TilingFactor;
 
 		// Editor Only
-		int EntityID = 0;
+		int EntityID;
 	};
 
 	struct Renderer2DData
@@ -79,13 +79,10 @@ namespace CatEngine
 		});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
-
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
-
 
 		// Index Buffer
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
-
 
 		uint32_t offset = 0;
 		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
@@ -116,11 +113,8 @@ namespace CatEngine
 		}
 
 		s_Data.TextureShader = Shader::Create("assets/shaders/TextureShader.glsl");
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_Texture", samplers, s_Data.MaxTextureSlots);
 
 		s_Data.TextureSlots[0] = s_Data.DefaultTexture;
-
 
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
@@ -133,6 +127,7 @@ namespace CatEngine
 	void Renderer2D::Shutdown()
 	{
 
+		delete[] s_Data.QuadVertexBufferBase;
 	}
 	void Renderer2D::ResetData()
 	{
