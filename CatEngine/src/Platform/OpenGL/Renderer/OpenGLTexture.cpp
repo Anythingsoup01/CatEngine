@@ -50,7 +50,7 @@ namespace CatEngine
 		stbi_image_free(data);
 	}
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		:m_Width(width), m_Height(height)
+		:m_Width(width), m_Height(height), m_Path("DefaultTexture")
 	{
 		CE_PROFILE_FUNCTION();
 		m_InternalFormat = GL_RGBA8;
@@ -74,7 +74,7 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 		uint32_t bpc = m_Format == GL_RGBA ? 4 : 3;
-		API_ASSERT(size == m_Width * m_Height * bpc, "Data mus be entire texture!");
+		API_ASSERT(size == m_Width * m_Height * bpc, "Data must be entire texture!");
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
 	}
 	void OpenGLTexture2D::Bind(uint32_t slot) const

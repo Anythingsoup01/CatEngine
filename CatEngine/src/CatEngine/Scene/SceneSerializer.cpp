@@ -176,7 +176,8 @@ namespace CatEngine
 
 			auto& src = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << src.Color;
-			/*out << YAML::Key << "Texture" << YAML::Value << src.Texture->GetRendererID();*/
+			std::string texturePath = src.Texture != nullptr ? src.Texture->GetFilePath() : "";
+			out << YAML::Key << "Texture" << YAML::Value << texturePath;
 			out << YAML::Key << "Tiling" << YAML::Value << src.TilingFactor;
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -289,7 +290,10 @@ namespace CatEngine
 				{
 					auto& src = deserializedEntity.GetOrAddComponent<SpriteRendererComponent>();
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
-					/*src.Texture->M = sprieRendererComponent["Texture"].as<uint32_t>();*/
+					if (spriteRendererComponent["Texture"].as<std::string>() != "")
+						src.Texture = Texture2D::Create(spriteRendererComponent["Texture"].as<std::string>());
+					else
+						src.Texture = nullptr;
 					src.TilingFactor = spriteRendererComponent["Tiling"].as<float>();
 				}
 

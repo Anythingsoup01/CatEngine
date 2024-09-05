@@ -22,6 +22,7 @@ namespace CatEngine
 		virtual bool operator==(const Texture& other) const = 0;
 
 		virtual uint32_t GetRendererID() const = 0;
+		virtual std::string GetFilePath() const = 0;
 	};
 
 	class Texture2D : public Texture

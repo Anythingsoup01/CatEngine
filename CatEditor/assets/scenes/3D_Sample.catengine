@@ -8,25 +8,12 @@ Entities:
     NameComponent:
       Name: Top
     TransformComponent:
-      Position: [0, 0.5, 0]
-      Rotation: [1.57079637, 0, 0]
+      Position: [0, 0.5, -0.5]
+      Rotation: [-1.57045102, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.177215338, 1, 0, 1]
-      Tiling: 1
-  - Entity: 435738945769384
-    TagComponent:
-      Tag: None
-    LayerComponent:
-      Layer: Default
-    NameComponent:
-      Name: Left
-    TransformComponent:
-      Position: [0.000999994576, -3.7252903e-09, 0.5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.135021091, 0.135021091, 1]
+      Color: [1, 1, 1, 1]
+      Texture: assets\textures\checkered.png
       Tiling: 1
   - Entity: 435738945769384
     TagComponent:
@@ -36,9 +23,25 @@ Entities:
     NameComponent:
       Name: Right
     TransformComponent:
-      Position: [0.5, 0, 0]
+      Position: [0.5, 0, -0.49999997]
       Rotation: [0, 1.57079637, 0]
-      Scale: [1, 1, 1]
+      Scale: [0.999986589, 1, 0.999986589]
     SpriteRendererComponent:
-      Color: [0, 0.202531815, 1, 1]
+      Color: [1, 1, 1, 1]
+      Texture: assets\textures\checkered.png
+      Tiling: 1
+  - Entity: 435738945769384
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Left
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 5.96046448e-08, 0]
+      Scale: [0.999999881, 1, 0.999999881]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: assets\textures\checkered.png
       Tiling: 1

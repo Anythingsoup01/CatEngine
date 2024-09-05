@@ -59,7 +59,7 @@ namespace CatEngine
 		{
 			std::string cacheDirectory = GetCacheDirectory();
 			if (!std::filesystem::exists(cacheDirectory))
-				std::filesystem::create_directory(cacheDirectory);
+				std::filesystem::create_directories(cacheDirectory);
 		}
 
 		static const char* GLShaderStageCachedOpenGLFileExtension(uint32_t stage)

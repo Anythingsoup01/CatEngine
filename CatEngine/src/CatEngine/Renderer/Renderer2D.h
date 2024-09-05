@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <filesystem>
 
 #include "CatEngine/Camera/Camera.h"
 #include "CatEngine/Camera/EditorCamera.h"
@@ -10,7 +11,6 @@
 #include "CatEngine/Renderer/SubTexture2D.h"
 
 #include "CatEngine/Scene/Components.h"
-
 
 
 namespace CatEngine
@@ -25,6 +25,9 @@ namespace CatEngine
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const EditorCamera& camera); 
 		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
+
+		static uint32_t CreateOrBindIndex(std::filesystem::path filePath);
+
 		static void Flush();
 		static void EndScene();
 

@@ -46,6 +46,7 @@ namespace CatEngine
 
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = DefaultTexture
+		std::unordered_map<uint32_t, std::string> TextureSlotIndexMap{ {1, "DefaultTexture"}}; // 0 = DefaultTexture
 
 		glm::vec4 QuadVertexPositions[4];
 
@@ -168,6 +169,22 @@ namespace CatEngine
 		StartBatch();
 
 	}
+	uint32_t Renderer2D::CreateOrBindIndex(std::filesystem::path filePath)
+	{
+		uint32_t nextIndex;
+		for (auto [index, path] : s_Data.TextureSlotIndexMap)
+		{
+			if (path == filePath.string())
+			{
+				return index;
+			}
+			nextIndex = index + 1;
+		}
+		s_Data.TextureSlotIndexMap.insert(std::pair<uint32_t, std::string>(nextIndex, filePath.string()));
+		Texture2D::Create(filePath.string());
+		return nextIndex;
+
+	}
 	void Renderer2D::Flush()
 	{
 
@@ -215,21 +232,24 @@ namespace CatEngine
 		constexpr glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
 		float texIndex = 0.f;
 
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+		if (texture)
 		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 			{
-				texIndex = (float)i;
-				break;
+				if (*s_Data.TextureSlots[i].get() == *texture.get())
+				{
+					texIndex = (float)i;
+					break;
+				}
 			}
-		}
 
-		if (texIndex == 0.0f)
-		{
+			if (texIndex == 0.0f)
+			{
 
-			texIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
+				texIndex = (float)s_Data.TextureSlotIndex;
+				s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+				s_Data.TextureSlotIndex++;
+			}
 		}
 
 		IncrementData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
@@ -267,7 +287,7 @@ namespace CatEngine
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{
-		DrawQuad(transform, src.Color, entityID);
+		DrawQuad(transform, src.Texture, src.Color, src.TilingFactor, entityID);
 	}
 
 	void Renderer2D::ResetStats() { memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics)); }

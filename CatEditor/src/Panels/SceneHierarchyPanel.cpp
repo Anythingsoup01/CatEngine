@@ -6,6 +6,8 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <filesystem>
+
 namespace CatEngine
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
@@ -290,7 +292,21 @@ namespace CatEngine
 		 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", selection, [](auto& component) 
 		{
-				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), 0.1f);
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), 0.1f);
+			
+			ImGui::Button("Texture", ImVec2{100.f, 100.f});
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path texturePath = std::filesystem::path("assets") / path;
+					component.Texture = Texture2D::Create(texturePath.string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.f, 100.f);
 		});
 
 		DrawComponent<CameraComponent>("Camera", selection, [](auto& component) 
