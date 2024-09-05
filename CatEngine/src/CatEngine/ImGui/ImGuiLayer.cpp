@@ -129,12 +129,17 @@ namespace CatEngine {
 		colors[ImGuiCol_TitleBg] = ImVec4{ 0.175f, 0.175f, 0.175f, 1.0f };
 		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.175f, 0.175f, 0.175f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.175f, 0.175f, 0.175f, 1.0f };
+
+		// Buttons
+		colors[ImGuiCol_Button] = ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f };
+		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.15f, 0.15f, 0.15f, 1.0f };
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.176f, 0.176f, 0.176f, 1.0f };
 	}
 	void ImGuiLayer::SetDefaultEditorStyle()
 	{
 		auto& style = ImGui::GetStyle();
 
-		style.WindowPadding = { 0, 0 };
+		style.WindowPadding = { 5, 5 };
 		style.WindowBorderSize = 0;
 		style.WindowRounding = 2;
 
@@ -169,8 +174,8 @@ namespace CatEngine {
 
 		style.DockingSeparatorSize = 2;
 
-		style.ItemSpacing = { 0, 5 };
-		style.ItemInnerSpacing = { 0, 0 };
+		style.ItemSpacing = { 5, 5 };
+		style.ItemInnerSpacing = { 5, 0 };
 		style.TouchExtraPadding = { 0, 0 };
 		style.IndentSpacing = 10;
 	}
