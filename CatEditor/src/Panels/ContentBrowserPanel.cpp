@@ -37,14 +37,26 @@ namespace CatEngine
 
 		ImGui::Columns(columnCount, 0, false);
 
+		int i = 0;
+
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
+			ImGui::PushID(i++);
 			const auto& path = directoryEntry.path();
 			auto relativePath = std::filesystem::relative(path, s_AssetPath);
 			std::string filenameString = relativePath.filename().string();
 
 			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+			if (ImGui::BeginDragDropSource())
+			{
+				const wchar_t* itemPath = relativePath.c_str();
+				ImGui::SetDragDropPayload("ASSET_MANAGER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
+				ImGui::EndDragDropSource();
+			}
+
+
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				if (directoryEntry.is_directory())
@@ -54,7 +66,7 @@ namespace CatEngine
 			ImGui::TextWrapped(filenameString.c_str());
 
 			ImGui::NextColumn();
-
+			ImGui::PopID();
 		}
 
 		ImGui::Columns(1);

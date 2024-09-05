@@ -28,7 +28,10 @@ namespace CatEngine
 
 		void SaveSceneAs();
 		void SaveScene();
+
 		void OpenScene();
+		void OpenScene(const std::filesystem::path filePath);
+		
 		void NewScene();
 
 	private:

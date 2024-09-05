@@ -179,6 +179,18 @@ namespace CatEngine
             uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
             ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
+                {
+                    const wchar_t* path = (const wchar_t*)payload->Data;
+                    OpenScene(std::filesystem::path("assets") / path);
+                }
+
+                ImGui::EndDragDropTarget();
+            }
+
+
             // Gizmos
             Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
             if (selectedEntity && m_GizmoType != -1)
@@ -365,6 +377,20 @@ namespace CatEngine
     void EditorLayer::OpenScene()
     {
         m_SceneFilePath = FileDialogs::OpenFile("CatEngine Scene (*.catengine)\0*.catengine\0");
+        if (!m_SceneFilePath.empty())
+        {
+            m_ActiveScene = CreateRef<Scene>();
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+            SceneSerializer serializer(m_ActiveScene);
+
+            serializer.Deserialize(m_SceneFilePath);
+        }
+    }
+    void EditorLayer::OpenScene(const std::filesystem::path filePath)
+    {
+        m_SceneFilePath = filePath.string();
         if (!m_SceneFilePath.empty())
         {
             m_ActiveScene = CreateRef<Scene>();

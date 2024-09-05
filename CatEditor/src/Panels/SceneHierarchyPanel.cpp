@@ -67,16 +67,18 @@ namespace CatEngine
 				ImGui::OpenPopup("AddComponent");
 			if (ImGui::BeginPopup("AddComponent"))
 			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.AddComponent<CameraComponent>().Primary = false;
-					ImGui::CloseCurrentPopup();
-				}
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
+				if (!m_SelectionContext.HasComponent<CameraComponent>())
+					if (ImGui::MenuItem("Camera"))
+					{
+						m_SelectionContext.AddComponent<CameraComponent>().Primary = false;
+						ImGui::CloseCurrentPopup();
+					}
+				if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
+					if (ImGui::MenuItem("Sprite Renderer"))
+					{
+						m_SelectionContext.AddComponent<SpriteRendererComponent>();
+						ImGui::CloseCurrentPopup();
+					}
 				ImGui::EndPopup();
 			}
 
