@@ -1,6 +1,7 @@
 #pragma once
 #include "CatEngine.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace CatEngine
 {
@@ -54,5 +55,6 @@ namespace CatEngine
 		glm::vec2 m_ViewportBounds[2];
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	};
 }

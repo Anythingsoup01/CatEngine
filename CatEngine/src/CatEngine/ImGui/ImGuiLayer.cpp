@@ -167,7 +167,7 @@ namespace CatEngine {
 		style.SeparatorTextAlign = { 0, 0 };
 		style.SeparatorTextPadding = { 20, 0 };
 
-		style.DockingSeparatorSize = 0;
+		style.DockingSeparatorSize = 2;
 
 		style.ItemSpacing = { 0, 5 };
 		style.ItemInnerSpacing = { 0, 0 };

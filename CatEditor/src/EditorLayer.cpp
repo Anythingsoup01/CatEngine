@@ -65,8 +65,8 @@ namespace CatEngine
         
         
         // Update Camera
-
-        m_EditorCamera.OnUpdate(time);
+        if (!ImGuizmo::IsUsing())
+            m_EditorCamera.OnUpdate(time);
 
 
         // Render
@@ -222,6 +222,7 @@ namespace CatEngine
             }
             ImGui::End();
 
+            m_ContentBrowserPanel.OnImGuiRender();
 
             ImGui::PopStyleVar();
 
