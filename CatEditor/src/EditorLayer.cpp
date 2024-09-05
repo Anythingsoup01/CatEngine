@@ -419,33 +419,29 @@ namespace CatEngine
     {
         m_SceneFilePath = FileDialogs::OpenFile("CatEngine Scene (*.catengine)\0*.catengine\0");
         if (!m_SceneFilePath.empty())
-        {
-            m_ActiveScene = CreateRef<Scene>();
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-            SceneSerializer serializer(m_ActiveScene);
-
-            serializer.Deserialize(m_SceneFilePath);
-        }
+            OpenScene(m_SceneFilePath);
     }
-    void EditorLayer::OpenScene(const std::filesystem::path filePath)
+    void EditorLayer::OpenScene(const std::filesystem::path& filePath)
     {
-        m_SceneFilePath = filePath.string();
-        if (!m_SceneFilePath.empty())
+        if (filePath.extension().string() != ".catengine")
         {
-            m_ActiveScene = CreateRef<Scene>();
+            CE_API_WARN("Could not load {0} - not a scene file", filePath.filename().string());
+            return;
+        }
+
+        Ref<Scene> newScene = CreateRef<Scene>();
+        SceneSerializer serializer(newScene);
+        if (serializer.Deserialize(filePath.string()))
+        {
+            m_ActiveScene = newScene;
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-            SceneSerializer serializer(m_ActiveScene);
-
-            serializer.Deserialize(m_SceneFilePath);
         }
     }
 
     void EditorLayer::NewScene()
     {
+        m_SceneFilePath = "";
         m_ActiveScene = CreateRef<Scene>();
         m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);

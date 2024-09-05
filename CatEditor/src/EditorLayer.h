@@ -30,7 +30,7 @@ namespace CatEngine
 		void SaveScene();
 
 		void OpenScene();
-		void OpenScene(const std::filesystem::path filePath);
+		void OpenScene(const std::filesystem::path& filePath);
 		
 		void OnScenePlay();
 		void OnSceneStop();
