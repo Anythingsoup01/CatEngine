@@ -129,7 +129,7 @@ namespace CatEngine
 
 		delete[] s_Data.QuadVertexBufferBase;
 	}
-	void Renderer2D::ResetData()
+	void Renderer2D::StartBatch()
 	{
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
@@ -138,24 +138,24 @@ namespace CatEngine
 	}
 
 
-	void Renderer2D::BeginScene(const Camera& camera, glm::mat4& transform)
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
 		CE_PROFILE_FUNCTION();
 
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-		ResetData();
+		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		CE_PROFILE_FUNCTION();
 
-		s_Data.CameraBuffer.ViewProjection = camera.GetProjection();
+		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-		ResetData();
+		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
@@ -164,19 +164,22 @@ namespace CatEngine
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-		ResetData();
+		StartBatch();
 
 	}
 	void Renderer2D::Flush()
 	{
 
 		CE_PROFILE_FUNCTION();
+		if (s_Data.QuadIndexCount == 0)
+			return; // Nothing to draw
 
-		// Bind Textures
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
+		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+
+		// Bind textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-		{
 			s_Data.TextureSlots[i]->Bind(i);
-		}
 
 		s_Data.TextureShader->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
@@ -184,20 +187,15 @@ namespace CatEngine
 	}
 
 
-	void Renderer2D::FlushAndReset()
+	void Renderer2D::NextBatch()
 	{
-		EndScene();
-		
-		ResetData();
+		Flush();
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene()
 	{
 		CE_PROFILE_FUNCTION();
-
-		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
 		Flush();
 	}
 
@@ -277,7 +275,7 @@ namespace CatEngine
 	void Renderer2D::IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex, int entityID)
 	{
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-			FlushAndReset();
+			NextBatch();
 
 		for (size_t i = 0; i < 4; i++)
 		{

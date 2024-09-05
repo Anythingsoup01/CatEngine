@@ -1,8 +1,9 @@
 #pragma once
+
 #include "CatEngine/Core/Core.h"
 
-namespace CatEngine
-{
+namespace CatEngine {
+
 	class UniformBuffer
 	{
 	public:
@@ -11,4 +12,5 @@ namespace CatEngine
 
 		static Ref<UniformBuffer> Create(uint32_t size, uint32_t binding);
 	};
+
 }
