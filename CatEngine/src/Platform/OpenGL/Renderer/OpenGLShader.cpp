@@ -52,7 +52,7 @@ namespace CatEngine
 		static const char* GetCacheDirectory()
 		{
 			// TODO: Make sure the assets dirtectory is valid
-			return "assets/cache/shader/opengl";
+			return "Resources/cache/shader/opengl";
 		}
 
 		static void CreateCacheDirectoryIfNeeded()

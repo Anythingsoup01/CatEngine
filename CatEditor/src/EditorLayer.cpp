@@ -20,6 +20,10 @@ namespace CatEngine
 
     void EditorLayer::OnAttach()
     {
+
+        m_IconStartRuntime = Texture2D::Create("Resources/Icons/Editor/Start-Runtime.png");
+        m_IconStopRuntime = Texture2D::Create("Resources/Icons/Editor/Stop-Runtime.png");
+
         FrameBufferSpecification fbSpec;
         fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
         fbSpec.Width = 1280;
@@ -50,8 +54,6 @@ namespace CatEngine
     {
         CE_PROFILE_FUNCTION();
 
-
-
         //Resize
 
         if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
@@ -63,12 +65,6 @@ namespace CatEngine
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
         
-        
-        // Update Camera
-        if (!ImGuizmo::IsUsing())
-            m_EditorCamera.OnUpdate(time);
-
-
         // Render
         Renderer2D::ResetStats();
 
@@ -78,7 +74,23 @@ namespace CatEngine
         m_FrameBuffer->ClearColorAttachmentI(1, -1);
 
         // Update Scene
-        m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
+        switch (m_SceneState)
+        {
+            case SceneState::Edit:
+            {
+                // Update Camera
+                if (!ImGuizmo::IsUsing())
+                    m_EditorCamera.OnUpdate(time);
+
+                m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
+                break;
+            }
+            case SceneState::Play:
+            {
+                m_ActiveScene->OnUpdateRuntime(time);
+                break;
+            }
+        }
 
         auto [mx, my] = ImGui::GetMousePos();
         mx -= m_ViewportBounds[0].x;
@@ -146,18 +158,28 @@ namespace CatEngine
                     if (ImGui::MenuItem("Open...", "Ctrl+O")) OpenScene();
 
                     if (ImGui::MenuItem("Save", "Ctrl+S")) SaveScene();
-                    
-                    if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
-                   
 
-                    if (ImGui::MenuItem("Exit" )) Application::Get().CloseEditor();
+                    if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
+
+
+                    if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
                     ImGui::EndMenu();
                 }
 
+                if (ImGui::BeginMenu("Scene"))
+                {
+                    const char* runtimeText = m_SceneState == SceneState::Edit ? "Start Runtime" : "Stop Runtime";
+                    if (ImGui::MenuItem(runtimeText, "Ctrl+F5"))  m_SceneState == SceneState::Edit ? OnScenePlay() : OnSceneStop();
+
+                    if (ImGui::MenuItem("Pause Runtime", "Ctrl+Shift+F5")) OnScenePause();
+
+                    if (ImGui::MenuItem("Simulate Runtime", "Ctrl+F7")) OnSceneSimulate();
+
+                    if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
+                    ImGui::EndMenu();
+                }
                 ImGui::EndMenuBar();
             }
-
-
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
             ImGui::Begin("Scene");
@@ -204,52 +226,33 @@ namespace CatEngine
 
                 // Camera
 
-                // Runtime Camera
-                auto runtimeCameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-                if (runtimeCameraEntity && (m_RuntimeActive || m_CameraPreviewActive))
+                if (m_SceneState == SceneState::Edit)
                 {
-                    const auto& camera = runtimeCameraEntity.GetComponent<CameraComponent>().Camera;
-                    const glm::mat4& cameraProjection = camera.GetProjection();
-                    glm::mat4 cameraView = glm::inverse(runtimeCameraEntity.GetComponent<TransformComponent>().GetTransform ());
-                    ImGuizmoDraw(selectedEntity, cameraProjection, cameraView);
-                }
-                if (!m_RuntimeActive)
-                {                
-                    // Editor Camera
                     const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
                     glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
                     ImGuizmoDraw(selectedEntity, cameraProjection, cameraView);
                 }
 
+
             }
             ImGui::End();
 
             m_SceneHierarchyPanel.OnImGuiRender();
-
-            ImGui::ShowDemoWindow();
+            m_ContentBrowserPanel.OnImGuiRender();
 
             ImGui::Begin("Console");
             {
 
             }
             ImGui::End();
-
-            m_ContentBrowserPanel.OnImGuiRender();
-
             ImGui::PopStyleVar();
+
+            UI_Toolbar();
 
         }
         ImGui::End();
     }
 
-    void EditorLayer::OnEvent(Event& e)
-    {
-        m_EditorCamera.OnEvent(e);
-        EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResize));
-        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
-        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
-    }
 
     void EditorLayer::ImGuizmoDraw(Entity selectedEntity, const glm::mat4& cameraProjection, glm::mat4 cameraView)
     {
@@ -279,6 +282,30 @@ namespace CatEngine
             tc.Scale = scale;
 
         }
+    }
+
+    void EditorLayer::UI_Toolbar()
+    {
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 2 });
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, { 0, 0 });
+
+        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+        {
+            float size = ImGui::GetWindowHeight() - 4.f;
+            Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconStartRuntime : m_IconStopRuntime;
+            ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f - (size * 0.5f)));
+            if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), {0, 0}, {1, 1}, 0))
+            {
+                if (m_SceneState == SceneState::Edit)
+                    OnScenePlay();
+                else if (m_SceneState == SceneState::Play)
+                    OnSceneStop();
+            }
+            ImGui::PopStyleVar(2);
+        }
+        ImGui::End();
+
     }
 
     bool EditorLayer::OnWindowResize(WindowResizeEvent& e)
@@ -322,17 +349,31 @@ namespace CatEngine
                     NewScene();
                 break;
             }
-            case (int)KeyCode::D1:
+            case (int)KeyCode::F5:
+            {
+                if (control && shift)
+                    OnScenePause();
+                else if (control)
+                    m_SceneState == SceneState::Edit ? OnScenePlay() : OnSceneStop();
+                break;
+            }
+            case (int)KeyCode::F7:
+            {
+                if (control)
+                    OnSceneSimulate();
+                break;
+            }
+            case (int)KeyCode::Q:
             {
                 m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
                 break;
             }
-            case (int)KeyCode::D2:
+            case (int)KeyCode::W:
             {
                 m_GizmoType = ImGuizmo::OPERATION::ROTATE;
                 break;
             }
-            case (int)KeyCode::D3:
+            case (int)KeyCode::E:
             {
                 m_GizmoType = ImGuizmo::OPERATION::SCALE;
                 break;
@@ -347,7 +388,7 @@ namespace CatEngine
     {
         if (e.GetMouseButton() == MouseCode::ButtonLeft)
         {
-            if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(KeyCode::LeftAlt))
+            if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(KeyCode::LeftAlt) && m_SceneState == SceneState::Edit)
                 m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
         }
         return false;
@@ -409,6 +450,23 @@ namespace CatEngine
         m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
-    
 
+    void EditorLayer::OnEvent(Event& e)
+    {
+        m_EditorCamera.OnEvent(e);
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResize));
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        m_SceneState = SceneState::Play;
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        m_SceneState = SceneState::Edit;
+    }
 }

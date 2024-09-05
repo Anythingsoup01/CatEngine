@@ -32,7 +32,17 @@ namespace CatEngine
 		void OpenScene();
 		void OpenScene(const std::filesystem::path filePath);
 		
+		void OnScenePlay();
+		void OnSceneStop();
+
+		// TODO: Implement pausing and simulating physics
+		void OnScenePause() {}
+		void OnSceneSimulate() {}
+
+
 		void NewScene();
+		// UI Panels
+		void UI_Toolbar();
 
 	private:
 
@@ -41,8 +51,15 @@ namespace CatEngine
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 
 		bool m_Minimized = false;
-		bool m_RuntimeActive = false;
-		bool m_CameraPreviewActive = false;
+
+		enum class SceneState
+		{
+			Edit = 0,
+			Play = 1,
+			Pause = 2,
+			Simulate = 3
+		};
+		SceneState m_SceneState = SceneState::Edit;
 		
 		Entity m_HoveredEntity;
 
@@ -52,6 +69,9 @@ namespace CatEngine
 		OrthographicCameraController m_CameraController;
 		Ref<FrameBuffer> m_FrameBuffer;
 
+		// Editor Resources
+		Ref<Texture2D> m_IconStartRuntime,  m_IconStopRuntime;
+
 		int m_GizmoType = -1;
 
 		glm::vec2 m_ViewportSize = { 0.f,0.f };
@@ -59,5 +79,7 @@ namespace CatEngine
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+
+
 	};
 }
