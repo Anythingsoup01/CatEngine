@@ -26,9 +26,8 @@ namespace CatEngine {
 			return Args[index];
 		}
 	};
+
 	class Application {
-
-
 	public:
 		Application(const std::string& name = "CatEngine", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
@@ -47,7 +46,8 @@ namespace CatEngine {
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
-		bool m_Minimized = false;
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+
 	private:
 		ApplicationCommandLineArgs m_CommandLineArgs;
 		LayerStack m_LayerStack;
@@ -60,6 +60,7 @@ namespace CatEngine {
 	private:
 		static Application* s_Instance;
 		bool m_Running = true;
+		bool m_Minimized = false;
 	};
 
 	// Defined in client

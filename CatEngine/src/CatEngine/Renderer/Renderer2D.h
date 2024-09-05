@@ -22,7 +22,7 @@ namespace CatEngine
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(const Camera& camera, glm::mat4& transform);
+		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const EditorCamera& camera); 
 		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
 		static void Flush();
@@ -85,8 +85,8 @@ namespace CatEngine
 		static Statistics GetStats();
 
 	private:
-		static void FlushAndReset();
-		static void ResetData();
+		static void NextBatch();
+		static void StartBatch();
 		static void IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex, int entityID);
 		static glm::mat4 GetTransform(const glm::vec3& position, float rotation, const glm::vec2 size) { return glm::translate(glm::mat4(1.0f), position) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) *

@@ -1,3 +1,4 @@
+
 #include "cepch.h"
 #include "Renderer2D.h"
 
@@ -6,8 +7,10 @@
 #include "CatEngine/Renderer/VertexArray.h"
 #include "CatEngine/Renderer/Shader.h"
 #include "CatEngine/Renderer/RenderCommand.h"
+#include "CatEngine/Renderer/UniformBuffer.h"
 
-#include "CatEngine/Core/Timer.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 namespace CatEngine
@@ -21,7 +24,7 @@ namespace CatEngine
 		float TilingFactor;
 
 		// Editor Only
-		int EntityID = 0;
+		int EntityID;
 	};
 
 	struct Renderer2DData
@@ -53,6 +56,7 @@ namespace CatEngine
 			glm::mat4 ViewProjection;
 		};
 		CameraData CameraBuffer;
+		Ref<UniformBuffer> CameraUniformBuffer;
 
 	};
 
@@ -73,16 +77,13 @@ namespace CatEngine
 			{ ShaderDataType::Vec, "a_TexIndex" },
 			{ ShaderDataType::Vec, "a_TilingFactor" },
 			{ ShaderDataType::Int, "a_EntityID" }
-		});
+			});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-
 
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
-
 		// Index Buffer
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
-
 
 		uint32_t offset = 0;
 		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
@@ -101,7 +102,7 @@ namespace CatEngine
 		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
 		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
-		
+
 		s_Data.DefaultTexture = Texture2D::Create(1, 1);
 		uint32_t defaultTextureData = 0xffffffff;
 		s_Data.DefaultTexture->SetData(&defaultTextureData, sizeof(uint32_t));
@@ -113,23 +114,23 @@ namespace CatEngine
 		}
 
 		s_Data.TextureShader = Shader::Create("assets/shaders/TextureShader.glsl");
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_Texture", samplers, s_Data.MaxTextureSlots);
 
 		s_Data.TextureSlots[0] = s_Data.DefaultTexture;
 
-
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+		s_Data.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+		s_Data.QuadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+
+		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
 
 	}
 	void Renderer2D::Shutdown()
 	{
 
+		delete[] s_Data.QuadVertexBufferBase;
 	}
-	void Renderer2D::ResetData()
+	void Renderer2D::StartBatch()
 	{
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
@@ -138,29 +139,24 @@ namespace CatEngine
 	}
 
 
-	void Renderer2D::BeginScene(const Camera& camera, glm::mat4& transform)
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
 		CE_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
-
-		ResetData();
+		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		CE_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = camera.GetViewProjection();
+		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
-
-
-		ResetData();
+		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
@@ -169,40 +165,38 @@ namespace CatEngine
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-		ResetData();
+		StartBatch();
 
 	}
 	void Renderer2D::Flush()
 	{
 
 		CE_PROFILE_FUNCTION();
+		if (s_Data.QuadIndexCount == 0)
+			return; // Nothing to draw
 
-		// Bind Textures
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
+		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+
+		// Bind textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-		{
 			s_Data.TextureSlots[i]->Bind(i);
-		}
 
-
+		s_Data.TextureShader->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
 	}
 
 
-	void Renderer2D::FlushAndReset()
+	void Renderer2D::NextBatch()
 	{
-		EndScene();
-		
-		ResetData();
+		Flush();
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene()
 	{
 		CE_PROFILE_FUNCTION();
-
-		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
 		Flush();
 	}
 
@@ -251,7 +245,7 @@ namespace CatEngine
 
 		textureCoords = subTexture->GetTexCoord();
 		texture = subTexture->GetTexture();
-		
+
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
 			if (*s_Data.TextureSlots[i].get() == *texture.get())
@@ -275,14 +269,14 @@ namespace CatEngine
 	{
 		DrawQuad(transform, src.Color, entityID);
 	}
-	
+
 	void Renderer2D::ResetStats() { memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics)); }
 	Renderer2D::Statistics Renderer2D::GetStats() { return s_Data.Stats; }
 
 	void Renderer2D::IncrementData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex, int entityID)
 	{
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-			FlushAndReset();
+			NextBatch();
 
 		for (size_t i = 0; i < 4; i++)
 		{

@@ -6,31 +6,30 @@
 namespace CatEngine
 {
 	static const uint32_t s_MaxFrameBufferSize = 8192;
-	namespace Utils
-	{
 
-		static GLenum TextureTarget(bool multiSample)
+	namespace Utils {
+
+		static GLenum TextureTarget(bool multisampled)
 		{
-			return multiSample ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+			return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 		}
 
-		static void CreateTextures(bool multiSample, uint32_t* outID, uint32_t count)
+		static void CreateTextures(bool multisampled, uint32_t* outID, uint32_t count)
 		{
-			glCreateTextures(TextureTarget(multiSample), count, outID);
+			glCreateTextures(TextureTarget(multisampled), count, outID);
 		}
 
-		static void BindTexture(bool multiSample, uint32_t id)
+		static void BindTexture(bool multisampled, uint32_t id)
 		{
-			glBindTexture(TextureTarget(multiSample), id);
+			glBindTexture(TextureTarget(multisampled), id);
 		}
 
 		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
 		{
-			bool multiSample = samples > 1;
-			if (multiSample)
+			bool multisampled = samples > 1;
+			if (multisampled)
 			{
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
-
 			}
 			else
 			{
@@ -43,16 +42,15 @@ namespace CatEngine
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multiSample), id, 0);
-
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), id, 0);
 		}
+
 		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
 		{
-			bool multiSample = samples > 1;
-			if (multiSample)
+			bool multisampled = samples > 1;
+			if (multisampled)
 			{
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
-
 			}
 			else
 			{
@@ -65,16 +63,16 @@ namespace CatEngine
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multiSample), id, 0);
-
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
 		}
 
 		static bool IsDepthFormat(FrameBufferTextureFormat format)
 		{
 			switch (format)
 			{
-				case FrameBufferTextureFormat::DEPTH24STENCIL8: return true;
+			case FrameBufferTextureFormat::DEPTH24STENCIL8:  return true;
 			}
+
 			return false;
 		}
 
@@ -82,14 +80,11 @@ namespace CatEngine
 		{
 			switch (format)
 			{
-			case CatEngine::FrameBufferTextureFormat::RGBA8: return GL_RGBA8;
-				break;
-			case CatEngine::FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
-				break;
-			case CatEngine::FrameBufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
-				break;
+			case FrameBufferTextureFormat::RGBA8:       return GL_RGBA8;
+			case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
 			}
-			API_ASSERT(false, "Format not supported!");
+
+			API_ASSERT(false, "");
 			return 0;
 		}
 
@@ -119,18 +114,19 @@ namespace CatEngine
 			else
 				m_DepthAttachmentSpec = spec;
 		}
+
 		Invalidate();
 	}
+
 	OpenGLFrameBuffer::~OpenGLFrameBuffer()
 	{
-		CE_PROFILE_FUNCTION();
 		glDeleteFramebuffers(1, &m_RendererID);
 		glDeleteTextures((GLsizei)m_ColorAttachments.size(), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
+
 	void OpenGLFrameBuffer::Invalidate()
 	{
-		CE_PROFILE_FUNCTION();
 		if (m_RendererID)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
@@ -140,41 +136,42 @@ namespace CatEngine
 			m_ColorAttachments.clear();
 			m_DepthAttachment = 0;
 		}
+
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-		bool multiSample = m_Specification.Samples > 1;
+		bool multisample = m_Specification.Samples > 1;
 
 		// Attachments
-
 		if (m_ColorAttachmentSpecs.size())
 		{
-			m_ColorAttachments.resize((size_t)m_ColorAttachmentSpecs.size());
-			Utils::CreateTextures(multiSample, m_ColorAttachments.data(), m_ColorAttachments.size());
+			m_ColorAttachments.resize(m_ColorAttachmentSpecs.size());
+			Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
 
-			for (size_t i = 0; i < m_ColorAttachmentSpecs.size(); i++)
+			for (size_t i = 0; i < m_ColorAttachments.size(); i++)
 			{
-				Utils::BindTexture(multiSample, m_ColorAttachments[i]);
+				Utils::BindTexture(multisample, m_ColorAttachments[i]);
 				switch (m_ColorAttachmentSpecs[i].TextureFormat)
 				{
-					case FrameBufferTextureFormat::RGBA8:
-						Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, (int)i);
-						break;
-					case FrameBufferTextureFormat::RED_INTEGER:
-						Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, (int)i);
-						break;
+				case FrameBufferTextureFormat::RGBA8:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+					break;
+				case FrameBufferTextureFormat::RED_INTEGER:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
+					break;
 				}
 			}
 		}
 
 		if (m_DepthAttachmentSpec.TextureFormat != FrameBufferTextureFormat::None)
 		{
-			Utils::CreateTextures(multiSample, &m_DepthAttachment, 1);
-			Utils::BindTexture(multiSample, m_DepthAttachment);
+			Utils::CreateTextures(multisample, &m_DepthAttachment, 1);
+			Utils::BindTexture(multisample, m_DepthAttachment);
 			switch (m_DepthAttachmentSpec.TextureFormat)
 			{
 			case FrameBufferTextureFormat::DEPTH24STENCIL8:
 				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+				break;
 			}
 		}
 
@@ -186,17 +183,17 @@ namespace CatEngine
 		}
 		else if (m_ColorAttachments.empty())
 		{
-			// Only Depth pass
+			// Only depth-pass
 			glDrawBuffer(GL_NONE);
 		}
 
-		API_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "GL_FRAMEBUFFER Incomplete!")
+		API_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "FrameBuffer is incomplete!");
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+
 	void OpenGLFrameBuffer::Bind()
 	{
-		CE_PROFILE_FUNCTION();
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 
@@ -205,16 +202,17 @@ namespace CatEngine
 		int value = -1;
 		glClearTexImage(m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &value);
 	}
+
 	void OpenGLFrameBuffer::Unbind()
 	{
-		CE_PROFILE_FUNCTION();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+
 	void OpenGLFrameBuffer::SetSize(uint32_t width, uint32_t height)
 	{
-		CE_PROFILE_FUNCTION();
 		if (width == 0 || height == 0 || width > s_MaxFrameBufferSize || height > s_MaxFrameBufferSize)
 		{
+			CE_API_WARN("Attempted to rezize framebuffer to {0}, {1}", width, height);
 			return;
 		}
 		m_Specification.Width = width;
@@ -222,20 +220,24 @@ namespace CatEngine
 
 		Invalidate();
 	}
+
 	int OpenGLFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
-		API_ASSERT(attachmentIndex < m_ColorAttachments.size(), "Attachment index out of range!");
+		API_ASSERT(attachmentIndex < m_ColorAttachments.size(), "");
+
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 		return pixelData;
+
 	}
+
 	void OpenGLFrameBuffer::ClearColorAttachmentI(uint32_t attachmentIndex, int value)
 	{
-		API_ASSERT(attachmentIndex < m_ColorAttachments.size(), "Attachment index out of range!");
+		API_ASSERT(attachmentIndex < m_ColorAttachments.size(), "");
+
 		auto& spec = m_ColorAttachmentSpecs[attachmentIndex];
-
-		glClearTexImage(m_ColorAttachments[attachmentIndex], 0, Utils::CatEngineTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
-
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
+			Utils::CatEngineTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
 	}
 }
