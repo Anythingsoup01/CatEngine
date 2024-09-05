@@ -382,3 +382,5 @@ FodyWeavers.xsd
 /CatEngine/CatEngine.vcxproj.filters
 /CatEngine/CatEngine.vcxproj
 /CatEngine/vendors/VulkanSDK
+*.frag
+*.vert
