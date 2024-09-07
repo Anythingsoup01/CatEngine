@@ -1,16 +1,38 @@
 Scene: SampleScene
 Entities:
-  - Entity: 17514401453993463474
+  - Entity: 2031321747254679876
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Top
+      Name: Camera
     TransformComponent:
-      Position: [0, 0.5, 2.98023224e-08]
-      Rotation: [-1.57079637, 0, 0]
-      Scale: [1, 0.999995351, 0.999995351]
+      Position: [0, 1.09342635, 1.94351339]
+      Rotation: [-0.462581336, 0, 0]
+      Scale: [1, 0.999999762, 0.999999762]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 10000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 1284473113126203845
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Left
+    TransformComponent:
+      Position: [0, 0, 0.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       Texture: assets\textures\checkered.png
@@ -30,17 +52,17 @@ Entities:
       Color: [1, 1, 1, 1]
       Texture: assets\textures\checkered.png
       Tiling: 1
-  - Entity: 1284473113126203845
+  - Entity: 17514401453993463474
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Left
+      Name: Top
     TransformComponent:
-      Position: [0, 0, 0.5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Position: [0, 0.5, 2.98023224e-08]
+      Rotation: [-1.57079637, 0, 0]
+      Scale: [1, 0.999995351, 0.999995351]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       Texture: assets\textures\checkered.png

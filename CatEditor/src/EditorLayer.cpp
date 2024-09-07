@@ -200,20 +200,20 @@ namespace CatEngine
 
             uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
             ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
-
-            if (ImGui::BeginDragDropTarget())
-            {
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
+            if (m_SceneState != SceneState::Play)
+                if (ImGui::BeginDragDropTarget())
                 {
-                    const wchar_t* path = (const wchar_t*)payload->Data;
-                    std::filesystem::path filePath = std::filesystem::path("assets") / path;
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload  ("ASSET_MANAGER_ITEM"))
+                    {
+                        const wchar_t* path = (const wchar_t*)payload->Data;
+                        std::filesystem::path filePath = std::filesystem::path("assets") / path;
 
-                    OpenScene(filePath);
-                    m_SceneFilePath = filePath.string();
+                        OpenScene(filePath);
+                        m_SceneFilePath = filePath.string();
+                    }
+
+                    ImGui::EndDragDropTarget();
                 }
-
-                ImGui::EndDragDropTarget();
-            }
 
 
             // Gizmos
@@ -435,17 +435,21 @@ namespace CatEngine
         SceneSerializer serializer(newScene);
         if (serializer.Deserialize(filePath.string()))
         {
-            m_ActiveScene = newScene;
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_EditorScene = newScene;
+
+            m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_ActiveScene = m_EditorScene;
             m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
         }
     }
 
     void EditorLayer::NewScene()
     {
         m_SceneFilePath = "";
-        m_ActiveScene = CreateRef<Scene>();
-        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_EditorScene = CreateRef<Scene>();
+        m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_ActiveScene = m_EditorScene;
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
@@ -460,13 +464,17 @@ namespace CatEngine
 
     void EditorLayer::OnScenePlay()
     {
+        m_ActiveScene = Scene::Copy(m_EditorScene);
         m_ActiveScene->OnRuntimeStart();
+
         m_SceneState = SceneState::Play;
     }
 
     void EditorLayer::OnSceneStop()
     {
         m_ActiveScene->OnRuntimeStop();
+        m_ActiveScene = m_EditorScene;
+
         m_SceneState = SceneState::Edit;
     }
 }

@@ -38,6 +38,55 @@ namespace CatEngine
 	{
 	}
 
+	template<typename Component>
+	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		auto view = src.view<Component>();
+		for (auto e : view)
+		{
+			UUID uuid = src.get<IDComponent>(e).ID;
+			entt::entity dstEnttID = enttMap.at(uuid);
+
+			auto& component = src.get<Component>(e);
+			dst.emplace_or_replace<Component>(dstEnttID, component);
+		}
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> src)
+	{
+		Ref<Scene> dst = CreateRef<Scene>();
+
+		dst->m_ViewportWidth = src->m_ViewportWidth;
+		dst->m_ViewportHeight = src->m_ViewportHeight;
+
+		auto& srcSceneRegistry = src->m_Registry;
+		auto& dstSceneRegistry = dst->m_Registry;
+		std::unordered_map<UUID, entt::entity> enttMap;
+
+		// Create Entities in new scene
+		auto idView = srcSceneRegistry.view<IDComponent>();
+		for (auto e : idView)
+		{
+			UUID uuid = srcSceneRegistry.get<IDComponent>(e).ID;
+			const auto& name = srcSceneRegistry.get<NameComponent>(e).Name;
+			enttMap[uuid] = dst->CreateEntityWithUUID(uuid, name);
+		}
+
+		// Copy Components (except IDComponent & NameComponent);
+
+		CopyComponent<TagComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<LayerComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+
+		return dst;
+
+	}
+
 	void Scene::OnUpdateEditor(Time ts, EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);

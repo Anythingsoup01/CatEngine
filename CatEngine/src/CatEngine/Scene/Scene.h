@@ -19,6 +19,9 @@ namespace CatEngine
 		Scene();
 		~Scene();
 
+		static Ref<Scene> Copy(Ref<Scene> other);
+
+
 		Entity CreateEntity(const std::string& name = std::string());
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DeleteEntity(Entity entity);
@@ -29,7 +32,6 @@ namespace CatEngine
 		void OnUpdateRuntime(Time time);
 		void OnUpdateEditor(Time time, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
-
 
 
 		Entity GetPrimaryCameraEntity();

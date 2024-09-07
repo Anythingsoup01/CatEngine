@@ -65,6 +65,7 @@ namespace CatEngine
 
 		EditorCamera m_EditorCamera;
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene, m_RuntimeScene;
 
 		OrthographicCameraController m_CameraController;
 		Ref<Framebuffer> m_Framebuffer;
