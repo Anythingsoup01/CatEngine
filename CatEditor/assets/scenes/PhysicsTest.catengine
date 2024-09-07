@@ -1,16 +1,91 @@
 Scene: SampleScene
 Entities:
+  - Entity: 6442554129421443828
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Ground
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [10, 0.5, 1]
+    SpriteRendererComponent:
+      Color: [0.342129409, 0.415887833, 0.161302283, 1]
+      Texture: ""
+      Tiling: 1
+    Rigidbody2DComponent:
+      BodyType: 0
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 3382618607833801535
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: RightWall
+    TransformComponent:
+      Position: [4.74805117, 4.75, 0]
+      Rotation: [0, 0, -1.57079637]
+      Scale: [9.99958324, 0.499987274, 1]
+    SpriteRendererComponent:
+      Color: [0.342129409, 0.415887833, 0.161302283, 1]
+      Texture: ""
+      Tiling: 1
+    Rigidbody2DComponent:
+      BodyType: 0
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 10999196957486513909
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Ceiling
+    TransformComponent:
+      Position: [0, 9.5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [10, 0.5, 1]
+    SpriteRendererComponent:
+      Color: [0.342129409, 0.415887833, 0.161302283, 1]
+      Texture: ""
+      Tiling: 1
+    Rigidbody2DComponent:
+      BodyType: 0
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
   - Entity: 312506798386891276
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Static Body
+      Name: LeftWall
     TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [10, 0.5, 1]
+      Position: [-4.75194883, 4.74999952, 0]
+      Rotation: [0, 0, -1.57079637]
+      Scale: [9.99942875, 0.499982446, 1]
     SpriteRendererComponent:
       Color: [0.342129409, 0.415887833, 0.161302283, 1]
       Texture: ""
@@ -31,7 +106,7 @@ Entities:
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Dynamic Body
+      Name: Heavy Cube
     TransformComponent:
       Position: [-0.00193208503, 2.4129293, 0]
       Rotation: [0, 0, 0.000277577143]
@@ -58,7 +133,7 @@ Entities:
     NameComponent:
       Name: Camera
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [0, 4.75, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
@@ -72,3 +147,28 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+  - Entity: 11458326440216624648
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Bouncy Cube
+    TransformComponent:
+      Position: [-0.00252437685, 4.54672003, 0]
+      Rotation: [0, 0, 0.000277577929]
+      Scale: [0.499994874, 0.499994874, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.257009327, 0.257009327, 1]
+      Texture: ""
+      Tiling: 1
+    Rigidbody2DComponent:
+      BodyType: 2
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 3.8499999
+      RestitutionThreshold: 0.5
