@@ -1,5 +1,5 @@
 #pragma once
-#include "CatEngine/Core/GraphicsContext.h"
+#include "CatEngine/Renderer/GraphicsContext.h"
 
 struct GLFWwindow;
 
