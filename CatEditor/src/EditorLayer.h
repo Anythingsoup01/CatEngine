@@ -32,25 +32,30 @@ namespace CatEngine
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& filePath);
 		
+		void NewScene();
+		
 		void OnScenePlay();
 		void OnSceneStop();
+
+		void DuplicateEntity();
+		void DeleteEntity();
 
 		// TODO: Implement pausing and simulating physics
 		void OnScenePause() {}
 		void OnSceneSimulate() {}
 
 
-		void NewScene();
 		// UI Panels
 		void UI_Toolbar();
 
 	private:
 
-		std::string m_SceneFilePath;
+		std::filesystem::path m_SceneFilePath;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 
 		bool m_Minimized = false;
+		bool m_BlockEvents = false;
 
 		enum class SceneState
 		{

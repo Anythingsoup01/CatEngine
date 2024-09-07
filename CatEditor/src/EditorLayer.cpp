@@ -79,7 +79,7 @@ namespace CatEngine
             case SceneState::Edit:
             {
                 // Update Camera
-                if (!ImGuizmo::IsUsing())
+                if (!ImGuizmo::IsUsing() && !m_BlockEvents)
                     m_EditorCamera.OnUpdate(time);
 
                 m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
@@ -97,7 +97,6 @@ namespace CatEngine
         my -= m_ViewportBounds[0].y;
         glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
         my = viewportSize.y - my;
-
 
         int mouseX = (int)mx;
         int mouseY = (int)my;
@@ -193,7 +192,7 @@ namespace CatEngine
 
             m_ViewportFocused = ImGui::IsWindowFocused();
             m_ViewportHovered = ImGui::IsWindowHovered();
-            Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+            m_BlockEvents = Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
             
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
             m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -209,7 +208,7 @@ namespace CatEngine
                         std::filesystem::path filePath = std::filesystem::path("assets") / path;
 
                         OpenScene(filePath);
-                        m_SceneFilePath = filePath.string();
+                        m_SceneFilePath = filePath;
                     }
 
                     ImGui::EndDragDropTarget();
@@ -331,6 +330,20 @@ namespace CatEngine
         bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
         switch (e.GetKeyCode())
         {
+            case (int)KeyCode::D:
+            {
+                if (control && shift)
+                {
+                }
+                else if (control)
+                    DuplicateEntity();
+                break;
+            }
+            case (int)KeyCode::V:
+            {
+
+                break;
+            }
             case (int)KeyCode::S :
             {
                 if (control && shift)
@@ -380,6 +393,10 @@ namespace CatEngine
                 m_GizmoType = ImGuizmo::OPERATION::SCALE;
                 break;
             }
+            case (int)KeyCode::Delete:
+            {
+                DeleteEntity();
+            }
             default:
                 break;
         }
@@ -402,7 +419,7 @@ namespace CatEngine
         if (!m_SceneFilePath.empty())
         {
             SceneSerializer serializer(m_ActiveScene);
-            serializer.Serialize(m_SceneFilePath);
+            serializer.Serialize(m_SceneFilePath.string());
         }
     }
 
@@ -412,7 +429,7 @@ namespace CatEngine
         {
             SceneSerializer serializer(m_ActiveScene);
 
-            serializer.Serialize(m_SceneFilePath);
+            serializer.Serialize(m_SceneFilePath.string());
         }
         else SaveSceneAs();
     }
@@ -446,7 +463,7 @@ namespace CatEngine
 
     void EditorLayer::NewScene()
     {
-        m_SceneFilePath = "";
+        m_SceneFilePath = std::filesystem::path();
         m_EditorScene = CreateRef<Scene>();
         m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_ActiveScene = m_EditorScene;
@@ -466,6 +483,7 @@ namespace CatEngine
     {
         m_ActiveScene = Scene::Copy(m_EditorScene);
         m_ActiveScene->OnRuntimeStart();
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
         m_SceneState = SceneState::Play;
     }
@@ -474,7 +492,25 @@ namespace CatEngine
     {
         m_ActiveScene->OnRuntimeStop();
         m_ActiveScene = m_EditorScene;
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
         m_SceneState = SceneState::Edit;
+    }
+    void EditorLayer::DuplicateEntity()
+    {
+        Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();
+        if (entity)
+        {
+            m_ActiveScene->DuplicateEntity(entity);
+        }
+    }
+    void EditorLayer::DeleteEntity()
+    {
+        Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();
+        if (entity)
+        {
+            m_ActiveScene->DeleteEntity(entity);
+            m_SceneHierarchyPanel.SetSelectedEntity();
+        }
     }
 }
