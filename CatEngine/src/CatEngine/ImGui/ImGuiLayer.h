@@ -22,7 +22,7 @@ namespace CatEngine {
 		void Begin();
 		void End();
 
-		void BlockEvents(bool block) { m_BlockEvents = block; }
+		bool BlockEvents(bool block) { m_BlockEvents = block; return block; }
 		void SetDarkThemeColors();
 		void SetDefaultEditorStyle();
 	private:

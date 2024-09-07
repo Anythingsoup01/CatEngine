@@ -67,7 +67,6 @@ namespace CatEngine {
 		if (m_BlockEvents) {
 			ImGuiIO& io = ImGui::GetIO();
 			e.Handled |= e.IsInCategory(CategoryMouseEvent) & io.WantCaptureMouse;
-			e.Handled |= e.IsInCategory(CategoryKeyboardEvent) & io.WantCaptureKeyboard;
 		}
 	}
 
