@@ -67,7 +67,7 @@ namespace CatEngine
 		Ref<Scene> m_ActiveScene;
 
 		OrthographicCameraController m_CameraController;
-		Ref<FrameBuffer> m_FrameBuffer;
+		Ref<Framebuffer> m_Framebuffer;
 
 		// Editor Resources
 		Ref<Texture2D> m_IconStartRuntime,  m_IconStopRuntime;

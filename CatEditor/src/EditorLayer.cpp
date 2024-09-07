@@ -24,11 +24,11 @@ namespace CatEngine
         m_IconStartRuntime = Texture2D::Create("Resources/Icons/Editor/Start-Runtime.png");
         m_IconStopRuntime = Texture2D::Create("Resources/Icons/Editor/Stop-Runtime.png");
 
-        FrameBufferSpecification fbSpec;
-        fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
+        FramebufferSpecification fbSpec;
+        fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
-        m_FrameBuffer = FrameBuffer::Create(fbSpec);
+        m_Framebuffer = Framebuffer::Create(fbSpec);
 
         // Entity
         m_ActiveScene = CreateRef<Scene>();
@@ -56,11 +56,11 @@ namespace CatEngine
 
         //Resize
 
-        if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+        if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
-            m_FrameBuffer->SetSize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
@@ -68,10 +68,10 @@ namespace CatEngine
         // Render
         Renderer2D::ResetStats();
 
-        m_FrameBuffer->Bind();
+        m_Framebuffer->Bind();
         RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
-        m_FrameBuffer->ClearColorAttachmentI(1, -1);
+        m_Framebuffer->ClearAttachment(1, -1);
 
         // Update Scene
         switch (m_SceneState)
@@ -104,12 +104,12 @@ namespace CatEngine
 
         if ((mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y))
         {
-            int pixelData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
+            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
             m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }
 
 
-        m_FrameBuffer->Unbind();
+        m_Framebuffer->Unbind();
     }
 
     void EditorLayer::OnImGuiDraw()
@@ -198,7 +198,7 @@ namespace CatEngine
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
             m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-            uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
+            uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
             ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 
             if (ImGui::BeginDragDropTarget())
