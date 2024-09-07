@@ -16,6 +16,3 @@
 [submodule "CatEngine/vendors/ImGuizmo"]
 	path = CatEngine/vendors/ImGuizmo
 	url = https://github.com/Anythingsoup01/ImGuizmo.git
-[submodule "CatEngine/vendors/Box2D"]
-	path = CatEngine/vendors/Box2D
-	url = https://github.com/Anythingsoup01/box2d
