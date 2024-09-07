@@ -34,6 +34,7 @@ namespace CatEngine
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		void DuplicateEntity(Entity entity);
+		Entity PasteEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
 	private:

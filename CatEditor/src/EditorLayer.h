@@ -37,8 +37,12 @@ namespace CatEngine
 		void OnScenePlay();
 		void OnSceneStop();
 
+		// Key-bound funcitons
+
 		void DuplicateEntity();
 		void DeleteEntity();
+		void CopyEntity();
+		void PasteEntity();
 
 		// TODO: Implement pausing and simulating physics
 		void OnScenePause() {}
@@ -67,6 +71,8 @@ namespace CatEngine
 		SceneState m_SceneState = SceneState::Edit;
 		
 		Entity m_HoveredEntity;
+
+		Entity m_CopiedEntity;
 
 		EditorCamera m_EditorCamera;
 		Ref<Scene> m_ActiveScene;

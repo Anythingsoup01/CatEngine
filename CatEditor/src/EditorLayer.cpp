@@ -330,6 +330,15 @@ namespace CatEngine
         bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
         switch (e.GetKeyCode())
         {
+            case (int)KeyCode::C:
+            {
+                if (control && shift)
+                {
+                }
+                else if (control)
+                    CopyEntity();
+                break;
+            }
             case (int)KeyCode::D:
             {
                 if (control && shift)
@@ -341,7 +350,11 @@ namespace CatEngine
             }
             case (int)KeyCode::V:
             {
-
+                if (control && shift)
+                {
+                }
+                else if (control)
+                    PasteEntity();
                 break;
             }
             case (int)KeyCode::S :
@@ -511,6 +524,23 @@ namespace CatEngine
         {
             m_ActiveScene->DeleteEntity(entity);
             m_SceneHierarchyPanel.SetSelectedEntity();
+        }
+    }
+    void EditorLayer::CopyEntity()
+    {
+        Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();
+        if (entity)
+        {
+            m_CopiedEntity = entity;
+        }
+    }
+    void EditorLayer::PasteEntity()
+    {
+        if (m_CopiedEntity)
+        {
+            // TODO : Make it to where entity doesn't need to exist
+            Entity pastedEntity = m_ActiveScene->PasteEntity(m_CopiedEntity);
+            m_SceneHierarchyPanel.SetSelectedEntity(pastedEntity);
         }
     }
 }

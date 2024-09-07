@@ -205,6 +205,11 @@ namespace CatEngine
 
 	void Scene::DuplicateEntity(Entity entity)
 	{
+		PasteEntity(entity);
+	}
+
+	Entity Scene::PasteEntity(Entity entity)
+	{
 		Entity newEntity = CreateEntity(entity.GetName() + "(Copied from " + entity.GetName() + ")");
 		CopyComponentIfExists<TagComponent>(newEntity, entity);
 		CopyComponentIfExists<LayerComponent>(newEntity, entity);
@@ -214,6 +219,7 @@ namespace CatEngine
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+		return newEntity;
 	}
 	Entity Scene::GetPrimaryCameraEntity()
 	{
