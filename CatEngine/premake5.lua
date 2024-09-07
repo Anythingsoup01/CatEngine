@@ -24,6 +24,7 @@ project "CatEngine"
 	includedirs{
 		"src",
 		"vendors/spdlog/include",
+		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
@@ -41,6 +42,7 @@ project "CatEngine"
 	}
 
 	links{
+		"Box2D",
 		"GLFW",
 		"Glad",
 		"ImGui",

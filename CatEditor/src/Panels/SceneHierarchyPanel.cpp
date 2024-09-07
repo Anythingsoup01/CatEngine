@@ -81,6 +81,18 @@ namespace CatEngine
 						m_SelectionContext.AddComponent<SpriteRendererComponent>();
 						ImGui::CloseCurrentPopup();
 					}
+				if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
+					if (ImGui::MenuItem("Rigidbody 2D"))
+					{
+						m_SelectionContext.AddComponent<Rigidbody2DComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+				if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
+					if (ImGui::MenuItem("BoxCollider 2D"))
+					{
+						m_SelectionContext.AddComponent<BoxCollider2DComponent>();
+						ImGui::CloseCurrentPopup();
+					}
 				ImGui::EndPopup();
 			}
 
@@ -171,6 +183,7 @@ namespace CatEngine
 		}
 	}
 
+
 	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.f, float columnWidth = 100.f)
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -225,6 +238,55 @@ namespace CatEngine
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.f, 0.f, "%.2f");
+		ImGui::PopItemWidth();
+
+		ImGui::PopStyleVar();
+
+		ImGui::Columns(1);
+
+		ImGui::PopID();
+	}
+
+	static void DrawVec2Control(const std::string& label, glm::vec2& values, float columnWidth = 100.f)
+	{
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+
+		ImGui::DragFloat("##X", &values.x, 0.1f, 0.f, 0.f, "%.2f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.f, 0.f, "%.2f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::PopStyleVar();
+
+		ImGui::Columns(1);
+
+		ImGui::PopID();
+	}
+
+	static void DrawVec1Control(const std::string& label, float& value, float columnWidth = 100.f)
+	{
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+
+		ImGui::DragFloat("##X", &value, 0.1f, 0.f, 1000.f, "%.2f");
 		ImGui::PopItemWidth();
 
 		ImGui::PopStyleVar();
@@ -369,6 +431,50 @@ namespace CatEngine
 					camera.SetOrthographicFarClip(farClip);
 			}
 		});
+
+		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", selection, [](auto& component)
+			{
+				const char* bodyTypeString[] = { "Static", "Kinematic", "Dynamic" };
+				const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
+				if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						bool isSelected = currentBodyTypeString == bodyTypeString[i];
+						if (ImGui::Selectable(bodyTypeString[i], &isSelected))
+						{
+							currentBodyTypeString = bodyTypeString[i];
+							component.Type = (Rigidbody2DComponent::BodyType)i;
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+
+					}
+					ImGui::EndCombo();
+				}
+
+				ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+			});
+
+		DrawComponent<BoxCollider2DComponent>("BoxCollider 2D", selection, [](auto& component)
+			{
+				glm::vec2& offset = component.Offset;
+				glm::vec2& size = component.Size;
+
+				float& density = component.Density;
+				float& friction = component.Friction;
+				float& restitution = component.Restitution;
+				float& restitutionThreshold = component.RestitutionThreshold;
+
+				DrawVec2Control("Offset", component.Offset);
+				DrawVec2Control("Size", component.Size);
+
+				DrawVec1Control("Density", component.Density);
+				DrawVec1Control("Friction", component.Friction);
+				DrawVec1Control("Restitution", component.Restitution);
+				DrawVec1Control("Restitution Threshold", component.RestitutionThreshold);
+			});
 
 		DrawComponent<NativeScriptComponent>("Script", selection, [](auto& component) 
 		{

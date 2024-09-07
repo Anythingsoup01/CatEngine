@@ -25,6 +25,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 
 group "Dependencies"
+	include "CatEngine/vendors/Box2D"
 	include "CatEngine/vendors/GLFW"
 	include "CatEngine/vendors/Glad"
 	include "CatEngine/vendors/ImGui"
