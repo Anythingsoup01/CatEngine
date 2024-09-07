@@ -51,9 +51,9 @@ namespace CatEngine {
 		{
 		}
 
-		uint32_t GetComponentCount(ShaderDataType type) const
+		uint32_t GetComponentCount() const
 		{
-			switch (type) 
+			switch (Type) 
 			{
 				case ShaderDataType::Vec:  return 1;
 				case ShaderDataType::Vec2: return 2;

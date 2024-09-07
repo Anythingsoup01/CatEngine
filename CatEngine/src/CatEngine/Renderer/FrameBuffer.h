@@ -2,10 +2,9 @@
 
 #include "CatEngine/Core/Core.h"
 
-namespace CatEngine
-{
+namespace CatEngine {
 
-	enum class FrameBufferTextureFormat
+	enum class FramebufferTextureFormat
 	{
 		None = 0,
 
@@ -13,57 +12,60 @@ namespace CatEngine
 		RGBA8,
 		RED_INTEGER,
 
-		// Depth/Stencil
+		// Depth/stencil
 		DEPTH24STENCIL8,
 
 		// Defaults
-		Depth = DEPTH24STENCIL8,
+		Depth = DEPTH24STENCIL8
 	};
 
-	struct FrameBufferTextureSpecification
+	struct FramebufferTextureSpecification
 	{
-		FrameBufferTextureSpecification() = default;
-		FrameBufferTextureSpecification(FrameBufferTextureFormat format)
+		FramebufferTextureSpecification() = default;
+		FramebufferTextureSpecification(FramebufferTextureFormat format)
 			: TextureFormat(format) {}
 
-		FrameBufferTextureFormat TextureFormat = FrameBufferTextureFormat::None;
+		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
 		// TODO: filtering/wrap
 	};
 
-	struct FrameBufferAttachmentSpecification
+	struct FramebufferAttachmentSpecification
 	{
-		FrameBufferAttachmentSpecification() = default;
-		FrameBufferAttachmentSpecification(std::initializer_list<FrameBufferTextureSpecification> attatchments)
-			: Attachments(attatchments) {}
+		FramebufferAttachmentSpecification() = default;
+		FramebufferAttachmentSpecification(std::initializer_list<FramebufferTextureSpecification> attachments)
+			: Attachments(attachments) {}
 
-		std::vector<FrameBufferTextureSpecification> Attachments;
+		std::vector<FramebufferTextureSpecification> Attachments;
 	};
 
-	struct FrameBufferSpecification
+	struct FramebufferSpecification
 	{
-		uint32_t Width, Height;
-		FrameBufferAttachmentSpecification Attachments;
+		uint32_t Width = 0, Height = 0;
+		FramebufferAttachmentSpecification Attachments;
 		uint32_t Samples = 1;
 
 		bool SwapChainTarget = false;
 	};
 
-	class FrameBuffer
+	class Framebuffer
 	{
 	public:
-		//virtual FrameBufferSpecification& GetSpecification() = 0;
-		virtual ~FrameBuffer() = default;
+		virtual ~Framebuffer() = default;
+
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
-		virtual void SetSize(uint32_t width, uint32_t height) = 0;
+		virtual void Resize(uint32_t width, uint32_t height) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
-		
-		virtual void ClearColorAttachmentI(uint32_t attachmentIndex, int value) = 0;
 
-		virtual const FrameBufferSpecification& GetSpecification() const = 0;
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
+
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
 
-		static Ref<FrameBuffer> Create(const FrameBufferSpecification& spec);
+		virtual const FramebufferSpecification& GetSpecification() const = 0;
+
+		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 	};
+
+
 }

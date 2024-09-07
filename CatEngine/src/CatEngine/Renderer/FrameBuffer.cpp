@@ -1,19 +1,22 @@
 #include "cepch.h"
-#include "FrameBuffer.h"
+#include "CatEngine/Renderer/Framebuffer.h"
 
 #include "CatEngine/Renderer/Renderer.h"
-#include "Platform/OpenGL/Renderer/OpenGLFrameBuffer.h"
 
-namespace CatEngine
-{
-	Ref<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& spec)
+#include "Platform/OpenGL/Renderer/OpenGLFramebuffer.h"
+
+namespace CatEngine {
+
+	Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 	{
 		switch (Renderer::GetCurrentAPI())
 		{
-		case RendererAPI::API::None:       API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;
-		case RendererAPI::API::OpenGL:     return std::make_shared<OpenGLFrameBuffer>(spec);
+		case RendererAPI::API::None:    API_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
 		}
-		API_ASSERT(false, "Unknown Renderer API!");
+
+		API_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
+
 }
