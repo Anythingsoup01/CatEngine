@@ -45,6 +45,7 @@ namespace CatEngine
 		for (auto e : view)
 		{
 			UUID uuid = src.get<IDComponent>(e).ID;
+			API_ASSERT(enttMap.find(uuid) != enttMap.end(), "ID Not found!");
 			entt::entity dstEnttID = enttMap.at(uuid);
 
 			auto& component = src.get<Component>(e);
@@ -194,6 +195,26 @@ namespace CatEngine
 			}
 		}
 	}
+
+	template<typename Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<Component>())
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+	}
+
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		Entity newEntity = CreateEntity(entity.GetName() + "(Copied from " + entity.GetName() + ")");
+		CopyComponentIfExists<TagComponent>(newEntity, entity);
+		CopyComponentIfExists<LayerComponent>(newEntity, entity);
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
+		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+	}
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();
@@ -218,7 +239,6 @@ namespace CatEngine
 		tag.Tag = "None";
 		auto& layer = entity.AddComponent<LayerComponent>();
 		layer.Layer = "Default";
-
 		auto& entityName = entity.AddComponent<NameComponent>();
 		entityName.Name = name.empty() ? "GameObject" : name;
 
