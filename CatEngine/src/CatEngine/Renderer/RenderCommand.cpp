@@ -4,5 +4,5 @@
 #include "Platform/OpenGL/Renderer/OpenGLRendererAPI.h"
 
 namespace CatEngine {
-	RendererAPI* RenderCommand::s_API = new OpenGLRendererAPI;
+	Scope<RendererAPI> RenderCommand::s_RendererAPI = RendererAPI::Create();
 }

@@ -11,21 +11,21 @@ namespace CatEngine {
 	public:
 		static inline void Init()
 		{
-			s_API->Init();
+			s_RendererAPI->Init();
 		}
 		static inline void Clear(const glm::vec4 clearColor) {
-			s_API->Clear(clearColor);
+			s_RendererAPI->Clear(clearColor);
 		}
 		static inline void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) {
-			s_API->DrawIndexed(vertexArray , indexCount);
+			s_RendererAPI->DrawIndexed(vertexArray , indexCount);
 		}
 
 		static inline void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 		{
-			s_API->SetViewport(x, y, width, height);
+			s_RendererAPI->SetViewport(x, y, width, height);
 		}
 
 	private:
-		static RendererAPI* s_API;
+		static Scope<RendererAPI> s_RendererAPI;
 	};
 }

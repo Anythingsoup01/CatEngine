@@ -54,63 +54,61 @@ namespace CatEngine {
 		{
 			switch (element.Type)
 			{
-				case ShaderDataType::Vec:
-				case ShaderDataType::Vec2:
-				case ShaderDataType::Vec3:
-				case ShaderDataType::Vec4:
+			case ShaderDataType::Vec:
+			case ShaderDataType::Vec2:
+			case ShaderDataType::Vec3:
+			case ShaderDataType::Vec4:
+			{
+				glEnableVertexAttribArray(m_VertexBufferIndex);
+				glVertexAttribPointer(m_VertexBufferIndex,
+					element.GetComponentCount(),
+					ShaderDataTypeToGLBaseType(element.Type),
+					element.Normalized ? GL_TRUE : GL_FALSE,
+					layout.GetStride(),
+					(const void*)element.Offset);
+				m_VertexBufferIndex++;
+				break;
+			}
+			case ShaderDataType::Int:
+			case ShaderDataType::Int2:
+			case ShaderDataType::Int3:
+			case ShaderDataType::Int4:
+			case ShaderDataType::Bool:
+			{
+				glEnableVertexAttribArray(m_VertexBufferIndex);
+				glVertexAttribIPointer(m_VertexBufferIndex,
+					element.GetComponentCount(),
+					ShaderDataTypeToGLBaseType(element.Type),
+					layout.GetStride(),
+					(const void*)element.Offset);
+				m_VertexBufferIndex++;
+				break;
+			}
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4:
+			{
+				uint8_t count = element.GetComponentCount();
+				for (uint8_t i = 0; i < count; i++)
 				{
 					glEnableVertexAttribArray(m_VertexBufferIndex);
-					glVertexAttribPointer(
-						m_VertexBufferIndex,
-						element.GetComponentCount(element.Type),
+					glVertexAttribPointer(m_VertexBufferIndex,
+						count,
 						ShaderDataTypeToGLBaseType(element.Type),
 						element.Normalized ? GL_TRUE : GL_FALSE,
 						layout.GetStride(),
-						(const void*)element.Offset);
+						(const void*)(element.Offset + sizeof(float) * count * i));
+					glVertexAttribDivisor(m_VertexBufferIndex, 1);
 					m_VertexBufferIndex++;
-					break;
 				}
-
-				case ShaderDataType::Int:
-				case ShaderDataType::Int2:
-				case ShaderDataType::Int3:
-				case ShaderDataType::Int4:
-				case ShaderDataType::Bool:
-				{
-					glEnableVertexAttribArray(m_VertexBufferIndex);
-					glVertexAttribIPointer(m_VertexBufferIndex,
-						element.GetComponentCount(element.Type),
-						ShaderDataTypeToGLBaseType(element.Type),
-						layout.GetStride(),
-						(const void*)element.Offset);
-					m_VertexBufferIndex++;
-					break;
-				}
-				case ShaderDataType::Mat3:
-				case ShaderDataType::Mat4:
-				{
-					uint8_t count = element.GetComponentCount(element.Type);
-					for (uint8_t i = 0; i < count; i++)
-					{
-						glEnableVertexAttribArray(m_VertexBufferIndex);
-						glVertexAttribPointer(m_VertexBufferIndex,
-							count,
-							ShaderDataTypeToGLBaseType(element.Type),
-							element.Normalized ? GL_TRUE : GL_FALSE,
-							layout.GetStride(),
-							(const void*)(element.Offset + sizeof(float) * count * i));
-						glVertexAttribDivisor(m_VertexBufferIndex, 1);
-						m_VertexBufferIndex++;
-					}
-					break;
-				}
-				default:
-					API_ASSERT(false, "Unknown ShaderDataType!");
+				break;
+			}
+			default:
+				API_ASSERT(false, "Unknown ShaderDataType!");
 			}
 		}
+
 		m_VertexBuffer.push_back(vertexBuffer);
-	}
-	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+	}	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();

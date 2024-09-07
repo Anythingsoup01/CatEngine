@@ -169,22 +169,6 @@ namespace CatEngine
 		StartBatch();
 
 	}
-	uint32_t Renderer2D::CreateOrBindIndex(std::filesystem::path filePath)
-	{
-		uint32_t nextIndex;
-		for (auto [index, path] : s_Data.TextureSlotIndexMap)
-		{
-			if (path == filePath.string())
-			{
-				return index;
-			}
-			nextIndex = index + 1;
-		}
-		s_Data.TextureSlotIndexMap.insert(std::pair<uint32_t, std::string>(nextIndex, filePath.string()));
-		Texture2D::Create(filePath.string());
-		return nextIndex;
-
-	}
 	void Renderer2D::Flush()
 	{
 
