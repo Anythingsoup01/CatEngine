@@ -1,9 +1,9 @@
 #pragma once
 
 #include "CatEngine/Renderer/Texture.h"
-#include "SoloAction.h"
-
 #include "SceneCamera.h"
+
+#include "CatEngine/Core/UUID.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -13,18 +13,14 @@
 
 namespace CatEngine
 {
-
-	struct NameComponent
+	struct IDComponent
 	{
-		std::string Name;
+		UUID ID;
 
-		NameComponent() = default;
-		NameComponent(const NameComponent&) = default;
-		NameComponent(const std::string& name)
-			: Name(name) {}
-		virtual void ResetComponent() {};
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+
 	};
-
 	struct TagComponent
 	{
 		std::string Tag;
@@ -50,7 +46,18 @@ namespace CatEngine
 		virtual void ResetComponent() {};
 
 	};
-	
+
+	struct NameComponent
+	{
+		std::string Name;
+
+		NameComponent() = default;
+		NameComponent(const NameComponent&) = default;
+		NameComponent(const std::string& name)
+			: Name(name) {}
+		virtual void ResetComponent() {};
+	};
+
 	struct TransformComponent
 	{
 		glm::vec3 Position = { 0.f, 0.f, 0.f };
@@ -124,6 +131,8 @@ namespace CatEngine
 			}
 		}
 	};
+
+	class SoloAction;
 
 	struct NativeScriptComponent
 	{

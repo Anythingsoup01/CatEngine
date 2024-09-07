@@ -15,6 +15,7 @@ namespace CatEngine
 		void SetOrthographic(float size, float nearClip, float farClip);
 		void SetPerspective(float verticalFov, float nearClip, float farClip);
 		void SetViewportSize(uint32_t width, uint32_t height);
+		void CheckViewportSize();
 
 		float GetOrthographicSize() const { return m_OrthographicSize; }
 		void SetOrthographicSize(float size) { m_OrthographicSize = size; RecalculateProjection(); }
@@ -35,6 +36,8 @@ namespace CatEngine
 
 		ProjectionType GetProjectionType() const { return m_ProjectionType; }
 		void SetProjectionType(ProjectionType projectionType) { m_ProjectionType = projectionType; RecalculateProjection(); }
+	private:
+		friend class Scene;
 	private:
 		void RecalculateProjection();
 	private:

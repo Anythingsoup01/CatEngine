@@ -206,7 +206,10 @@ namespace CatEngine
                 if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
                 {
                     const wchar_t* path = (const wchar_t*)payload->Data;
-                    OpenScene(std::filesystem::path("assets") / path);
+                    std::filesystem::path filePath = std::filesystem::path("assets") / path;
+
+                    OpenScene(filePath);
+                    m_SceneFilePath = filePath.string();
                 }
 
                 ImGui::EndDragDropTarget();
@@ -220,9 +223,8 @@ namespace CatEngine
                 ImGuizmo::SetOrthographic(false);
                 ImGuizmo::SetDrawlist();
 
-                float windowWidth = (float)ImGui::GetWindowWidth();
-                float windowHeight = (float)ImGui::GetWindowHeight();
-                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+                ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
 
                 // Camera
 

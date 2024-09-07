@@ -1,44 +1,47 @@
 Scene: SampleScene
 Entities:
-  - Entity: 435738945769384
+  - Entity: 1161878949837974403
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Top
+      Name: Box3
     TransformComponent:
-      Position: [0, 0.5, 0]
-      Rotation: [1.57079637, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.177215338, 1, 0, 1]
-      Tiling: 1
-  - Entity: 435738945769384
-    TagComponent:
-      Tag: None
-    LayerComponent:
-      Layer: Default
-    NameComponent:
-      Name: Left
-    TransformComponent:
-      Position: [0.000999994576, -3.7252903e-09, 0.5]
+      Position: [1.44910812, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [1, 0.135021091, 0.135021091, 1]
+      Color: [1, 1, 1, 1]
+      Texture: ""
       Tiling: 1
-  - Entity: 435738945769384
+  - Entity: 6009305901047635275
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Right
+      Name: Box1
     TransformComponent:
-      Position: [0.5, 0, 0]
-      Rotation: [0, 1.57079637, 0]
+      Position: [-1.33063126, 0, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0, 0.202531815, 1, 1]
+      Color: [1, 1, 1, 1]
+      Texture: ""
+      Tiling: 1
+  - Entity: 6540180081666919043
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Box2
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: ""
       Tiling: 1

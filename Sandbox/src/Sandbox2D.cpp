@@ -41,11 +41,11 @@ void Sandbox2D::OnUpdate(CatEngine::Time time)
 
 		CatEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-		for (float y = -10.f; y < 10.f; y += .5f)
+		for (float y = -m_Height; y < m_Height; y += .5f)
 		{
-			for (float x = -10.f; x < 10.f; x += .5f) 
+			for (float x = -m_Width; x < m_Width; x += .5f)
 			{
-				glm::vec2 color = { {(x + 10.f) / 20.f}, {(y + 10.f) / 20.f} };
+				glm::vec2 color = { {(x + m_Width) / (m_Width * 2)}, {(y + m_Height) / (m_Height * 2)} };
 				CatEngine::Renderer2D::DrawQuad({ x, y }, 0, { .45f, .45f }, { color.x, 1.f, color.y, 1.f });
 			}
 		}
@@ -58,6 +58,8 @@ void Sandbox2D::OnImGuiDraw()
     CE_PROFILE_FUNCTION();
 
    
+
+
     ImGui::Begin("Scene");
 
 	auto stats = CatEngine::Renderer2D::GetStats();
@@ -66,6 +68,10 @@ void Sandbox2D::OnImGuiDraw()
 	ImGui::Text("Quads: %d", stats.QuadCount);
 	ImGui::Text("Vertices:", stats.GetTotalVertexCount());
 	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+	ImGui::Separator();
+	ImGui::DragFloat("Width", &m_Width, 1.f, 0.0f);
+	ImGui::DragFloat("Height", &m_Height, 1.f, 0.0f);
 
     ImGui::End();
 

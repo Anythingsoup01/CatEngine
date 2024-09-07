@@ -2,6 +2,7 @@
 #include "Scene.h"
 
 #include "Components.h"
+#include "SoloAction.h"
 #include "Entity.h"
 
 #include "CatEngine/Renderer/Renderer2D.h"
@@ -157,11 +158,15 @@ namespace CatEngine
 	}
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		return CreateEntityWithUUID(UUID(), name);
+	}
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+	{
 		Entity entity = { m_Registry.create(), this };
 
+		entity.AddComponent<IDComponent>(uuid);
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = "None";
-
 		auto& layer = entity.AddComponent<LayerComponent>();
 		layer.Layer = "Default";
 
@@ -224,6 +229,11 @@ namespace CatEngine
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
 		static_assert(false);
+	}
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
+
 	}
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)

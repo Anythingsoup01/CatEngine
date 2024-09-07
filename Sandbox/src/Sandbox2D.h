@@ -18,7 +18,8 @@ private:
 
 	CatEngine::OrthographicCameraController m_CameraController;
 
-	CatEngine::Ref<CatEngine::Texture2D> m_CheckeredTexture;
+	float m_Width = 10.f, m_Height = 10.f;
 
+	CatEngine::Ref<CatEngine::Texture2D> m_CheckeredTexture;
 
 };

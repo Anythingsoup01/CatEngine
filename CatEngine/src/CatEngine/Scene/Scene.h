@@ -1,6 +1,9 @@
 #pragma once
-#include "CatEngine/Core/TimeStep.h"
+
 #include "CatEngine/Camera/EditorCamera.h"
+#include "CatEngine/Core/TimeStep.h"
+#include "CatEngine/Core/UUID.h"
+
 
 #include "entt.hpp"
 
@@ -17,6 +20,7 @@ namespace CatEngine
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DeleteEntity(Entity entity);
 
 		void OnRuntimeStart();
@@ -25,6 +29,8 @@ namespace CatEngine
 		void OnUpdateRuntime(Time time);
 		void OnUpdateEditor(Time time, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
+
+
 
 		Entity GetPrimaryCameraEntity();
 	private:

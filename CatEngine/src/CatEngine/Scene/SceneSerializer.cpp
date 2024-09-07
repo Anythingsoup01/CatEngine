@@ -131,7 +131,7 @@ namespace CatEngine
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << 435738945769384;
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetComponent<IDComponent>().ID;
 		if (entity.HasComponent<TagComponent>())
 		{
 			out << YAML::Key << "TagComponent";
@@ -289,7 +289,7 @@ namespace CatEngine
 		{
 			for (auto entity : entities)
 			{
-				uint64_t uuid = entity["Entity"].as<uint64_t>(); // TODO
+				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
 				auto nameComponent = entity["NameComponent"];
@@ -298,7 +298,7 @@ namespace CatEngine
 
 				CE_API_TRACE("Deserialized entity with ID = {0}, Name = {1}", uuid, name);
 
-				Entity deserializedEntity = m_Scene->CreateEntity(name);
+				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
 				std::string tag;
 				auto tagComponent = entity["TagComponent"];

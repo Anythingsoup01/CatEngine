@@ -14,6 +14,6 @@ public:
 	}
 };
 
-CatEngine::Application* CatEngine::CreateApplication(AppllicationCommandLineArgs args) {
+CatEngine::Application* CatEngine::CreateApplication(ApplicationCommandLineArgs args) {
 	return new Sandbox();
 }
