@@ -351,16 +351,16 @@ namespace CatEngine
 		}
 
 		DrawComponent<TransformComponent>("Transform", selection, [](auto& component) {
-			DrawVec3Control("Position", component.Position);
+			ImGuiDraw::DrawVec3Control("Position", component.Position, 0.1f, 0.0f, 0.0f);
 			glm::vec3 rotation = glm::degrees(component.Rotation);
-			DrawVec3Control("Rotation", rotation);
+			ImGuiDraw::DrawVec3Control("Rotation", rotation, 0.1f, 0.0f, 0.0f);
 			component.Rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.Scale, 1.0f);
+			ImGuiDraw::DrawVec3Control("Scale", component.Scale, 0.1f, 0.0f, 0.0f);
 		}, false);
 		 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", selection, [](auto& component) 
 		{
-			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), 0.1f);
+			ImGuiDraw::DrawColorEdit4Control("Color", component.Color);
 			
 			ImGui::Button("Texture", ImVec2{100.f, 100.f});
 			if (ImGui::BeginDragDropTarget())
@@ -378,7 +378,15 @@ namespace CatEngine
 				ImGui::EndDragDropTarget();
 			}
 
-			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.f, 100.f);
+			ImGuiDraw::DrawVec1Control("Tiling Factor", component.TilingFactor, 0.1f, 0.f, 100.f);
+		});
+
+		DrawComponent<CircleRendererComponent>("Circle Renderer", selection, [](auto& component)
+		{
+			ImGuiDraw::DrawColorEdit4Control("Color", component.Color);
+
+			ImGuiDraw::DrawVec1Control("Thickness", component.Thickness, 0.025f, 0.f, 1.f);
+			ImGuiDraw::DrawVec1Control("Fade", component.Fade, 0.00025f, 0.f, 1.f);
 		});
 
 		DrawComponent<CameraComponent>("Camera", selection, [](auto& component) 
@@ -473,13 +481,13 @@ namespace CatEngine
 				float& restitution = component.Restitution;
 				float& restitutionThreshold = component.RestitutionThreshold;
 
-				DrawVec2Control("Offset", component.Offset);
-				DrawVec2Control("Size", component.Size);
+				ImGuiDraw::DrawVec2Control("Offset", component.Offset);
+				ImGuiDraw::DrawVec2Control("Size", component.Size);
 
-				DrawVec1Control("Density", component.Density);
-				DrawVec1Control("Friction", component.Friction);
-				DrawVec1Control("Restitution", component.Restitution);
-				DrawVec1Control("Restitution Threshold", component.RestitutionThreshold);
+				ImGuiDraw::DrawVec1Control("Density", component.Density);
+				ImGuiDraw::DrawVec1Control("Friction", component.Friction);
+				ImGuiDraw::DrawVec1Control("Restitution", component.Restitution);
+				ImGuiDraw::DrawVec1Control("Restitution Threshold", component.RestitutionThreshold);
 			});
 
 		DrawComponent<NativeScriptComponent>("Script", selection, [](auto& component) 
