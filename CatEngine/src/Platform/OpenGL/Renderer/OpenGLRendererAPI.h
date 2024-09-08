@@ -11,6 +11,7 @@ namespace CatEngine
 		void Clear(const glm::vec4& clearColor) override;
 
 		void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
+		void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0) override;
 
 
 	};
