@@ -81,6 +81,12 @@ namespace CatEngine
 						m_SelectionContext.AddComponent<SpriteRendererComponent>();
 						ImGui::CloseCurrentPopup();
 					}
+				if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
+					if (ImGui::MenuItem("Circle Renderer"))
+					{
+						m_SelectionContext.AddComponent<CircleRendererComponent>();
+						ImGui::CloseCurrentPopup();
+					}
 				if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
 					if (ImGui::MenuItem("Rigidbody 2D"))
 					{
