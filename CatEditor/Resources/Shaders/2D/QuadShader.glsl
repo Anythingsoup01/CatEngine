@@ -1,4 +1,4 @@
-// Basic Texture Shader
+// 2D/QuadShader.glsl
 
 #type vertex
 #version 450 core
@@ -41,7 +41,7 @@ void main()
 #version 450 core
 
 layout(location = 0) out vec4 color;
-layout(location = 1) out int color2;
+layout(location = 1) out int entityID;
 
 struct VertexOutput
 {
@@ -78,5 +78,5 @@ void main()
 
 	color = texColor;
 
-	color2 = v_EntityID;
+	entityID = v_EntityID;
 }
