@@ -15,6 +15,7 @@ project "CatEditor"
 
 	includedirs
 	{
+		"src",
 		"%{wks.location}/CatEngine/vendors/spdlog/include",
 		"%{wks.location}/CatEngine/src",
 		"%{wks.location}/CatEngine/vendors",
