@@ -21,6 +21,7 @@ namespace CatEngine
 		IDComponent(const IDComponent&) = default;
 
 	};
+
 	struct TagComponent
 	{
 		std::string Tag;
@@ -85,6 +86,7 @@ namespace CatEngine
 			Scale = { 1, 1, 1 };
 		}
 	};
+
 	struct SpriteRendererComponent
 	{
 		
@@ -102,6 +104,23 @@ namespace CatEngine
 			Color = { 1.f, 1.f, 1.f, 1.f };
 			Texture = nullptr;
 			TilingFactor = 1.0f;
+		}
+	};
+
+	struct CircleRendererComponent
+	{
+		glm::vec4 Color{ 1.f, 1.f, 1.f, 1.f };
+		float Thickness = 1.0f;
+		float Fade = 0.005f;
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+
+		virtual void ResetComponent()
+		{
+			Color = { 1.f, 1.f, 1.f, 1.f };
+			Thickness = 1.0f;
+			Fade = 0.005f;
 		}
 	};
 
