@@ -155,13 +155,13 @@ Entities:
     NameComponent:
       Name: Bouncy Cube
     TransformComponent:
-      Position: [-0.00252437685, 4.54672003, 0]
+      Position: [-0.019306276, 3.57996345, 0.220449343]
       Rotation: [0, 0, 0.000277577929]
-      Scale: [0.499994874, 0.499994874, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.257009327, 0.257009327, 1]
-      Texture: ""
-      Tiling: 1
+      Scale: [0.75, 0.75, 1]
+    CircleRendererComponent:
+      Color: [0.388235301, 0.376470596, 1, 1]
+      Thickness: 0.25
+      Fade: 0.0500000007
     Rigidbody2DComponent:
       BodyType: 2
       FixedRotation: false
