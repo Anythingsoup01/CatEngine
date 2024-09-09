@@ -12,7 +12,7 @@ namespace CatEngine
 
 		void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
 		void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0) override;
-
+		void SetLineThickness(float thickness) override;
 
 	};
 }
