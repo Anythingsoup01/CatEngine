@@ -107,6 +107,7 @@ namespace CatEngine
             m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }
 
+        OnOverlayRender();
 
         m_Framebuffer->Unbind();
     }
@@ -202,7 +203,7 @@ namespace CatEngine
             if (m_SceneState != SceneState::Play)
                 if (ImGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload  ("ASSET_MANAGER_ITEM"))
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
                     {
                         const wchar_t* path = (const wchar_t*)payload->Data;
                         std::filesystem::path filePath = std::filesystem::path("assets") / path;
@@ -213,7 +214,6 @@ namespace CatEngine
 
                     ImGui::EndDragDropTarget();
                 }
-
 
             // Gizmos
             Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
@@ -234,7 +234,7 @@ namespace CatEngine
                     ImGuizmoDraw(selectedEntity, cameraProjection, cameraView);
                 }
 
-
+                
             }
             ImGui::End();
 
@@ -283,6 +283,78 @@ namespace CatEngine
             tc.Scale = scale;
 
         }
+    }
+
+    void EditorLayer::OnOverlayRender()
+    {
+
+        if (m_SceneState == SceneState::Play)
+        {
+            Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+
+            Renderer2D::BeginScene(cameraEntity.GetComponent<CameraComponent>().Camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+        }
+        else
+        {
+            Renderer2D::BeginScene(m_EditorCamera);
+
+            Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+
+            if (selectedEntity)
+            {
+                auto& tc = selectedEntity.GetComponent<TransformComponent>();
+                glm::vec3 position = tc.Position;
+                glm::mat4 rotation = glm::toMat4(glm::quat(tc.Rotation));
+                glm::vec3 scale = tc.Scale;
+
+                glm::mat4 transform = glm::translate(glm::mat4(1.f), position) * rotation * glm::scale(glm::mat4(1.f), scale);
+                Renderer2D::DrawRect(transform, glm::vec4(0.1f, 0.1f, 0.85f, 1.0f));
+            }
+
+        }
+
+        {
+            auto view = m_ActiveScene->GetAllComponentsWith<TransformComponent, CircleCollider2DComponent>();
+
+            for (auto entity : view)
+            {
+                auto [tc, cc2D] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+                if (cc2D.ShowColliderBounds)
+                {
+                    glm::vec3 position = tc.Position + glm::vec3(cc2D.Offset, 0.0001f);
+                    glm::vec3 scale = tc.Scale * glm::vec3(cc2D.Radius * 2.f);
+
+                    glm::mat4 transform = glm::translate(glm::mat4(1.f), position) * glm::scale(glm::mat4(1.f), scale);
+                    Renderer2D::DrawCircle(transform, glm::vec4(0.2f, 0.2f, 0.95f, 1.0f), 0.025f, 0.001f);
+
+                }
+            }
+        }
+
+        {
+            auto view = m_ActiveScene->GetAllComponentsWith<TransformComponent, BoxCollider2DComponent>();
+
+            for (auto entity : view)
+            {
+                auto [tc, bc2D] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+                if (bc2D.ShowColliderBounds)
+                {
+                    glm::vec3 position = tc.Position + glm::vec3(bc2D.Offset, 0);
+                    float rotation = tc.Rotation.z;
+                    glm::vec3 scale = tc.Scale * glm::vec3(bc2D.Size * 2.f, 0.f);
+
+                    glm::mat4 transform = glm::translate(glm::mat4(1.f), position)
+                        * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0,0,1))
+                        * glm::scale(glm::mat4(1.f), scale);
+                    Renderer2D::DrawRect(transform, glm::vec4(0.2f, 0.2f, 0.95f, 1.0f));
+
+                }
+            }
+        }
+
+
+        Renderer2D::EndScene();
     }
 
     void EditorLayer::UI_Toolbar()
