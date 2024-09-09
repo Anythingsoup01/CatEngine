@@ -206,4 +206,20 @@ namespace CatEngine
 
 		ImGui::PopID();
 	}
+
+	void ImGuiDraw::DrawCheckBox(const std::string& label, bool& active, float columnWidth)
+	{
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::Checkbox("##CB", &active);
+
+		ImGui::Columns(1);
+
+		ImGui::PopID();
+	}
 }

@@ -20,6 +20,6 @@ namespace CatEngine
 		static void DrawVec2Control(const std::string& label, glm::vec2& values, float step = 1.0f, float Min = 0.0f, float Max = 0.0f, float columnWidth = 100.f);
 		static void DrawVec1Control(const std::string& label, float& value, float step = 1.0f, float Min = 0.0f, float Max = 0.0f, float columnWidth = 100.f);
 		
-
+		static void DrawCheckBox(const std::string& label, bool& active, float columnWidth = 100.f);
 	};
 }
