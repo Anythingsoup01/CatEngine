@@ -19,7 +19,6 @@ namespace CatEngine
 
 		IDComponent() = default;
 		IDComponent(const IDComponent&) = default;
-
 	};
 
 	struct TagComponent
@@ -30,9 +29,6 @@ namespace CatEngine
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& tag)
 			: Tag(tag) {}
-
-		virtual void ResetComponent() {};
-
 	};
 
 	struct LayerComponent
@@ -44,8 +40,6 @@ namespace CatEngine
 		LayerComponent(const std::string& layer)
 			: Layer(layer) {}
 
-		virtual void ResetComponent() {};
-
 	};
 
 	struct NameComponent
@@ -56,7 +50,6 @@ namespace CatEngine
 		NameComponent(const NameComponent&) = default;
 		NameComponent(const std::string& name)
 			: Name(name) {}
-		virtual void ResetComponent() {};
 	};
 
 	struct TransformComponent
@@ -78,13 +71,6 @@ namespace CatEngine
 				* rotation
 				* glm::scale(glm::mat4(1.f), Scale);
 		}
-
-		virtual void ResetComponent()
-		{
-			Position = {};
-			Rotation = {};
-			Scale = { 1, 1, 1 };
-		}
 	};
 
 	struct SpriteRendererComponent
@@ -98,13 +84,6 @@ namespace CatEngine
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
-
-		virtual void ResetComponent()
-		{
-			Color = { 1.f, 1.f, 1.f, 1.f };
-			Texture = nullptr;
-			TilingFactor = 1.0f;
-		}
 	};
 
 	struct CircleRendererComponent
@@ -115,13 +94,6 @@ namespace CatEngine
 
 		CircleRendererComponent() = default;
 		CircleRendererComponent(const CircleRendererComponent&) = default;
-
-		virtual void ResetComponent()
-		{
-			Color = { 1.f, 1.f, 1.f, 1.f };
-			Thickness = 1.0f;
-			Fade = 0.005f;
-		}
 	};
 
 	struct CameraComponent
@@ -133,22 +105,6 @@ namespace CatEngine
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 		virtual void ResetComponent()
-		{
-			if (Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-			{
-				Camera.SetOrthographicFarClip(1.f);
-				Camera.SetOrthographicNearClip(-1.f);
-				Camera.SetOrthographicSize(10.f);
-				Camera.SetOrthographic(10.f, -1.f, 1.f);
-			}
-			else
-			{
-				Camera.SetPerspectiveFarClip(10000.f);
-				Camera.SetPerspectiveNearClip(.01f);
-				Camera.SetPerspectiveVerticalFov(glm::radians(45.f));
-				Camera.SetPerspective(glm::radians(45.f), 0.01f, 10000.f);
-			}
-		}
 	};
 
 	class SoloAction;
@@ -167,7 +123,6 @@ namespace CatEngine
 			InstantiateScript = []() { return static_cast<SoloAction*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
-		virtual void ResetComponent() {}
 	};
 
 	//---------------------------------------
@@ -185,12 +140,6 @@ namespace CatEngine
 
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
-
-		virtual void ResetComponent()
-		{
-			Type = BodyType::Static;
-			FixedRotation = false;
-		}
 	};
 
 	struct BoxCollider2DComponent
@@ -209,17 +158,6 @@ namespace CatEngine
 
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
-
-		virtual void ResetComponent()
-		{
-			Offset = { 0.0f, 0.0f };
-			Size = { 0.5f, 0.5f };
-
-			Density = 1.0f;
-			Friction = 0.5f;
-			Restitution = 0.0f;
-			RestitutionThreshold = 0.5f;
-		}
 	};
 
 	struct CircleCollider2DComponent 
@@ -238,17 +176,6 @@ namespace CatEngine
 
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
-
-		virtual void ResetComponent()
-		{
-			Offset = { 0.0f, 0.0f };
-			Radius = 0.5f;
-
-			Density = 1.0f;
-			Friction = 0.5f;
-			Restitution = 0.0f;
-			RestitutionThreshold = 0.5f;
-		}
 	};
 
 }

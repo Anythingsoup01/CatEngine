@@ -159,7 +159,7 @@ namespace CatEngine
 				}
 				if (ImGui::MenuItem("Reset Component"))
 				{
-					component.ResetComponent();
+					component = T();
 					ImGui::CloseCurrentPopup();
 				}
 
