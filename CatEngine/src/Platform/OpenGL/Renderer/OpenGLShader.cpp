@@ -292,7 +292,8 @@ namespace CatEngine
 				m_OpenGLSourceCode[stage] = glslCompiler.compile();
 				auto& source = m_OpenGLSourceCode[stage];
 
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str());
+
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					CE_API_ERROR(module.GetErrorMessage());
