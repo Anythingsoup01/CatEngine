@@ -243,6 +243,7 @@ namespace CatEngine
 			out << YAML::BeginMap; // BoxCollider2DComponent
 			out << YAML::Key << "Offset" << YAML::Value << bc2d.Offset;
 			out << YAML::Key << "Size" << YAML::Value << bc2d.Size;
+			out << YAML::Key << "ShowColliderBounds" << YAML::Value << bc2d.ShowColliderBounds;
 			out << YAML::Key << "Density" << YAML::Value << bc2d.Density;
 			out << YAML::Key << "Friction" << YAML::Value << bc2d.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << bc2d.Restitution;
@@ -258,6 +259,7 @@ namespace CatEngine
 			out << YAML::BeginMap; // CircleCollider2DComponent
 			out << YAML::Key << "Offset" << YAML::Value << cc2d.Offset;
 			out << YAML::Key << "Radius" << YAML::Value << cc2d.Radius;
+			out << YAML::Key << "ShowColliderBounds" << YAML::Value << cc2d.ShowColliderBounds;
 			out << YAML::Key << "Density" << YAML::Value << cc2d.Density;
 			out << YAML::Key << "Friction" << YAML::Value << cc2d.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << cc2d.Restitution;
@@ -404,6 +406,7 @@ namespace CatEngine
 
 					bc2d.Offset = boxCollider2D["Offset"].as<glm::vec2>();
 					bc2d.Size = boxCollider2D["Size"].as<glm::vec2>();
+					bc2d.ShowColliderBounds = boxCollider2D["ShowColliderBounds"].as<bool>();
 					bc2d.Density = boxCollider2D["Density"].as<float>();
 					bc2d.Friction = boxCollider2D["Friction"].as<float>();
 					bc2d.Restitution = boxCollider2D["Restitution"].as<float>();
@@ -418,6 +421,7 @@ namespace CatEngine
 
 					cc2d.Offset = circleCollider2D["Offset"].as<glm::vec2>();
 					cc2d.Radius = circleCollider2D["Radius"].as<float>();
+					cc2d.ShowColliderBounds = circleCollider2D["ShowColliderBounds"].as<bool>();
 					cc2d.Density = circleCollider2D["Density"].as<float>();
 					cc2d.Friction = circleCollider2D["Friction"].as<float>();
 					cc2d.Restitution = circleCollider2D["Restitution"].as<float>();
