@@ -22,6 +22,9 @@ namespace CatEngine
 		static void Init();
 		static void Shutdown();
 
+		static void SetLineThickness(float thickness);
+		static float GetLineWidth();
+
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const EditorCamera& camera); 
 		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
@@ -30,6 +33,7 @@ namespace CatEngine
 		static void EndScene();
 
 		// Primitives -- 2 component position
+
 		static void DrawQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color)
 		{
 			DrawQuad({ position.x ,position.y, 0.0f }, rotation, size, color);
@@ -43,6 +47,11 @@ namespace CatEngine
 			DrawQuad({ position.x, position.y , 0.f }, rotation, size, texture, color, tilingFactor);
 		}
 		
+		static void DrawRect(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color) 
+		{ 
+			DrawRect({ position.x, position.y, 0 }, rotation, {size.x, size.y, 1}, color);
+		}
+
 		// Primitives -- 3 component position
 		
 		static void DrawQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color)
@@ -57,6 +66,10 @@ namespace CatEngine
 		{
 			DrawQuad(GetTransform(position, rotation, size), subTexture, color, tilingFactor, -1);
 		}
+		static void DrawRect(const glm::vec3& position, float rotation, const glm::vec3& size, const glm::vec4& color) 
+		{
+			DrawRect(GetTransform(position, rotation, size), color, -1);
+		}
 
 		// Primitives -- Transform Matrix
 		
@@ -64,11 +77,25 @@ namespace CatEngine
 		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID = -1);
 		static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID = -1);
 
+		static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
+
 		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID = -1);
 
-		// Sprites
+		// For debug use
 
-		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID = -1);
+		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID = -1);
+
+		// Component Based
+
+		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID = -1)
+		{
+			DrawQuad(transform, src.Texture, src.Color, src.TilingFactor, entityID);
+		}
+		static void DrawCircle(const glm::mat4& transform, CircleRendererComponent& src, int entityID = -1)
+		{
+			DrawCircle(transform, src.Color, src.Thickness, src.Fade, (int)entityID);
+		}
+
 
 		struct Statistics
 		{
@@ -86,7 +113,6 @@ namespace CatEngine
 		static void NextBatch();
 		static void StartBatch();
 		static void IncrementQuadData(const glm::mat4& transform, glm::vec4 color, const glm::vec2* textureCoords, float tilingFactor, float texIndex, int entityID);
-		static void IncrementCircleData(const glm::mat4& transform, glm::vec4 color, float thickness, float fade, int entityID);
 		static glm::mat4 GetTransform(const glm::vec3& position, float rotation, const glm::vec2 size) { return glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(-rotation), glm::vec3(0, 0, 1)) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 		}
 
