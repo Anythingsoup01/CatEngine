@@ -23,6 +23,11 @@ namespace CatEngine {
 			s_RendererAPI->DrawLines(vertexArray, vertexCount);
 		}
 
+		static inline void SetLineThickness(float thickness)
+		{
+			s_RendererAPI->SetLineThickness(thickness);
+		}
+
 		static inline void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 		{
 			s_RendererAPI->SetViewport(x, y, width, height);
