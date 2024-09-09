@@ -39,6 +39,15 @@ namespace CatEngine
 		int EntityID;
 	};
 
+	struct LineVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+
+		// Editor Only
+		int EntityID;
+	};
+
 	struct Renderer2DData
 	{
 		static const uint32_t MaxQuads = 20000;
@@ -56,6 +65,10 @@ namespace CatEngine
 		Ref<VertexBuffer> CircleVertexBuffer;
 		Ref<Shader> CircleShader;
 
+		Ref<VertexArray> LineVertexArray;
+		Ref<VertexBuffer> LineVertexBuffer;
+		Ref<Shader> LineShader;
+
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
@@ -63,6 +76,10 @@ namespace CatEngine
 		uint32_t CircleIndexCount = 0;
 		CircleVertex* CircleVertexBufferBase = nullptr;
 		CircleVertex* CircleVertexBufferPtr = nullptr;
+
+		uint32_t LineVertexCount = 0;
+		LineVertex* LineVertexBufferBase = nullptr;
+		LineVertex* LineVertexBufferPtr = nullptr;
 
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = DefaultTexture
@@ -79,10 +96,11 @@ namespace CatEngine
 		CameraData CameraBuffer;
 		Ref<UniformBuffer> CameraUniformBuffer;
 
+		float LineThickness = 1.5f;
+
 	};
 
 	static Renderer2DData s_Data;
-
 
 	void Renderer2D::Init()
 	{
@@ -126,6 +144,8 @@ namespace CatEngine
 
 		delete[] quadIndices;
 
+		// Circles -----------------------------------------
+
 		s_Data.CircleVertexArray = CatEngine::VertexArray::Create();
 
 		s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
@@ -142,6 +162,19 @@ namespace CatEngine
 		s_Data.CircleVertexArray->SetIndexBuffer(quadIB); // Use quadIB
 		s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
 
+		// Line --------------------------------------------
+
+		s_Data.LineVertexArray = CatEngine::VertexArray::Create();
+
+		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
+		s_Data.LineVertexBuffer->SetLayout
+		({
+			{ ShaderDataType::Vec3, "a_Position" },
+			{ ShaderDataType::Vec4, "a_Color" },
+			{ ShaderDataType::Int, "a_EntityID" }
+			});
+		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
 
 		s_Data.DefaultTexture = Texture2D::Create(1, 1);
 		uint32_t defaultTextureData = 0xffffffff;
@@ -155,6 +188,7 @@ namespace CatEngine
 
 		s_Data.QuadShader = Shader::Create("Resources/Shaders/2D/QuadShader.glsl");
 		s_Data.CircleShader = Shader::Create("Resources/Shaders/2D/CircleShader.glsl");
+		s_Data.LineShader = Shader::Create("Resources/Shaders/2D/LineShader.glsl");
 
 
 		s_Data.TextureSlots[0] = s_Data.DefaultTexture;
@@ -171,6 +205,18 @@ namespace CatEngine
 	{
 		delete[] s_Data.QuadVertexBufferBase;
 		delete[] s_Data.CircleVertexBufferBase;
+		delete[] s_Data.LineVertexBufferBase;
+	}
+
+	void Renderer2D::SetLineThickness(float thickness)
+	{
+		s_Data.LineThickness = thickness;
+		RenderCommand::SetLineThickness(s_Data.LineThickness);
+	}
+
+	float Renderer2D::GetLineWidth()
+	{
+		return s_Data.LineThickness;
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
@@ -211,6 +257,9 @@ namespace CatEngine
 		s_Data.CircleIndexCount = 0;
 		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
 		s_Data.TextureSlotIndex = 1;
 	}
 
@@ -241,6 +290,16 @@ namespace CatEngine
 			RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
+		if (s_Data.LineVertexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
+			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+
+			s_Data.LineShader->Bind();
+			SetLineThickness(s_Data.LineThickness);
+			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+			s_Data.Stats.DrawCalls++;
+	}
 	}
 
 
@@ -324,14 +383,55 @@ namespace CatEngine
 		IncrementQuadData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
 	}
 
-	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID)
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
-		IncrementCircleData(transform, color, thickness, fade, entityID);
+		glm::vec3 lineVertices[4];
+		for (size_t i = 0; i < 4; i++)
+			lineVertices[i] = transform * s_Data.QuadVertexPositions[i];
+
+		DrawLine(lineVertices[0], lineVertices[1], color);
+		DrawLine(lineVertices[1], lineVertices[2], color);
+		DrawLine(lineVertices[2], lineVertices[3], color);
+		DrawLine(lineVertices[3], lineVertices[0], color);
 	}
 
-	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
+	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID)
 	{
-		DrawQuad(transform, src.Texture, src.Color, src.TilingFactor, entityID);
+		if (s_Data.CircleIndexCount >= Renderer2DData::MaxIndices)
+			NextBatch();
+
+		for (size_t i = 0; i < 4; i++)
+		{
+			s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
+			s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
+			s_Data.CircleVertexBufferPtr->Color = color;
+			s_Data.CircleVertexBufferPtr->Thickness = thickness;
+			s_Data.CircleVertexBufferPtr->Fade = fade;
+			s_Data.CircleVertexBufferPtr->EntityID = entityID;
+			s_Data.CircleVertexBufferPtr++;
+	}
+
+		s_Data.CircleIndexCount += 6;
+
+		s_Data.Stats.QuadCount++;
+	}
+
+	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
+	{
+		if (s_Data.LineVertexCount >= Renderer2DData::MaxVertices)
+			NextBatch();
+
+		s_Data.LineVertexBufferPtr->Position = p0;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr->EntityID = entityID;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineVertexBufferPtr->Position = p1;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr->EntityID = entityID;
+		s_Data.LineVertexBufferPtr++;
+		
+		s_Data.LineVertexCount += 2;
 	}
 
 	void Renderer2D::ResetStats() { memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics)); }
@@ -354,26 +454,6 @@ namespace CatEngine
 		}
 
 		s_Data.QuadIndexCount += 6;
-
-		s_Data.Stats.QuadCount++;
-	}
-	void Renderer2D::IncrementCircleData(const glm::mat4& transform, glm::vec4 color, float thickness, float fade, int entityID)
-	{
-		if (s_Data.CircleIndexCount >= Renderer2DData::MaxIndices)
-			NextBatch();
-
-		for (size_t i = 0; i < 4; i++)
-		{
-			s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
-			s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
-			s_Data.CircleVertexBufferPtr->Color = color;
-			s_Data.CircleVertexBufferPtr->Thickness = thickness;
-			s_Data.CircleVertexBufferPtr->Fade = fade;
-			s_Data.CircleVertexBufferPtr->EntityID = entityID;
-			s_Data.CircleVertexBufferPtr++;
-		}
-
-		s_Data.CircleIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
 	}
