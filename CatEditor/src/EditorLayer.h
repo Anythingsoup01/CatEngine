@@ -48,6 +48,8 @@ namespace CatEngine
 		void OnScenePause() {}
 		void OnSceneSimulate() {}
 
+		void OnOverlayRender();
+
 
 		// UI Panels
 		void UI_Toolbar();
