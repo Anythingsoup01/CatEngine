@@ -104,7 +104,6 @@ namespace CatEngine
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		virtual void ResetComponent()
 	};
 
 	class SoloAction;
@@ -146,6 +145,7 @@ namespace CatEngine
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 0.5f, 0.5f };
+		bool ShowColliderBounds = false;
 
 		// TODO: Possibly make physics material
 		float Density = 1.0f;
@@ -164,6 +164,7 @@ namespace CatEngine
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 0.5f;
+		bool ShowColliderBounds = false;
 
 		// TODO: Possibly make physics material
 		float Density = 1.0f;
