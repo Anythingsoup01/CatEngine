@@ -299,7 +299,7 @@ namespace CatEngine
 			SetLineThickness(s_Data.LineThickness);
 			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
 			s_Data.Stats.DrawCalls++;
-	}
+		}
 	}
 
 
@@ -409,7 +409,7 @@ namespace CatEngine
 			s_Data.CircleVertexBufferPtr->Fade = fade;
 			s_Data.CircleVertexBufferPtr->EntityID = entityID;
 			s_Data.CircleVertexBufferPtr++;
-	}
+		}
 
 		s_Data.CircleIndexCount += 6;
 
