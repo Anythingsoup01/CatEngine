@@ -193,7 +193,6 @@ namespace CatEngine
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
 					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-					Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0, 1, 1), (int)entity);
 				}
 			}
 			// Draw Circles
@@ -204,7 +203,6 @@ namespace CatEngine
 					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
 					Renderer2D::DrawCircle(transform.GetTransform(), circle, (int)entity);
-					Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0, 1, 1), (int)entity);
 				}
 			}
 			Renderer2D::EndScene();
