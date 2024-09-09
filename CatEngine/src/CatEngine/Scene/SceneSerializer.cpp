@@ -251,6 +251,21 @@ namespace CatEngine
 
 		}
 
+		if (entity.HasComponent<CircleCollider2DComponent>())
+		{
+			auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+			out << YAML::Key << "CircleCollider2DComponent" << YAML::Value;
+			out << YAML::BeginMap; // CircleCollider2DComponent
+			out << YAML::Key << "Offset" << YAML::Value << cc2d.Offset;
+			out << YAML::Key << "Radius" << YAML::Value << cc2d.Radius;
+			out << YAML::Key << "Density" << YAML::Value << cc2d.Density;
+			out << YAML::Key << "Friction" << YAML::Value << cc2d.Friction;
+			out << YAML::Key << "Restitution" << YAML::Value << cc2d.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2d.RestitutionThreshold;
+			out << YAML::EndMap; // CircleCollider2DComponent
+
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -393,6 +408,20 @@ namespace CatEngine
 					bc2d.Friction = boxCollider2D["Friction"].as<float>();
 					bc2d.Restitution = boxCollider2D["Restitution"].as<float>();
 					bc2d.RestitutionThreshold = boxCollider2D["RestitutionThreshold"].as<float>();
+
+				}
+
+				auto circleCollider2D = entity["CircleCollider2DComponent"];
+				if (circleCollider2D)
+				{
+					auto& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
+
+					cc2d.Offset = circleCollider2D["Offset"].as<glm::vec2>();
+					cc2d.Radius = circleCollider2D["Radius"].as<float>();
+					cc2d.Density = circleCollider2D["Density"].as<float>();
+					cc2d.Friction = circleCollider2D["Friction"].as<float>();
+					cc2d.Restitution = circleCollider2D["Restitution"].as<float>();
+					cc2d.RestitutionThreshold = circleCollider2D["RestitutionThreshold"].as<float>();
 
 				}
 			}
