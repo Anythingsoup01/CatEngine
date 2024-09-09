@@ -97,24 +97,6 @@ namespace CatEngine
 		CompileOrGetOpenGLBinaries();
 		CreateProgram();
 	}
-	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath)
-		:m_Name(name), m_FilePath(filepath)
-	{
-		CE_PROFILE_FUNCTION();
-
-		Utils::CreateCacheDirectoryIfNeeded();
-
-		std::string source = ReadFile(filepath);
-		auto shaderSources = PreProcess(source);
-
-		{
-			Timer timer;
-			CompileOrGetVulkanBinaries(shaderSources);
-			CompileOrGetOpenGLBinaries();
-			CreateProgram();
-			CE_API_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
-		}
-	}
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 		: m_FilePath(filepath)
 	{
