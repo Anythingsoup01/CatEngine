@@ -325,7 +325,7 @@ namespace CatEngine
 		IncrementQuadData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID)
+	void Renderer2D::DrawQuad(const glm::mat4& transform,const Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID)
 	{
 		constexpr glm::vec2 textureCoords[4] = { {0,0}, {1,0}, {1,1}, {0,1} };
 		float texIndex = 0.f;
@@ -355,7 +355,7 @@ namespace CatEngine
 	}
 
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<SubTexture2D>& subTexture, const glm::vec4& color, float tilingFactor, int entityID)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture, const glm::vec4& color, float tilingFactor, int entityID)
 	{
 		Ref<Texture2D> texture;
 		const glm::vec2* textureCoords;
