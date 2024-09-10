@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "Components.h"
+#include "CatEngine/Components/Components.h"
 
 #include <entt.hpp>
 

@@ -1,5 +1,5 @@
 #include "SceneHierarchyPanel.h"
-#include "CatEngine/Scene/Components.h"
+#include "CatEngine/Components/Components.h"
 #include "ImGui/ImGuiDraw.h"
 
 #include <glm/gtc/type_ptr.hpp>

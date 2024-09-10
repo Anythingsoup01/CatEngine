@@ -32,10 +32,14 @@
 
 // Scene ---------------------------------------------
 #include "CatEngine/Scene/Scene.h"
-#include "CatEngine/Scene/Components.h"
 #include "CatEngine/Scene/Entity.h"
 #include "CatEngine/Scene/SoloAction.h"
 #include "CatEngine/Scene/SceneSerializer.h"
+
+// Runtime -------------------------------------------
+
+#include "CatEngine/Components/Components.h"
+
 
 // Profiling -----------------------------------------
 #include "CatEngine/Core/Timer.h"

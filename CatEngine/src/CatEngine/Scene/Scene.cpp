@@ -1,7 +1,7 @@
 #include "cepch.h"
 #include "Scene.h"
 
-#include "Components.h"
+#include "CatEngine/Components/Components.h"
 #include "SoloAction.h"
 #include "Entity.h"
 

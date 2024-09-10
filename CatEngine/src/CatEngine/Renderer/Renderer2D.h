@@ -10,7 +10,7 @@
 #include "CatEngine/Renderer/Texture.h"
 #include "CatEngine/Renderer/SubTexture2D.h"
 
-#include "CatEngine/Scene/Components.h"
+#include "CatEngine/Components/Components.h"
 
 
 namespace CatEngine
