@@ -37,6 +37,9 @@ namespace CatEngine
 		void OnScenePlay();
 		void OnSceneStop();
 
+		void OnSceneSimulateStart();
+		void OnSceneSimulateStop();
+		
 		// Key-bound funcitons
 
 		void DuplicateEntity();
@@ -44,9 +47,11 @@ namespace CatEngine
 		void CopyEntity();
 		void PasteEntity();
 
+
+
+
 		// TODO: Implement pausing and simulating physics
 		void OnScenePause() {}
-		void OnSceneSimulate() {}
 
 		void OnOverlayRender();
 

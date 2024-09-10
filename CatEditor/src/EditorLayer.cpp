@@ -90,6 +90,10 @@ namespace CatEngine
                 m_ActiveScene->OnUpdateRuntime(time);
                 break;
             }
+            case SceneState::Simulate:
+                m_ActiveScene->OnUpdateSimulation(time, m_EditorCamera);
+                m_EditorCamera.OnUpdate(time);
+                break;
         }
 
         auto [mx, my] = ImGui::GetMousePos();
@@ -173,7 +177,7 @@ namespace CatEngine
 
                     if (ImGui::MenuItem("Pause Runtime", "Ctrl+Shift+F5")) OnScenePause();
 
-                    if (ImGui::MenuItem("Simulate Runtime", "Ctrl+F7")) OnSceneSimulate();
+                    if (ImGui::MenuItem("Simulate Runtime", "Ctrl+F7")) m_SceneState == SceneState::Edit ? OnSceneSimulateStart() : OnSceneSimulateStop();
 
                     if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
                     ImGui::EndMenu();
@@ -460,7 +464,7 @@ namespace CatEngine
             case (int)KeyCode::F7:
             {
                 if (control)
-                    OnSceneSimulate();
+                    m_SceneState == SceneState::Edit ? OnSceneSimulateStart() : OnSceneSimulateStop();
                 break;
             }
             case (int)KeyCode::Q:
@@ -581,6 +585,25 @@ namespace CatEngine
 
         m_SceneState = SceneState::Edit;
     }
+
+    void EditorLayer::OnSceneSimulateStart()
+    {
+        m_ActiveScene = Scene::Copy(m_EditorScene);
+        m_ActiveScene->OnSimulationStart();
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+        m_SceneState = SceneState::Simulate;
+    }
+    void EditorLayer::OnSceneSimulateStop()
+    {
+        m_ActiveScene->OnSimulationStop();
+        m_ActiveScene = m_EditorScene;
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+        m_SceneState = SceneState::Edit;
+
+    }
+
     void EditorLayer::DuplicateEntity()
     {
         Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();

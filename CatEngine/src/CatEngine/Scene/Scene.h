@@ -29,7 +29,11 @@ namespace CatEngine
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
+		void OnSimulationStart();
+		void OnSimulationStop();
+
 		void OnUpdateRuntime(Time time);
+		void OnUpdateSimulation(Time time, EditorCamera& camera);
 		void OnUpdateEditor(Time time, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
@@ -47,6 +51,9 @@ namespace CatEngine
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
+
+		void OnPhysics2DStart();
+		void OnPhysics2DStop();
 
 	private:
 		entt::registry m_Registry;
