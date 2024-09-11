@@ -39,19 +39,43 @@ namespace CatEngine
 	{
 	}
 
-	template<typename Component>
+	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
-		auto view = src.view<Component>();
-		for (auto e : view)
+		([&]()
 		{
-			UUID uuid = src.get<IDComponent>(e).ID;
-			API_ASSERT(enttMap.find(uuid) != enttMap.end(), "ID Not found!");
-			entt::entity dstEnttID = enttMap.at(uuid);
+			auto view = src.view<Component>();
+			for (auto srcEntity : view)
+			{
+				UUID uuid = src.get<IDComponent>(srcEntity).ID;
+				API_ASSERT(enttMap.find(uuid) != enttMap.end(), "ID Not found!");
+				entt::entity dstEnttID = enttMap.at(uuid);
 
-			auto& component = src.get<Component>(e);
-			dst.emplace_or_replace<Component>(dstEnttID, component);
-		}
+				auto& component = src.get<Component>(srcEntity);
+				dst.emplace_or_replace<Component>(dstEnttID, component);
+			}
+		}(), ...);
+	}
+
+	template<typename... Component>
+	static void CopyComponent(ComponentGroup<Component ... >, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		CopyComponent<Component ...>(dst, src, enttMap);
+	}
+
+	template<typename... Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		([&]()
+		{
+			if (src.HasComponent<Component>())
+				dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+		}(), ...);
+	}
+	template<typename... Component>
+	static void CopyComponentIfExists(ComponentGroup<Component ... >,Entity dst, Entity src)
+	{
+		CopyComponentIfExists<Component ...>(dst, src);
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene> src)
@@ -76,16 +100,7 @@ namespace CatEngine
 
 		// Copy Components (except IDComponent & NameComponent);
 
-		CopyComponent<TagComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<LayerComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CircleRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return dst;
 
@@ -361,12 +376,7 @@ namespace CatEngine
 		}
 	}
 
-	template<typename Component>
-	static void CopyComponentIfExists(Entity dst, Entity src)
-	{
-		if (src.HasComponent<Component>())
-			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
-	}
+
 
 	void Scene::DuplicateEntity(Entity entity)
 	{
@@ -376,16 +386,7 @@ namespace CatEngine
 	Entity Scene::PasteEntity(Entity entity)
 	{
 		Entity newEntity = CreateEntity(entity.GetName() + "(Copied from " + entity.GetName() + ")");
-		CopyComponentIfExists<TagComponent>(newEntity, entity);
-		CopyComponentIfExists<LayerComponent>(newEntity, entity);
-		CopyComponentIfExists<TransformComponent>(newEntity, entity);
-		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
-		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
-		CopyComponentIfExists<CameraComponent>(newEntity, entity);
-		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
-		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
-		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
-		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 		return newEntity;
 	}
 	Entity Scene::GetPrimaryCameraEntity()
