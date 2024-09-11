@@ -1,3 +1,4 @@
+
 import os
 import subprocess
 import platform
@@ -24,4 +25,5 @@ if (premakeInstalled):
 
     print("\nSetup completed!")
 else:
-    print("CatEngine requires Premake to generate project files.")
+    print("Hazel requires Premake to generate project files.")
+
