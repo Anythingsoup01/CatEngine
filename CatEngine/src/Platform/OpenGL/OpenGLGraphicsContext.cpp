@@ -1,5 +1,8 @@
 #include "cepch.h"
+
 #include "OpenGLGraphicsContext.h"
+#include "CatEngine/Core/Log.h"
+
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -17,11 +20,6 @@ namespace CatEngine {
 		glfwMakeContextCurrent(m_Window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		API_ASSERT(status, "Failed to load GLAD");
-
-		CE_API_INFO("OpenGL Info:");
-		CE_API_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
-		CE_API_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
-		CE_API_INFO("  Version: {0}", glGetString(GL_VERSION));
 
 #ifdef CE_ENABLE_ASSERTS
 		int versionMajor;
