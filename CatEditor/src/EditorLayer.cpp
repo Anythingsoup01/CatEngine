@@ -296,8 +296,10 @@ namespace CatEngine
         {
             Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
 
+            if (cameraEntity)
             Renderer2D::BeginScene(cameraEntity.GetComponent<CameraComponent>().Camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
-
+            else
+                CE_API_ERROR("No primary Camera!");
         }
         else
         {
