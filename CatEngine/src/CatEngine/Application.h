@@ -30,7 +30,7 @@ namespace CatEngine {
 	class Application {
 	public:
 		Application(const std::string& name = "CatEngine", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
-		virtual ~Application();
+		virtual ~Application() = default;
 
 		void Run();
 		void OnEvent(Event& e);

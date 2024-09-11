@@ -19,8 +19,6 @@ namespace CatEngine {
 	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer") {}
 
-	ImGuiLayer::~ImGuiLayer() {}
-
 	void ImGuiLayer::OnAttach()
 	{
 		// Setting up ImGui

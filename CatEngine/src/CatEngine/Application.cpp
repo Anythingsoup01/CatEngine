@@ -24,9 +24,6 @@ namespace CatEngine {
 		m_ImGuiLayer = new CatEngine::ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 	}
-	Application::~Application()
-	{
-	}
 
 	void Application::Run() 
 	{
