@@ -44,11 +44,11 @@ namespace CatEngine {
 	// Mouse Moved Event
 	class MouseMovedEvent : public Event {
 	public:
-		MouseMovedEvent(unsigned int mouseX, unsigned int mouseY)
+		MouseMovedEvent(const float mouseX, const float mouseY)
 			: m_MouseX(mouseX), m_MouseY(mouseY) {}
 
-		inline unsigned int GetMouseX() const { return m_MouseX; }
-		inline unsigned int GetMouseY() const { return m_MouseY; }
+		inline float GetMouseX() const { return m_MouseX; }
+		inline float GetMouseY() const { return m_MouseY; }
 
 		std::string ToString() const override {
 			std::stringstream ss;
@@ -58,7 +58,7 @@ namespace CatEngine {
 		EVENT_CLASS_TYPE(MouseMoved)
 		EVENT_CLASS_CATEGORY(CategoryMouseEvent | CategoryInputEvent)
 	private:
-		unsigned int m_MouseX, m_MouseY;
+		float m_MouseX, m_MouseY;
 	};
 
 	class MouseScrolledEvent : public Event {
