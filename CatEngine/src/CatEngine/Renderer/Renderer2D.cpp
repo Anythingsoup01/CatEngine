@@ -268,6 +268,9 @@ namespace CatEngine
 
 		CE_PROFILE_FUNCTION();
 
+		if (s_Data.QuadIndexCount == 0)
+			return; // Nothing to draw
+
 		if (s_Data.QuadIndexCount)
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
