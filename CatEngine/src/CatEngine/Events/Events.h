@@ -4,14 +4,16 @@
 
 namespace CatEngine {
 
-	enum class EventType {
+	enum class EventType 
+	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, WindowMaximized,
 		KeyPressed, KeyTyped, KeyReleased,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 	};
 
-	enum EventCategory { 
+	enum EventCategory 
+	{ 
 		None = 0, 
 		CategoryApplicationEvent   = BIT(0),	
 		CategoryInputEvent         = BIT(1),
@@ -47,21 +49,20 @@ This can range from CategoryApplicationEvent, CategoryInputEvent, CategoryKeyboa
 	};
 
 	class EventDispatcher {
-		template<typename T>
-		using EventFn = std::function<bool(T&)>;
 	public:
 		EventDispatcher(Event& event)
 		: m_Event(event) {}
 
 		template<typename T, typename F>
-		bool Dispatch(const F& func) {
-			if (m_Event.GetEventType() == T::GetStaticType()) {
+		bool Dispatch(const F& func) 
+		{
+			if (m_Event.GetEventType() == T::GetStaticType()) 
+			{
 				m_Event.Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;
 		}
-
 	private:
 		Event& m_Event;
 	};
