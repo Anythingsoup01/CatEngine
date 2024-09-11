@@ -63,7 +63,7 @@ namespace CatEngine {
 
 	class MouseScrolledEvent : public Event {
 	public:
-		MouseScrolledEvent(float offsetX, float offsetY)
+		MouseScrolledEvent(const float offsetX, const float offsetY)
 			: m_OffsetX(offsetX), m_OffsetY(offsetY) {}
 
 		inline float GetXOffset() const { return m_OffsetX; }

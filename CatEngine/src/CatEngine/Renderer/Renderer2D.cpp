@@ -268,8 +268,6 @@ namespace CatEngine
 
 		CE_PROFILE_FUNCTION();
 
-		if (s_Data.QuadIndexCount == 0)
-			return; // Nothing to draw
 
 		if (s_Data.QuadIndexCount)
 		{
@@ -303,6 +301,7 @@ namespace CatEngine
 			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
 			s_Data.Stats.DrawCalls++;
 		}
+
 	}
 
 

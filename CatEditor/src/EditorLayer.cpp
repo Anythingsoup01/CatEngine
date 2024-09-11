@@ -14,7 +14,7 @@
 namespace CatEngine 
 {
     EditorLayer::EditorLayer()
-        : Layer("Application"), m_CameraController(1280.f / 720.f)
+        : Layer("Application")
     {
     }
 
@@ -408,7 +408,7 @@ namespace CatEngine
         bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
         switch (e.GetKeyCode())
         {
-            case (int)KeyCode::C:
+            case KeyCode::C:
             {
                 if (control && shift)
                 {
@@ -417,7 +417,7 @@ namespace CatEngine
                     CopyEntity();
                 break;
             }
-            case (int)KeyCode::D:
+            case KeyCode::D:
             {
                 if (control && shift)
                 {
@@ -426,7 +426,7 @@ namespace CatEngine
                     DuplicateEntity();
                 break;
             }
-            case (int)KeyCode::V:
+            case KeyCode::V:
             {
                 if (control && shift)
                 {
@@ -435,7 +435,7 @@ namespace CatEngine
                     PasteEntity();
                 break;
             }
-            case (int)KeyCode::S :
+            case KeyCode::S :
             {
                 if (control && shift)
                     SaveSceneAs();
@@ -443,19 +443,19 @@ namespace CatEngine
                     SaveScene();
                 break;
             }
-            case (int)KeyCode::O:
+            case KeyCode::O:
             {
                 if (control)
                     OpenScene();
                 break;
             }
-            case (int)KeyCode::N:
+            case KeyCode::N:
             {
                 if (control) 
                     NewScene();
                 break;
             }
-            case (int)KeyCode::F5:
+            case KeyCode::F5:
             {
                 if (control && shift)
                     OnScenePause();
@@ -463,28 +463,28 @@ namespace CatEngine
                     m_SceneState == SceneState::Edit ? OnScenePlay() : OnSceneStop();
                 break;
             }
-            case (int)KeyCode::F7:
+            case KeyCode::F7:
             {
                 if (control)
                     m_SceneState == SceneState::Edit ? OnSceneSimulateStart() : OnSceneSimulateStop();
                 break;
             }
-            case (int)KeyCode::Q:
+            case KeyCode::Q:
             {
                 m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
                 break;
             }
-            case (int)KeyCode::W:
+            case KeyCode::W:
             {
                 m_GizmoType = ImGuizmo::OPERATION::ROTATE;
                 break;
             }
-            case (int)KeyCode::E:
+            case KeyCode::E:
             {
                 m_GizmoType = ImGuizmo::OPERATION::SCALE;
                 break;
             }
-            case (int)KeyCode::Delete:
+            case KeyCode::Delete:
             {
                 DeleteEntity();
             }
@@ -571,6 +571,7 @@ namespace CatEngine
     {
         m_EditorCamera.OnEvent(e);
         EventDispatcher dispatcher(e);
+		
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(EditorLayer::OnWindowResize));
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(EditorLayer::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
