@@ -297,7 +297,7 @@ namespace CatEngine
             Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
 
             if (cameraEntity)
-            Renderer2D::BeginScene(cameraEntity.GetComponent<CameraComponent>().Camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
+                Renderer2D::BeginScene(cameraEntity.GetComponent<CameraComponent>().Camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
             else
                 CE_API_ERROR("No primary Camera!");
         }
@@ -508,27 +508,27 @@ namespace CatEngine
     {
         if (m_SceneState == SceneState::Edit)
         {
-        m_SceneFilePath = FileDialogs::SaveFile("CatEngine Scene (*.catengine)\0*.catengine\0");
-        if (!m_SceneFilePath.empty())
-        {
-            SceneSerializer serializer(m_ActiveScene);
-            serializer.Serialize(m_SceneFilePath.string());
+            m_SceneFilePath = FileDialogs::SaveFile("CatEngine Scene (*.catengine)\0*.catengine\0");
+            if (!m_SceneFilePath.empty())
+            {
+                SceneSerializer serializer(m_ActiveScene);
+                serializer.Serialize(m_SceneFilePath.string());
+            }
         }
-    }
     }
 
     void EditorLayer::SaveScene()
     {
         if (m_SceneState == SceneState::Edit)
         {
-        if (!m_SceneFilePath.empty())
-        {
-            SceneSerializer serializer(m_ActiveScene);
+            if (!m_SceneFilePath.empty())
+            {
+                SceneSerializer serializer(m_ActiveScene);
 
-            serializer.Serialize(m_SceneFilePath.string());
+                serializer.Serialize(m_SceneFilePath.string());
+            }
+            else SaveSceneAs();
         }
-        else SaveSceneAs();
-    }
     }
 
     void EditorLayer::OpenScene()
@@ -578,7 +578,7 @@ namespace CatEngine
 
     void EditorLayer::OnScenePlay()
     {
-        m_ActiveScene = Scene::Copy(m_EditorScene);
+        m_EditorScene = Scene::Copy(m_ActiveScene);
         m_ActiveScene->OnRuntimeStart();
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
@@ -596,7 +596,7 @@ namespace CatEngine
 
     void EditorLayer::OnSceneSimulateStart()
     {
-        m_ActiveScene = Scene::Copy(m_EditorScene);
+        m_EditorScene = Scene::Copy(m_ActiveScene);
         m_ActiveScene->OnSimulationStart();
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
