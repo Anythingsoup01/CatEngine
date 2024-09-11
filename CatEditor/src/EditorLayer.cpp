@@ -506,6 +506,8 @@ namespace CatEngine
 
     void EditorLayer::SaveSceneAs()
     {
+        if (m_SceneState == SceneState::Edit)
+        {
         m_SceneFilePath = FileDialogs::SaveFile("CatEngine Scene (*.catengine)\0*.catengine\0");
         if (!m_SceneFilePath.empty())
         {
@@ -513,9 +515,12 @@ namespace CatEngine
             serializer.Serialize(m_SceneFilePath.string());
         }
     }
+    }
 
     void EditorLayer::SaveScene()
     {
+        if (m_SceneState == SceneState::Edit)
+        {
         if (!m_SceneFilePath.empty())
         {
             SceneSerializer serializer(m_ActiveScene);
@@ -523,6 +528,7 @@ namespace CatEngine
             serializer.Serialize(m_SceneFilePath.string());
         }
         else SaveSceneAs();
+    }
     }
 
     void EditorLayer::OpenScene()
