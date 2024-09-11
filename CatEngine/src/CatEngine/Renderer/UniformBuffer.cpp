@@ -1,7 +1,7 @@
 #include "cepch.h"
 #include "UniformBuffer.h"
 #include "Renderer.h"
-#include "Platform/OpenGL/Renderer/OpenGLUniformBuffer.h"
+#include "Platform/OpenGL/OpenGLUniformBuffer.h"
 
 namespace CatEngine
 {

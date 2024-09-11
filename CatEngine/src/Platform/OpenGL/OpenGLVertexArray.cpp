@@ -65,7 +65,7 @@ namespace CatEngine {
 					ShaderDataTypeToGLBaseType(element.Type),
 					element.Normalized ? GL_TRUE : GL_FALSE,
 					layout.GetStride(),
-					(const void*)element.Offset);
+					(const void*)(intptr_t)element.Offset);
 				m_VertexBufferIndex++;
 				break;
 			}
@@ -80,7 +80,7 @@ namespace CatEngine {
 					element.GetComponentCount(),
 					ShaderDataTypeToGLBaseType(element.Type),
 					layout.GetStride(),
-					(const void*)element.Offset);
+					(const void*)(intptr_t)element.Offset);
 				m_VertexBufferIndex++;
 				break;
 			}
@@ -96,7 +96,7 @@ namespace CatEngine {
 						ShaderDataTypeToGLBaseType(element.Type),
 						element.Normalized ? GL_TRUE : GL_FALSE,
 						layout.GetStride(),
-						(const void*)(element.Offset + sizeof(float) * count * i));
+						(const void*)(intptr_t)(element.Offset + sizeof(float) * count * i));
 					glVertexAttribDivisor(m_VertexBufferIndex, 1);
 					m_VertexBufferIndex++;
 				}

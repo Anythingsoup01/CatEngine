@@ -10,7 +10,7 @@
 
 namespace CatEngine {
 
-	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
 
 	void Renderer::Init()
 	{
@@ -28,7 +28,7 @@ namespace CatEngine {
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		CE_PROFILE_FUNCTION();
-		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 	void Renderer::EndScene()
 	{
@@ -37,7 +37,7 @@ namespace CatEngine {
 	{
 		CE_PROFILE_FUNCTION();
 		shader->Bind();
-		shader->SetMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 		shader->SetMat4("u_ModelMatrix", transform);
 
 		vertexArray->Bind();

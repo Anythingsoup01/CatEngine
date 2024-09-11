@@ -3,7 +3,7 @@
 
 #include "CatEngine/Renderer/Renderer.h"
 
-#include "Platform/OpenGL/Renderer/OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace CatEngine {
 	Ref<VertexArray> VertexArray::Create()
