@@ -38,7 +38,7 @@ namespace CatEngine {
 #define CE_API_TRACE(...)                ::CatEngine::Log::GetAPILogger()->trace(__VA_ARGS__)
 
 // Client Log Macros
-#define CE_CLI_CRITICAL(...)                ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
+#define CE_CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
 #define CE_CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
 #define CE_CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
 #define CE_CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
