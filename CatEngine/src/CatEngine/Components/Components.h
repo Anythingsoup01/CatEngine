@@ -15,3 +15,18 @@
 
 #include "Scripting/NativeScriptingComponent.h"
 
+
+namespace CatEngine
+{
+	template<typename... Component>
+	struct ComponentGroup
+	{
+
+	};
+
+	using AllComponents =
+		ComponentGroup<TagComponent, LayerComponent, TransformComponent, CameraComponent,
+		SpriteRendererComponent, CircleRendererComponent,
+		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
+		NativeScriptComponent>;
+}
