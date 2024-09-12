@@ -36,7 +36,7 @@ namespace CatEngine
 				dataFormat = GL_RGB;
 			}
 
-			API_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			CE_API_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
@@ -79,7 +79,7 @@ namespace CatEngine
 	{
 		CE_PROFILE_FUNCTION();
 		uint32_t bpc = m_Format == GL_RGBA ? 4 : 3;
-		API_ASSERT(size == m_Width * m_Height * bpc, "Data must be entire texture!");
+		CE_API_ASSERT(size == m_Width * m_Height * bpc, "Data must be entire texture!");
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
 	}
 	void OpenGLTexture2D::Bind(uint32_t slot) const

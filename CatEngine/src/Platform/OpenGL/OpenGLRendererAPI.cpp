@@ -27,7 +27,7 @@ namespace CatEngine
 		case GL_DEBUG_SEVERITY_NOTIFICATION: CE_API_TRACE(message); return;
 		}
 
-		API_ASSERT(false, "Unknown severity level!");
+		CE_API_ASSERT(false, "Unknown severity level!");
 	}
 
 	void OpenGLRendererAPI::Init()

@@ -13,7 +13,7 @@ namespace CatEngine {
 	{
 		CE_PROFILE_FUNCTION();
 
-		API_ASSERT(!s_Instance, "Application already open!");
+		CE_API_ASSERT(!s_Instance, "Application already open!");
 		s_Instance = this;
 
 		m_Window = Window::Create(WindowProps(name));

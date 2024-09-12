@@ -22,7 +22,7 @@ namespace CatEngine {
 			case CatEngine::ShaderDataType::Int4: return GL_INT;
 			case CatEngine::ShaderDataType::Bool: return GL_BOOL;
 		}
-		API_ASSERT(false, "Unknown ShaderDataType!");
+		CE_API_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 	}
 
@@ -45,7 +45,7 @@ namespace CatEngine {
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		CE_PROFILE_FUNCTION();
-		API_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer Has no layout!!");
+		CE_API_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer Has no layout!!");
 
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
@@ -103,7 +103,7 @@ namespace CatEngine {
 				break;
 			}
 			default:
-				API_ASSERT(false, "Unknown ShaderDataType!");
+				CE_API_ASSERT(false, "Unknown ShaderDataType!");
 			}
 		}
 

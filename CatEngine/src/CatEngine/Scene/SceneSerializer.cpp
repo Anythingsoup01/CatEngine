@@ -293,7 +293,7 @@ namespace CatEngine
 	}
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
 	{
-		API_ASSERT(false, "Not Implemented Yet");
+		CE_API_ASSERT(false, "Not Implemented Yet");
 	}
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
@@ -434,7 +434,7 @@ namespace CatEngine
 	}
 	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
 	{
-		API_ASSERT(false, "Not Implemented Yet");
+		CE_API_ASSERT(false, "Not Implemented Yet");
 		return false;
 	}
 }

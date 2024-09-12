@@ -1,7 +1,6 @@
 #pragma once
 
-#include "CatEngine/Core/Core.h"
-
+#include "CatEngine/Core/PlatformDetection.h"
 
 #ifdef CE_PLATFORM_WINDOWS
 #ifndef NOMINMAX
@@ -23,6 +22,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "CatEngine/Core/Core.h"
 #include "CatEngine/Debug/Instrumentor.h"
 
 #ifdef CE_PLATFORM_WINDOWS

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CatEngine/Core/Core.h"
+
 namespace CatEngine {
 
 	enum class ShaderDataType {
@@ -33,7 +35,7 @@ namespace CatEngine {
 		case ShaderDataType::Int4: return 4 * 4;
 		case ShaderDataType::Bool: return 1;
 		}
-		API_ASSERT(false, "Unknown Shader Data Type");
+		CE_API_ASSERT(false, "Unknown Shader Data Type");
 		return 0;
 	}
 
@@ -67,7 +69,7 @@ namespace CatEngine {
 				case ShaderDataType::Int4: return 4;
 				case ShaderDataType::Bool: return 1;
 			}
-			API_ASSERT(false, "Unknown Shader Data Type");
+			CE_API_ASSERT(false, "Unknown Shader Data Type");
 			return 0;
 		}
 	};

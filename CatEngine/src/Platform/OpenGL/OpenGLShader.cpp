@@ -24,7 +24,7 @@ namespace CatEngine
 			if (type == "vertex") return GL_VERTEX_SHADER;
 			if (type == "fragment" || type == "pixel") return GL_FRAGMENT_SHADER;
 
-			API_ASSERT(false, "Unknown shader type '{0}'", type);
+			CE_API_ASSERT(false, "Unknown shader type '{0}'", type);
 			return -1;
 		}
 
@@ -35,7 +35,7 @@ namespace CatEngine
 			case GL_VERTEX_SHADER: return shaderc_glsl_vertex_shader;
 			case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
 			}
-			API_ASSERT(false, "Unknown shader type!");
+			CE_ASSERT(false);
 			return (shaderc_shader_kind)0;
 		}
 
@@ -46,7 +46,7 @@ namespace CatEngine
 			case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
 			case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 			}
-			API_ASSERT(false, "Unknown shader type!");
+			CE_ASSERT(false);
 			return nullptr;
 		}
 		static const char* GetCacheDirectory()
@@ -69,7 +69,7 @@ namespace CatEngine
 			case GL_VERTEX_SHADER: return ".cached_opengl.vert";
 			case GL_FRAGMENT_SHADER: return ".cached_opengl.frag";
 			}
-			API_ASSERT(false, "Unknown shader type!");
+			CE_ASSERT(false);
 			return "";
 		}
 		static const char* GLShaderTageCacheVulkanFileExtension(uint32_t stage)
@@ -79,7 +79,7 @@ namespace CatEngine
 			case GL_VERTEX_SHADER: return ".cached_vulkan.vert";
 			case GL_FRAGMENT_SHADER: return ".cached_vulkan.frag";
 			}
-			API_ASSERT(false, "Unknown shader type!");
+			CE_ASSERT(false);
 			return "";
 		}
 
@@ -166,13 +166,13 @@ namespace CatEngine
 		while (pos != std::string::npos)
 		{
 			size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
-			API_ASSERT(eol != std::string::npos, "Syntax error");
+			CE_API_ASSERT(eol != std::string::npos, "Syntax error");
 			size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
 			std::string type = source.substr(begin, eol - begin);
-			API_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified");
+			CE_API_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified");
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
-			API_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+			CE_API_ASSERT(nextLinePos != std::string::npos, "Syntax error");
 			pos = source.find(typeToken, nextLinePos); //Start of next shader type declaration line
 
 			shaderSources[Utils::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
@@ -217,7 +217,7 @@ namespace CatEngine
 				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					API_ASSERT(false, module.GetErrorMessage());
+					CE_API_ASSERT(false, module.GetErrorMessage());
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -278,8 +278,7 @@ namespace CatEngine
 
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					CE_API_ERROR(module.GetErrorMessage());
-					API_ASSERT(false, "");
+					CE_API_ASSERT(false, module.GetErrorMessage());
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());

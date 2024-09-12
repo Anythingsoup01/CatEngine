@@ -28,7 +28,7 @@ namespace CatEngine
 			case CatEngine::Rigidbody2DComponent::BodyType::Dynamic: return b2_dynamicBody;
 		}
 
-		API_ASSERT(false, "Unknown body type!");
+		CE_API_ASSERT(false, "Unknown body type!");
 		return b2_staticBody;
 	}
 	Scene::Scene()
@@ -48,7 +48,7 @@ namespace CatEngine
 			for (auto srcEntity : view)
 			{
 				UUID uuid = src.get<IDComponent>(srcEntity).ID;
-				API_ASSERT(enttMap.find(uuid) != enttMap.end(), "ID Not found!");
+				CE_API_ASSERT(enttMap.find(uuid) != enttMap.end(), "ID Not found!");
 				entt::entity dstEnttID = enttMap.at(uuid);
 
 				auto& component = src.get<Component>(srcEntity);

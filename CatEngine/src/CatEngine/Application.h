@@ -22,7 +22,7 @@ namespace CatEngine {
 
 		const char* operator[](int index) const
 		{
-			API_ASSERT(index < Count, "");
+			CE_ASSERT(index < Count);
 			return Args[index];
 		}
 	};

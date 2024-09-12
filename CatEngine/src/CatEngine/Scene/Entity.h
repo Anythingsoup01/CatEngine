@@ -19,7 +19,7 @@ namespace CatEngine
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-			API_ASSERT(!HasComponent<T>(), "Entity already has component!");
+			CE_API_ASSERT(!HasComponent<T>(), "Entity already has component!");
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
@@ -36,7 +36,7 @@ namespace CatEngine
 		template<typename T>
 		T& GetComponent()
 		{
-			API_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			CE_API_ASSERT(HasComponent<T>(), "Entity does not have component!");
 
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
@@ -54,7 +54,7 @@ namespace CatEngine
 		template<typename T>
 		void RemoveComponent()
 		{
-			API_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			CE_API_ASSERT(HasComponent<T>(), "Entity does not have component!");
 
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}

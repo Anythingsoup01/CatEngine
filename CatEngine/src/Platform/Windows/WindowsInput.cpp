@@ -52,7 +52,6 @@ namespace CatEngine {
 	float Input::GetMouseY()
 	{
 		auto [x, y] = GetMousePosition();
-		API_ASSERT(y < 10000, "BROKE");
 		return y;
 	}
 	float Input::GetMouseXOffset()

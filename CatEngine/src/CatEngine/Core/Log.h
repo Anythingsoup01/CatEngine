@@ -3,7 +3,10 @@
 
 #include "CatEngine/Core/Core.h"
 
-#include "spdlog/spdlog.h"
+#pragma warning(push, 0)
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
+#pragma warning(pop)
 
 #define ASSERT(x) if (!(x)) __debugbreak();
 #define GLCall(x) Log::GLClearError();x;ASSERT(Log::GLLog(#x, __FILE__, __LINE__));
@@ -58,7 +61,6 @@ namespace CatEngine {
 #define CE_CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
 #define CE_CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
 #define CE_CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
-#define CLI_ASSERT(x, ...)if (!(x)) { ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__); __debugbreak(); }
 
 #endif // CE_DEBUG
 
