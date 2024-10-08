@@ -8,6 +8,8 @@
 namespace CatEngine {
 	Ref<VertexArray> VertexArray::Create()
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;

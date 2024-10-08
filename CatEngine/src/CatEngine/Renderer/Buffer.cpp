@@ -10,6 +10,8 @@
 namespace CatEngine {
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;
@@ -20,6 +22,8 @@ namespace CatEngine {
 	}
 	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 			case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;
@@ -30,6 +34,8 @@ namespace CatEngine {
 	}
 	Ref<IndexBuffer>  IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 			case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;

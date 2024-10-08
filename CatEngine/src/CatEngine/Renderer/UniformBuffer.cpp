@@ -7,6 +7,8 @@ namespace CatEngine
 {
 	Ref<UniformBuffer> UniformBuffer::Create(uint32_t size, uint32_t binding)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:    CE_API_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;

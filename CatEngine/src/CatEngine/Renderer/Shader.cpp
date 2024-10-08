@@ -9,6 +9,8 @@ namespace CatEngine {
 
 	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexShader, const std::string& fragmentShader)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;
@@ -19,6 +21,8 @@ namespace CatEngine {
 	}
 	Ref<Shader> Shader::Create(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;
@@ -29,27 +33,37 @@ namespace CatEngine {
 	}
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
 	{
+		CE_PROFILE_FUNCTION();
+
 		CE_API_ASSERT(!Exists(name), "Shader already exists!");
 		m_Shaders[name] = shader;
 	}
 	void ShaderLibrary::Add(const Ref<Shader>& shader)
 	{
+		CE_PROFILE_FUNCTION();
+
 		auto& name = shader->GetName();
 		Add(name, shader);
 	}
 	Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
+
 		auto shader = Shader::Create(filepath);
 		Add(shader);
 		return shader;
 	}
 	Ref<Shader> ShaderLibrary::Get(const std::string& name)
 	{
+		CE_PROFILE_FUNCTION();
+
 		CE_API_ASSERT(Exists(name), "Shader not found!");
 		return Exists(name) ? m_Shaders[name] : nullptr;
 	}
 	bool ShaderLibrary::Exists(const std::string& name) const
 	{
+		CE_PROFILE_FUNCTION();
+
 		return m_Shaders.find(name) != m_Shaders.end();
 	}
 }

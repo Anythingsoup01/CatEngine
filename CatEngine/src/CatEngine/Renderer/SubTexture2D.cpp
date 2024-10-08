@@ -17,6 +17,8 @@ namespace CatEngine
 	}
 	Ref<SubTexture2D> SubTexture2D::CreateFromCoords(const Ref<Texture2D>& texture, const glm::vec2& coords, const glm::vec2& cellSize, const glm::vec2& spriteSize)
 	{
+		CE_PROFILE_FUNCTION();
+
 		glm::vec2 min = { (cellSize.x * coords.x) / texture->GetWidth(), (cellSize.y * coords.y) / texture->GetHeight() };
 		glm::vec2 max = { (cellSize.x * (coords.x + spriteSize.x)) / texture->GetWidth(), (cellSize.y * (coords.y + spriteSize.y)) / texture->GetHeight() };
 		Ref<SubTexture2D> result = CreateRef<SubTexture2D>(texture, min, max);

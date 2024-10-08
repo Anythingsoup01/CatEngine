@@ -19,6 +19,8 @@ namespace CatEngine
 	}
 	void EditorCamera::OnUpdate(Time time)
 	{	
+		CE_PROFILE_FUNCTION();
+
 		if (Input::IsKeyPressed(KeyCode::LeftAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };

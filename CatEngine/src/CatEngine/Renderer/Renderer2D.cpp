@@ -105,6 +105,7 @@ namespace CatEngine
 	void Renderer2D::Init()
 	{
 		CE_PROFILE_FUNCTION();
+
 		// Quads -----------------------------------
 		s_Data.QuadVertexArray = CatEngine::VertexArray::Create();
 

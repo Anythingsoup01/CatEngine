@@ -8,6 +8,8 @@ namespace CatEngine
 {
 	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;
@@ -18,6 +20,8 @@ namespace CatEngine
 	}
 	Ref<Texture2D> CatEngine::Texture2D::Create(const std::string& path)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:       CE_API_ASSERT(false, "RendererAPI::NONE is not supported at this time!"); return nullptr;

@@ -80,6 +80,8 @@ namespace CatEngine
 
 	Ref<Scene> Scene::Copy(Ref<Scene> src)
 	{
+		CE_PROFILE_FUNCTION();
+
 		Ref<Scene> dst = CreateRef<Scene>();
 
 		dst->m_ViewportWidth = src->m_ViewportWidth;
@@ -108,6 +110,8 @@ namespace CatEngine
 
 	void Scene::OnUpdateEditor(Time ts, EditorCamera& camera)
 	{
+		CE_PROFILE_FUNCTION();
+
 		Renderer2D::BeginScene(camera);
 
 		// Draw Sprites
@@ -136,6 +140,8 @@ namespace CatEngine
 
 	void Scene::OnPhysics2DStart()
 	{
+		CE_PROFILE_FUNCTION();
+
 		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
 		auto view = m_Registry.view<Rigidbody2DComponent>();
 		for (auto e : view)
@@ -199,11 +205,14 @@ namespace CatEngine
 		// TODO: Start scripts before physics
 
 		OnPhysics2DStart();
+			
 	}
 
 
 	void Scene::OnUpdateRuntime(Time time)
 	{
+		CE_PROFILE_FUNCTION();
+
 		// Update Scripts
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
@@ -304,6 +313,7 @@ namespace CatEngine
 
 	void Scene::OnUpdateSimulation(Time time, EditorCamera& camera)
 	{
+		CE_PROFILE_FUNCTION();
 
 		Renderer2D::BeginScene(camera);
 
@@ -385,12 +395,16 @@ namespace CatEngine
 
 	Entity Scene::PasteEntity(Entity entity)
 	{
+		CE_PROFILE_FUNCTION();
+
 		Entity newEntity = CreateEntity(entity.GetName() + "(Copied from " + entity.GetName() + ")");
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 		return newEntity;
 	}
 	Entity Scene::GetPrimaryCameraEntity()
 	{
+		CE_PROFILE_FUNCTION();
+
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
@@ -406,6 +420,8 @@ namespace CatEngine
 	}
 	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
+		CE_PROFILE_FUNCTION();
+
 		Entity entity = { m_Registry.create(), this };
 
 		entity.AddComponent<IDComponent>(uuid);

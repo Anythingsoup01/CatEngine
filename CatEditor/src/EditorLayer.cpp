@@ -5,6 +5,7 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include <imgui.h>
+#include <ImGui/imgui_internal.h>
 #include <ImGuizmo.h>
 
 #include "CatEngine/Math/Math.h"
@@ -93,7 +94,7 @@ namespace CatEngine
             case SceneState::Play:
             {
 				if (!m_IsScenePaused)
-                m_ActiveScene->OnUpdateRuntime(time);
+					m_ActiveScene->OnUpdateRuntime(time);
 				OnScenePause();
                 break;
             }
@@ -152,8 +153,6 @@ namespace CatEngine
         {
             // Submit the DockSpace
             ImGuiIO& io = ImGui::GetIO();
-            ImGuiStyle& style = ImGui::GetStyle();
-            style.WindowMinSize.x = 360.f;
             if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
             {
                 ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
@@ -298,6 +297,7 @@ namespace CatEngine
 
     void EditorLayer::OnOverlayRender()
     {
+		CE_PROFILE_FUNCTION();
 
         if (m_SceneState == SceneState::Play)
         {
@@ -542,6 +542,8 @@ namespace CatEngine
 
     void EditorLayer::SaveSceneAs()
     {
+		CE_PROFILE_FUNCTION();
+
         if (m_SceneState == SceneState::Edit)
         {
             m_SceneFilePath = FileDialogs::SaveFile("CatEngine Scene (*.catengine)\0*.catengine\0");
@@ -555,6 +557,8 @@ namespace CatEngine
 
     void EditorLayer::SaveScene()
     {
+		CE_PROFILE_FUNCTION();
+
         if (m_SceneState == SceneState::Edit)
         {
             if (!m_SceneFilePath.empty())
@@ -569,12 +573,16 @@ namespace CatEngine
 
     void EditorLayer::OpenScene()
     {
+		CE_PROFILE_FUNCTION();
+
         m_SceneFilePath = FileDialogs::OpenFile("CatEngine Scene (*.catengine)\0*.catengine\0");
         if (!m_SceneFilePath.empty())
             OpenScene(m_SceneFilePath);
     }
     void EditorLayer::OpenScene(const std::filesystem::path& filePath)
     {
+		CE_PROFILE_FUNCTION();
+
         if (filePath.extension().string() != ".catengine")
         {
             CE_API_WARN("Could not load {0} - not a scene file", filePath.filename().string());
@@ -596,6 +604,8 @@ namespace CatEngine
 
     void EditorLayer::NewScene()
     {
+		CE_PROFILE_FUNCTION();
+
         m_SceneFilePath = std::filesystem::path();
         m_EditorScene = CreateRef<Scene>();
         m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
@@ -615,6 +625,8 @@ namespace CatEngine
 
     void EditorLayer::OnScenePlay()
     {
+		CE_PROFILE_FUNCTION();
+
         m_SceneState = SceneState::Play;
 
         m_EditorScene = Scene::Copy(m_ActiveScene);
@@ -625,10 +637,12 @@ namespace CatEngine
 	void EditorLayer::OnScenePause()
 	{
 
-    }
+	}
 
     void EditorLayer::OnSceneStop()
     {
+		CE_PROFILE_FUNCTION();
+
         m_SceneState = SceneState::Edit;
 
         m_ActiveScene->OnRuntimeStop();
@@ -638,23 +652,29 @@ namespace CatEngine
 
     void EditorLayer::OnSceneSimulateStart()
     {
+		CE_PROFILE_FUNCTION();
+
         m_SceneState = SceneState::Simulate;
      
-        m_EditorScene = Scene::Copy(m_ActiveScene);
+		m_EditorScene = Scene::Copy(m_ActiveScene);
         m_ActiveScene->OnSimulationStart();
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
     void EditorLayer::OnSceneSimulateStop()
     {
+		CE_PROFILE_FUNCTION();
+
         m_SceneState = SceneState::Edit;
         
-        m_ActiveScene->OnSimulationStop();
+		m_ActiveScene->OnSimulationStop();
         m_ActiveScene = m_EditorScene;
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::DuplicateEntity()
     {
+		CE_PROFILE_FUNCTION();
+
         Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();
         if (entity)
         {
@@ -663,6 +683,8 @@ namespace CatEngine
     }
     void EditorLayer::DeleteEntity()
     {
+		CE_PROFILE_FUNCTION();
+
         Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();
         if (entity)
         {
@@ -672,6 +694,8 @@ namespace CatEngine
     }
     void EditorLayer::CopyEntity()
     {
+		CE_PROFILE_FUNCTION();
+
         Entity entity = m_SceneHierarchyPanel.GetSelectedEntity();
         if (entity)
         {
@@ -680,6 +704,8 @@ namespace CatEngine
     }
     void EditorLayer::PasteEntity()
     {
+		CE_PROFILE_FUNCTION();
+
         if (m_CopiedEntity)
         {
             // TODO : Make it to where entity doesn't need to exist

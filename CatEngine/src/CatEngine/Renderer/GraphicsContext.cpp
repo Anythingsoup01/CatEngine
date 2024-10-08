@@ -8,6 +8,8 @@ namespace CatEngine {
 
 	Scope<GraphicsContext> GraphicsContext::Create(void* window)
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (Renderer::GetCurrentAPI())
 		{
 		case RendererAPI::API::None:    CE_API_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;

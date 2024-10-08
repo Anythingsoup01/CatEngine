@@ -130,6 +130,7 @@ namespace CatEngine
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		CE_PROFILE_FUNCTION();
 		out << YAML::BeginMap; // Entity
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetComponent<IDComponent>().ID;
 		if (entity.HasComponent<TagComponent>())
@@ -273,6 +274,8 @@ namespace CatEngine
 
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
+
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "SampleScene";
@@ -293,17 +296,19 @@ namespace CatEngine
 	}
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
+
 		CE_API_ASSERT(false, "Not Implemented Yet");
 	}
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
+
 		YAML::Node data;
-		try
+		try	{ data = YAML::LoadFile(filepath); }
+		catch (YAML::ParserException ex)
 		{
-			data = YAML::LoadFile(filepath);
-		}
-		catch (YAML::ParserException e)
-		{
+			CE_API_ERROR("Failed to load .catengine file '{0}'\n       {1}", filepath, ex.what());
 			return false;
 		}
 
@@ -311,7 +316,6 @@ namespace CatEngine
 			return false;
 
 		std::string sceneName = data["Scene"].as<std::string>();
-		CE_API_TRACE("Deserializing scene '{0}'", sceneName);
 
 		auto entities = data["Entities"];
 		if (entities)
@@ -324,8 +328,6 @@ namespace CatEngine
 				auto nameComponent = entity["NameComponent"];
 				if (nameComponent)
 					name = nameComponent["Name"].as<std::string>();
-
-				CE_API_TRACE("Deserialized entity with ID = {0}, Name = {1}", uuid, name);
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
@@ -434,6 +436,8 @@ namespace CatEngine
 	}
 	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
 	{
+		CE_PROFILE_FUNCTION();
+
 		CE_API_ASSERT(false, "Not Implemented Yet");
 		return false;
 	}

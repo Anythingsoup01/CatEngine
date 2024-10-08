@@ -9,6 +9,8 @@ namespace CatEngine {
 
 	Scope<RendererAPI> RendererAPI::Create()
 	{
+		CE_PROFILE_FUNCTION();
+
 		switch (s_API)
 		{
 		case RendererAPI::API::None:    CE_API_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
