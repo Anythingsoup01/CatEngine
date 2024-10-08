@@ -384,3 +384,4 @@ FodyWeavers.xsd
 /CatEngine/vendors/VulkanSDK
 *.frag
 *.vert
+/CatEditor/imgui.ini
