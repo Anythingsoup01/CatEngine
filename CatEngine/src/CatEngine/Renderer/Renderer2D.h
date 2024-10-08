@@ -68,7 +68,7 @@ namespace CatEngine
 		}
 		static void DrawRect(const glm::vec3& position, float rotation, const glm::vec3& size, const glm::vec4& color) 
 		{
-			DrawRect(GetTransform(position, rotation, size), color, -1);
+			DrawRect(GetTransform(position, rotation, size), color);
 		}
 
 		// Primitives -- Transform Matrix
@@ -77,7 +77,7 @@ namespace CatEngine
 		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID = -1);
 		static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& texture, const glm::vec4& color, float tilingFactor, int entityID = -1);
 
-		static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
+		static void DrawRect(const glm::mat4& transform, const glm::vec4& color);
 
 		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID = -1);
 

@@ -37,18 +37,22 @@ namespace CatEngine
 
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 		{
-			if (ImGui::MenuItem("Create Empty GameObject"))
+			if (ImGui::BeginMenu("Create"))
 			{
-				auto& entity = m_Context->CreateEntity("GameObject");
-				m_SelectionContext = entity;
-				ImGui::CloseCurrentPopup();
-			}
-			if (ImGui::MenuItem("Create Camera"))
-			{
-				auto& entity = m_Context->CreateEntity("Camera");
-				entity.AddComponent<CameraComponent>().Primary = false;
-				m_SelectionContext = entity;
-				ImGui::CloseCurrentPopup();
+				if (ImGui::MenuItem("Create Empty GameObject"))
+				{
+					auto& entity = m_Context->CreateEntity("GameObject");
+					m_SelectionContext = entity;
+					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::MenuItem("Create Camera"))
+				{
+					auto& entity = m_Context->CreateEntity("Camera");
+					entity.AddComponent<CameraComponent>().Primary = false;
+					m_SelectionContext = entity;
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndMenu();
 			}
 
 			ImGui::EndPopup();

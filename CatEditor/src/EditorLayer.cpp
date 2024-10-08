@@ -218,8 +218,25 @@ namespace CatEngine
                         const wchar_t* path = (const wchar_t*)payload->Data;
                         std::filesystem::path filePath = std::filesystem::path("assets") / path;
 
-                        OpenScene(filePath);
-                        m_SceneFilePath = filePath;
+						if (filePath.extension().string() == ".catengine")
+						{
+							OpenScene(filePath);
+							m_SceneFilePath = filePath;
+						}
+						else if (filePath.extension().string() == ".png")
+						{
+							std::filesystem::path texturePath = std::filesystem::path("assets") / path;
+							Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+							if (texture->IsLoaded())
+							{
+								if (m_HoveredEntity && m_HoveredEntity.HasComponent<SpriteRendererComponent>())
+									m_HoveredEntity.GetComponent<SpriteRendererComponent>().Texture = texture;
+							}
+							else
+							{
+								CE_CLI_WARN("Could not load texture {0}", texturePath.filename().string());
+							}
+						}
                     }
 
                     ImGui::EndDragDropTarget();
@@ -256,7 +273,10 @@ namespace CatEngine
 
             }
             ImGui::End();
-            ImGui::PopStyleVar();
+            
+			ImGui::ShowDemoWindow();
+			
+			ImGui::PopStyleVar();
 
             UI_Toolbar();
 
@@ -389,6 +409,9 @@ namespace CatEngine
 				pauseIcon = m_IsScenePaused ? m_IconPauseRuntimeSelected : m_IconPauseRuntime;
 			else if (m_SceneState == SceneState::Play)
 				pauseIcon = m_IsScenePaused ? m_IconNextFrameRuntime : m_IconPauseRuntime;
+			else if (m_SceneState == SceneState::Simulate)
+				pauseIcon = m_IsScenePaused ? m_IconPauseRuntimeSelected : m_IconPauseRuntime; // TODO: Disable the play & pause buttons during simulation
+
 			Ref<Texture2D> simulationIcon = m_SceneState == SceneState::Simulate ? m_IconStopRuntime : m_IconStartSimulation;
 
             ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f - (size * 0.5f)));
@@ -437,8 +460,8 @@ namespace CatEngine
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
     {   
         // Shortcuts
-        if (!e.IsRepeat())
-            return false;
+        //if (!e.IsRepeat())
+        //    return false;
 
         bool control = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
         bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);

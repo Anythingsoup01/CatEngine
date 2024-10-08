@@ -386,7 +386,7 @@ namespace CatEngine
 		IncrementQuadData(transform, color, textureCoords, tilingFactor, texIndex, entityID);
 	}
 
-	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color)
 	{
 		glm::vec3 lineVertices[4];
 		for (size_t i = 0; i < 4; i++)
