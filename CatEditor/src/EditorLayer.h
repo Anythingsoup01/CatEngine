@@ -57,7 +57,11 @@ namespace CatEngine
 
 
 		// UI Panels
+		void UI_ChildPanels();
+		void UI_MenuBar();
 		void UI_Toolbar();
+		void UI_Viewport();
+		void UI_Gizmos();
 
 	private:
 

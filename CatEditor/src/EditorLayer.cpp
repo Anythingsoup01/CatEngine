@@ -158,115 +158,12 @@ namespace CatEngine
                 ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
                 ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
             }
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 
-            if (ImGui::BeginMenuBar())
-            {
-                if (ImGui::BeginMenu("File"))
-                {
-                    if (ImGui::MenuItem("New", "Ctrl+N")) NewScene();
-
-                    if (ImGui::MenuItem("Open...", "Ctrl+O")) OpenScene();
-
-                    if (ImGui::MenuItem("Save", "Ctrl+S")) SaveScene();
-
-                    if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
-
-
-                    if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
-                    ImGui::EndMenu();
-                }
-
-                if (ImGui::BeginMenu("Scene"))
-                {
-                    const char* runtimeText = m_SceneState == SceneState::Edit ? "Start Runtime" : "Stop Runtime";
-                    if (ImGui::MenuItem(runtimeText, "Ctrl+F5"))  m_SceneState == SceneState::Edit ? OnScenePlay() : OnSceneStop();
-
-                    if (ImGui::MenuItem("Pause Runtime", "Ctrl+Shift+F5")) OnScenePause();
-
-                    if (ImGui::MenuItem("Simulate Runtime", "Ctrl+F7")) m_SceneState == SceneState::Edit ? OnSceneSimulateStart() : OnSceneSimulateStop();
-
-                    if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
-                    ImGui::EndMenu();
-                }
-                ImGui::EndMenuBar();
-            }
-
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-            ImGui::Begin("Scene");
-            auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
-            auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-            auto viewportOffset = ImGui::GetWindowPos();
-            m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-            m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-
-
-            m_ViewportFocused = ImGui::IsWindowFocused();
-            m_ViewportHovered = ImGui::IsWindowHovered();
-            m_BlockEvents = Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
-            
-            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-            uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
-            ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
-            if (m_SceneState != SceneState::Play)
-                if (ImGui::BeginDragDropTarget())
-                {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
-                    {
-                        const wchar_t* path = (const wchar_t*)payload->Data;
-                        std::filesystem::path filePath = std::filesystem::path("assets") / path;
-
-						if (filePath.extension().string() == ".catengine")
-						{
-							OpenScene(filePath);
-							m_SceneFilePath = filePath;
-						}
-						else if (filePath.extension().string() == ".png")
-						{
-							std::filesystem::path texturePath = std::filesystem::path("assets") / path;
-							Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-							if (texture->IsLoaded())
-							{
-								if (m_HoveredEntity && m_HoveredEntity.HasComponent<SpriteRendererComponent>())
-									m_HoveredEntity.GetComponent<SpriteRendererComponent>().Texture = texture;
-							}
-							else
-							{
-								CE_CLI_WARN("Could not load texture {0}", texturePath.filename().string());
-							}
-						}
-                    }
-
-                    ImGui::EndDragDropTarget();
-                }
-
-            // Gizmos
-            Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-            if (selectedEntity && m_GizmoType != -1)
-            {
-                ImGuizmo::SetOrthographic(false);
-                ImGuizmo::SetDrawlist();
-
-                ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-
-                // Camera
-
-                if (m_SceneState == SceneState::Edit)
-                {
-                    const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
-                    glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
-                    ImGuizmoDraw(selectedEntity, cameraProjection, cameraView);
-                }
-
-                
-            }
-            ImGui::End();
-
-            m_SceneHierarchyPanel.OnImGuiRender();
-            m_ContentBrowserPanel.OnImGuiRender();
+			UI_Viewport();
+			UI_MenuBar();
+			UI_Toolbar();
+			UI_ChildPanels();
 
             ImGui::Begin("Console");
             {
@@ -278,7 +175,6 @@ namespace CatEngine
 			
 			ImGui::PopStyleVar();
 
-            UI_Toolbar();
 
         }
         ImGui::End();
@@ -388,7 +284,48 @@ namespace CatEngine
         Renderer2D::EndScene();
     }
 
-    void EditorLayer::UI_Toolbar()
+	void EditorLayer::UI_ChildPanels()
+	{
+		m_SceneHierarchyPanel.OnImGuiRender();
+		m_ContentBrowserPanel.OnImGuiRender();
+	}
+
+	void EditorLayer::UI_MenuBar()
+	{
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New", "Ctrl+N")) NewScene();
+
+				if (ImGui::MenuItem("Open...", "Ctrl+O")) OpenScene();
+
+				if (ImGui::MenuItem("Save", "Ctrl+S")) SaveScene();
+
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
+
+
+				if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Scene"))
+			{
+				const char* runtimeText = m_SceneState == SceneState::Edit ? "Start Runtime" : "Stop Runtime";
+				if (ImGui::MenuItem(runtimeText, "Ctrl+F5"))  m_SceneState == SceneState::Edit ? OnScenePlay() : OnSceneStop();
+
+				if (ImGui::MenuItem("Pause Runtime", "Ctrl+Shift+F5")) OnScenePause();
+
+				if (ImGui::MenuItem("Simulate Runtime", "Ctrl+F7")) m_SceneState == SceneState::Edit ? OnSceneSimulateStart() : OnSceneSimulateStop();
+
+				if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+	}
+
+	void EditorLayer::UI_Toolbar()
     {
 		ImGuiWindowClass tabWindowClass;
 		tabWindowClass.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoResizeFlagsMask_;
@@ -445,6 +382,84 @@ namespace CatEngine
         ImGui::End();
 
     }
+
+	void EditorLayer::UI_Viewport()
+	{
+		ImGui::Begin("Scene");
+		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+		auto viewportOffset = ImGui::GetWindowPos();
+		m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+
+
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		m_BlockEvents = Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
+		ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::filesystem::path filePath = std::filesystem::path("assets") / path;
+
+				if (filePath.extension().string() == ".catengine" && m_SceneState == SceneState::Edit)
+				{
+					OpenScene(filePath);
+					m_SceneFilePath = filePath;
+				}
+				else if (filePath.extension().string() == ".png")
+				{
+					std::filesystem::path texturePath = std::filesystem::path("assets") / path;
+					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+					if (texture->IsLoaded())
+					{
+						if (m_HoveredEntity && m_HoveredEntity.HasComponent<SpriteRendererComponent>())
+							m_HoveredEntity.GetComponent<SpriteRendererComponent>().Texture = texture;
+					}
+					else
+					{
+						CE_CLI_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+		UI_Gizmos();
+		ImGui::End();
+	}
+
+	void EditorLayer::UI_Gizmos()
+	{
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
+
+			// Camera
+
+			if (m_SceneState == SceneState::Edit)
+			{
+				const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+				glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+				ImGuizmoDraw(selectedEntity, cameraProjection, cameraView);
+			}
+
+
+		}
+	}
 
     bool EditorLayer::OnWindowResize(WindowResizeEvent& e)
     {
