@@ -22,7 +22,12 @@ namespace CatEngine
     {
 
         m_IconStartRuntime = Texture2D::Create("Resources/Icons/Editor/Start-Runtime.png");
+		m_IconPauseRuntime = Texture2D::Create("Resources/Icons/Editor/Pause-Runtime.png");
+		m_IconPauseRuntimeSelected = Texture2D::Create("Resources/Icons/Editor/Pause-Runtime-Selected.png");
+		m_IconNextFrameRuntime = Texture2D::Create("Resources/Icons/Editor/NextFrame-Runtime.png");
         m_IconStopRuntime = Texture2D::Create("Resources/Icons/Editor/Stop-Runtime.png");
+
+        m_IconStartSimulation = Texture2D::Create("Resources/Icons/Editor/Start-Simulation.png");
 
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -87,7 +92,9 @@ namespace CatEngine
             }
             case SceneState::Play:
             {
+				if (!m_IsScenePaused)
                 m_ActiveScene->OnUpdateRuntime(time);
+				OnScenePause();
                 break;
             }
             case SceneState::Simulate:
@@ -298,8 +305,6 @@ namespace CatEngine
 
             if (cameraEntity)
                 Renderer2D::BeginScene(cameraEntity.GetComponent<CameraComponent>().Camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
-            else
-                CE_API_ERROR("No primary Camera!");
         }
         else
         {
@@ -365,22 +370,53 @@ namespace CatEngine
 
     void EditorLayer::UI_Toolbar()
     {
+		ImGuiWindowClass tabWindowClass;
+		tabWindowClass.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoResizeFlagsMask_;
+		ImGui::SetNextWindowClass(&tabWindowClass);
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 2 });
         ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, { 0, 0 });
+		ImGuiWindowFlags tabStyle = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
-        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		
+		
+        ImGui::Begin("##toolbar", nullptr, tabStyle);
         {
             float size = ImGui::GetWindowHeight() - 4.f;
-            Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconStartRuntime : m_IconStopRuntime;
+            Ref<Texture2D> runtimeIcon = m_SceneState == SceneState::Play ? m_IconStopRuntime : m_IconStartRuntime;
+			Ref<Texture2D> pauseIcon;
+			if (m_SceneState == SceneState::Edit)
+				pauseIcon = m_IsScenePaused ? m_IconPauseRuntimeSelected : m_IconPauseRuntime;
+			else if (m_SceneState == SceneState::Play)
+				pauseIcon = m_IsScenePaused ? m_IconNextFrameRuntime : m_IconPauseRuntime;
+			Ref<Texture2D> simulationIcon = m_SceneState == SceneState::Simulate ? m_IconStopRuntime : m_IconStartSimulation;
+
             ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f - (size * 0.5f)));
-            if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), {0, 0}, {1, 1}, 0))
+            if (ImGui::ImageButton((ImTextureID)runtimeIcon->GetRendererID(), ImVec2(size * 1.403, size), {0, 0}, {1, 1}, 0))
             {
                 if (m_SceneState == SceneState::Edit)
                     OnScenePlay();
                 else if (m_SceneState == SceneState::Play)
                     OnSceneStop();
             }
+			ImGui::SameLine();
+			if (ImGui::ImageButton((ImTextureID)pauseIcon->GetRendererID(), ImVec2(size * 1.403, size), { 0, 0 }, { 1, 1 }, 0))
+			{
+				if (m_SceneState == SceneState::Edit)
+					m_IsScenePaused = !m_IsScenePaused;
+				else if (m_SceneState == SceneState::Play)
+					m_IsScenePaused = !m_IsScenePaused;
+				
+			}
+			ImGui::SameLine();
+			if (ImGui::ImageButton((ImTextureID)simulationIcon->GetRendererID(), ImVec2(size * 1.403, size), { 0, 0 }, { 1, 1 }, 0))
+			{
+				if (m_SceneState == SceneState::Edit)
+					OnSceneSimulateStart();
+				else if (m_SceneState == SceneState::Simulate)
+					OnSceneSimulateStop();
+			}
+
             ImGui::PopStyleVar(2);
         }
         ImGui::End();
@@ -579,38 +615,42 @@ namespace CatEngine
 
     void EditorLayer::OnScenePlay()
     {
+        m_SceneState = SceneState::Play;
+
         m_EditorScene = Scene::Copy(m_ActiveScene);
         m_ActiveScene->OnRuntimeStart();
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
 
-        m_SceneState = SceneState::Play;
+	void EditorLayer::OnScenePause()
+	{
+
     }
 
     void EditorLayer::OnSceneStop()
     {
+        m_SceneState = SceneState::Edit;
+
         m_ActiveScene->OnRuntimeStop();
         m_ActiveScene = m_EditorScene;
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-        m_SceneState = SceneState::Edit;
     }
 
     void EditorLayer::OnSceneSimulateStart()
     {
+        m_SceneState = SceneState::Simulate;
+     
         m_EditorScene = Scene::Copy(m_ActiveScene);
         m_ActiveScene->OnSimulationStart();
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-        m_SceneState = SceneState::Simulate;
     }
     void EditorLayer::OnSceneSimulateStop()
     {
+        m_SceneState = SceneState::Edit;
+        
         m_ActiveScene->OnSimulationStop();
         m_ActiveScene = m_EditorScene;
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-        m_SceneState = SceneState::Edit;
-
     }
 
     void EditorLayer::DuplicateEntity()
