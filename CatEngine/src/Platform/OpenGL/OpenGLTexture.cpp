@@ -90,10 +90,4 @@ namespace CatEngine
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	bool OpenGLTexture2D::operator==(const Texture& other) const
-	{
-
-		return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
-
-	}
 }

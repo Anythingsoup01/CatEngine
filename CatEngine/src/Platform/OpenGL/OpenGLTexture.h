@@ -26,7 +26,10 @@ namespace CatEngine
 		virtual void Unbind() const override;
 
 
-		virtual bool operator==(const Texture& other) const override;
+		virtual bool operator==(const Texture& other) const override
+		{
+			return m_RendererID == other.GetRendererID();
+		}
 
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
 		virtual std::string GetFilePath() const override { return m_Path != "" ? m_Path : ""; }
