@@ -10,9 +10,6 @@ public:
 	{
 		PushLayer(new Sandbox2D());
 	}
-	~Sandbox() {
-
-	}
 };
 
 CatEngine::Application* CatEngine::CreateApplication(ApplicationCommandLineArgs args) {

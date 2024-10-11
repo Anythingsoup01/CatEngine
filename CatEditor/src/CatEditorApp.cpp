@@ -14,15 +14,11 @@ namespace CatEngine
 		{
 			PushLayer(new EditorLayer());
 		}
-		~CatEditor() {
-
-		}
 	};
 
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
 		ApplicationSpecification spec;
 		spec.Name = "CatEditor";
-		spec.WorkingDirectory = "./";
 		spec.CommandlineArgs = args;
 		return new CatEditor(spec);
 	}
