@@ -6,15 +6,15 @@
 #define PROFILE(name) PROFILE_SCOPE(name, [&](ProfileResult profileResult) {m_ProfileResults.push_back(profileResult);})
 
 Sandbox2D::Sandbox2D()
-	: Layer("Application"), m_CameraController(1280.f / 720.f)
+	: Layer("Application"), m_SceneOrthoCam(2, -2, 2, -2)
 {
 }
 
 void Sandbox2D::OnAttach()
 {
-	m_CameraController.SetZoomLevel(5.f);
 
     m_CheckeredTexture = CatEngine::Texture2D::Create("assets/textures/cat_texture.png");
+
 
 }
 
@@ -24,12 +24,8 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(CatEngine::Time time)
 {
+	CatEngine::Renderer2D::BeginScene(m_SceneOrthoCam);
 	CE_PROFILE_FUNCTION();
-	// Update
-	{
-		CE_PROFILE_SCOPE("CameraController::OnUpdate");
-		m_CameraController.OnUpdate(time);
-	}
 	// Render
 	{
 		CE_PROFILE_SCOPE("Prerender Commands");
@@ -39,16 +35,9 @@ void Sandbox2D::OnUpdate(CatEngine::Time time)
 	{
 		CE_PROFILE_SCOPE("Render");
 
-		CatEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
+				
+		CatEngine::Renderer2D::DrawQuad({ 0, 0, 0 },0, { 1, 1 }, { 1.f, 1.f, 1.f, 1.f });
 
-		for (float y = -m_Height; y < m_Height; y += .5f)
-		{
-			for (float x = -m_Width; x < m_Width; x += .5f)
-			{
-				glm::vec2 color = { {(x + m_Width) / (m_Width * 2)}, {(y + m_Height) / (m_Height * 2)} };
-				CatEngine::Renderer2D::DrawQuad({ x, y }, 0, { .45f, .45f }, { color.x, 1.f, color.y, 1.f });
-			}
-		}
 
 		CatEngine::Renderer2D::EndScene();
 	}
@@ -80,6 +69,6 @@ void Sandbox2D::OnImGuiDraw()
 
 void Sandbox2D::OnEvent(CatEngine::Event& e)
 {
-	m_CameraController.OnEvent(e);
+
 }
 

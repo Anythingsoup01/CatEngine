@@ -39,7 +39,7 @@ namespace CatEngine
         // Entity
         m_ActiveScene = CreateRef<Scene>();
 
-        auto commandLineArgs = Application::Get().GetCommandLineArgs();
+        auto commandLineArgs = Application::Get().GetSpecification().CommandlineArgs;
         if (commandLineArgs.Count > 1)
         {
             auto sceneFilePath = commandLineArgs[1];
@@ -396,7 +396,7 @@ namespace CatEngine
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		m_BlockEvents = Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+		m_BlockEvents = Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };

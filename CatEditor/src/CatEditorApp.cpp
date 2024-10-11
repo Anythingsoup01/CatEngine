@@ -9,8 +9,8 @@ namespace CatEngine
 	class CatEditor : public Application
 	{
 	public:
-		CatEditor()
-			: Application("CatEditor")
+		CatEditor(const ApplicationSpecification& specification)
+			: Application(specification)
 		{
 			PushLayer(new EditorLayer());
 		}
@@ -20,6 +20,10 @@ namespace CatEngine
 	};
 
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
-		return new CatEditor();
+		ApplicationSpecification spec;
+		spec.Name = "CatEditor";
+		spec.WorkingDirectory = "./";
+		spec.CommandlineArgs = args;
+		return new CatEditor(spec);
 	}
 }

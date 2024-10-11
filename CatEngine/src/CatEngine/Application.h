@@ -27,9 +27,16 @@ namespace CatEngine {
 		}
 	};
 
+	struct ApplicationSpecification
+	{
+		std::string Name = "CatEngine";
+		std::string WorkingDirectory;
+		ApplicationCommandLineArgs CommandlineArgs;
+	};
+
 	class Application {
 	public:
-		Application(const std::string& name = "CatEngine", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+		Application(const ApplicationSpecification& specification);
 		virtual ~Application() = default;
 
 		void Run();
@@ -46,10 +53,10 @@ namespace CatEngine {
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
-		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+		const ApplicationSpecification GetSpecification() const { return m_Specification; }
 
 	private:
-		ApplicationCommandLineArgs m_CommandLineArgs;
+		ApplicationSpecification m_Specification;
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);

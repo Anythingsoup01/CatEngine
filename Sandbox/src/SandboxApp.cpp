@@ -5,7 +5,8 @@
 
 class Sandbox : public CatEngine::Application {
 public:
-	Sandbox()
+	Sandbox(CatEngine::ApplicationSpecification& specification)
+		:Application(specification)
 	{
 		PushLayer(new Sandbox2D());
 	}
@@ -15,5 +16,9 @@ public:
 };
 
 CatEngine::Application* CatEngine::CreateApplication(ApplicationCommandLineArgs args) {
-	return new Sandbox();
+	ApplicationSpecification spec;
+	spec.Name = "Sandbox";
+	spec.WorkingDirectory = "../CatEditor";
+	spec.CommandlineArgs = args;
+	return new Sandbox(spec);
 }
