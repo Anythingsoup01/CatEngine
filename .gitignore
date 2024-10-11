@@ -385,3 +385,4 @@ FodyWeavers.xsd
 *.frag
 *.vert
 /CatEditor/imgui.ini
+/CatEditor/CatEditor.vcxproj
