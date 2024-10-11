@@ -361,6 +361,7 @@ namespace CatEngine
 
 				ImGuiDraw::DrawVec2Control("Offset", component.Offset);
 				ImGuiDraw::DrawVec2Control("Size", component.Size, 0.025f, 0.0001, 100000.f);
+				ImGuiDraw::DrawVec1Control("Rotation", component.Rotation, 0.025f, 0, 0);
 				ImGuiDraw::DrawCheckBox("Show Collider", component.ShowColliderBounds);
 				ImGuiDraw::DrawVec1Control("Density", component.Density, 0.025f, 0.0001, 100000.f);
 				ImGuiDraw::DrawVec1Control("Friction", component.Friction, 0.025f, 0.0001, 100000.f);

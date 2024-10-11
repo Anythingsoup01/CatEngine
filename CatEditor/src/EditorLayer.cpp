@@ -268,11 +268,11 @@ namespace CatEngine
                 if (bc2D.ShowColliderBounds)
                 {
                     glm::vec3 position = tc.Position + glm::vec3(bc2D.Offset, 0);
-                    float rotation = tc.Rotation.z;
+                    float rotation = tc.Rotation.z + glm::radians(bc2D.Rotation);
                     glm::vec3 scale = tc.Scale * glm::vec3(bc2D.Size * 2.f, 0.f);
 
                     glm::mat4 transform = glm::translate(glm::mat4(1.f), position)
-                        * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0,0,1))
+                        * glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0,0,1))
                         * glm::scale(glm::mat4(1.f), scale);
                     Renderer2D::DrawRect(transform, glm::vec4(0.2f, 0.2f, 0.95f, 1.0f));
 

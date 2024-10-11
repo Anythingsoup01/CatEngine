@@ -164,7 +164,7 @@ namespace CatEngine
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x, transform.Scale.y * bc2d.Size.y, { bc2d.Offset.x, bc2d.Offset.y }, 0);
+				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x, transform.Scale.y * bc2d.Size.y, { bc2d.Offset.x, bc2d.Offset.y }, glm::radians(bc2d.Rotation));
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;

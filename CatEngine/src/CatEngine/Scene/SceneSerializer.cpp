@@ -244,6 +244,7 @@ namespace CatEngine
 			out << YAML::BeginMap; // BoxCollider2DComponent
 			out << YAML::Key << "Offset" << YAML::Value << bc2d.Offset;
 			out << YAML::Key << "Size" << YAML::Value << bc2d.Size;
+			out << YAML::Key << "Rotation" << YAML::Value << bc2d.Rotation;
 			out << YAML::Key << "ShowColliderBounds" << YAML::Value << bc2d.ShowColliderBounds;
 			out << YAML::Key << "Density" << YAML::Value << bc2d.Density;
 			out << YAML::Key << "Friction" << YAML::Value << bc2d.Friction;
@@ -408,6 +409,7 @@ namespace CatEngine
 
 					bc2d.Offset = boxCollider2D["Offset"].as<glm::vec2>();
 					bc2d.Size = boxCollider2D["Size"].as<glm::vec2>();
+					bc2d.Rotation = boxCollider2D["Rotation"].as<float>();
 					bc2d.ShowColliderBounds = boxCollider2D["ShowColliderBounds"].as<bool>();
 					bc2d.Density = boxCollider2D["Density"].as<float>();
 					bc2d.Friction = boxCollider2D["Friction"].as<float>();

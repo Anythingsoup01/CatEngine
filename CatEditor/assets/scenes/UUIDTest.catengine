@@ -1,14 +1,14 @@
 Scene: SampleScene
 Entities:
-  - Entity: 1161878949837974403
+  - Entity: 6540180081666919043
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Box3
+      Name: Box2
     TransformComponent:
-      Position: [1.44910812, 0, 0]
+      Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
@@ -30,15 +30,15 @@ Entities:
       Color: [1, 1, 1, 1]
       Texture: ""
       Tiling: 1
-  - Entity: 6540180081666919043
+  - Entity: 1161878949837974403
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Box2
+      Name: Box3
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [1.44910812, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:

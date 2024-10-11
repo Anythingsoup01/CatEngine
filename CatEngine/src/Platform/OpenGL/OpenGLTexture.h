@@ -32,7 +32,7 @@ namespace CatEngine
 		}
 
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
-		virtual std::string GetFilePath() const override { return m_Path != "" ? m_Path : ""; }
+		virtual std::string GetFilePath() const override { return m_Path; }
 	private:
 		std::string m_Path;
 		uint32_t m_Width, m_Height;
