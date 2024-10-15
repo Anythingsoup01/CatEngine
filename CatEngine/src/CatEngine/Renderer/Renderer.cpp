@@ -20,6 +20,11 @@ namespace CatEngine {
 		Renderer2D::Init();
 	}
 
+	void Renderer::Shutdown()
+	{
+		Renderer2D::Shutdown();
+	}
+
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{
 		CE_PROFILE_FUNCTION();

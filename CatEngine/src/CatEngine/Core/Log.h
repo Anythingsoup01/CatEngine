@@ -53,7 +53,6 @@ namespace CatEngine {
 #define CE_API_WARN(...)
 #define CE_API_INFO(...)
 #define CE_API_TRACE(...)
-#define API_ASSERT(x, ...)
 
 // Client Log Macros
 #define CE_CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)

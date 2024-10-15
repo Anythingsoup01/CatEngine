@@ -25,8 +25,17 @@ namespace CatEngine {
 
 		Renderer::Init();
 
+		ScriptEngine::Init();
+
 		m_ImGuiLayer = new CatEngine::ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+	}
+
+	Application::~Application()
+	{
+		ScriptEngine::Shutdown();
+
+		Renderer::Shutdown();
 	}
 
 	void Application::Run() 

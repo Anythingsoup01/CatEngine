@@ -12,6 +12,8 @@
 #include "Layers/LayerStack.h"
 #include "Renderer/Renderer.h"
 
+#include "Scripting/ScriptEngine.h"
+
 
 namespace CatEngine {
 
@@ -37,7 +39,7 @@ namespace CatEngine {
 	class Application {
 	public:
 		Application(const ApplicationSpecification& specification);
-		virtual ~Application() = default;
+		virtual ~Application();
 
 		void Run();
 		void OnEvent(Event& e);

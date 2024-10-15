@@ -99,9 +99,11 @@ namespace CatEngine
                 break;
             }
             case SceneState::Simulate:
+			{
                 m_ActiveScene->OnUpdateSimulation(time, m_EditorCamera);
                 m_EditorCamera.OnUpdate(time);
                 break;
+			}
         }
 
         auto [mx, my] = ImGui::GetMousePos();
