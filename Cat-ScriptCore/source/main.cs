@@ -1,30 +1,55 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace CatEngine
 {
-	public class Main
+
+	public static class InternalCalls
+	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void NativeLogString(string text, int paramenter);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void NativeLogVector3(ref Vector3 paramenter);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void NativeLogVector2(ref Vector2 paramenter);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static Vector3 AddVector3(ref Vector3 value1, ref Vector3 value2);
+	}
+
+	public struct Vector3
+	{
+		public float X, Y, Z;
+
+		public Vector3(float x, float y, float z)
+		{
+			X = x;
+			Y = y;
+			Z = z;
+		}
+	}
+	public struct Vector2
+	{
+		public float X, Y;
+
+		public Vector2(float x, float y)
+		{
+			X = x;
+			Y = y;
+		}
+	}
+
+	public class Entity
 	{
 
-		public float FloatVar { get; set; }
-
-		public Main()
+		void Start()
 		{
-			Console.WriteLine("Main Constructor!");
+			PrintMessage();
 		}
 
-		public void PrintMessage()
+		private void PrintMessage()
 		{
-			Console.WriteLine("Hello World from C#");
+			InternalCalls.NativeLogString("You suck!!", 1);
 		}
 
-		public void PrintInt(int value)
-		{
-			Console.WriteLine(value);
-		}
-
-		public void PrintCustomMessage(string message)
-		{
-			Console.WriteLine(message);
-		}
 	}
 }
