@@ -26,6 +26,12 @@ namespace CatEngine
 			Y = y;
 			Z = z;
 		}
+		public Vector3(Vector3 other)
+		{
+			X = other.X;
+			Y = other.Y;
+			Z = other.Z;
+		}
 	}
 	public struct Vector2
 	{
@@ -41,15 +47,27 @@ namespace CatEngine
 	public class Entity
 	{
 
+		Vector3 position = new Vector3(0.64f, 0.23f, 0.32f);
+
+		void Update()
+		{
+
+		}
 		void Start()
 		{
-			PrintMessage();
-		}
+			LogVector3(ref position);
+			Vector3 newPos = new Vector3(1.1f, 1.6f, 1.7f);
+			LogVector3(ref newPos);
 
-		private void PrintMessage()
+			LogVector3(new Vector3(InternalCalls.AddVector3(ref position,ref newPos)));
+		}
+		void LogVector3(ref Vector3 vector)
 		{
-			InternalCalls.NativeLogString("You suck!!", 1);
+			InternalCalls.NativeLogVector3(ref vector);
 		}
-
+		void LogVector3(Vector3 vector)
+		{
+			InternalCalls.NativeLogVector3(ref vector);
+		}
 	}
 }

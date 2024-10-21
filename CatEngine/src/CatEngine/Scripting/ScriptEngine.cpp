@@ -24,7 +24,7 @@ namespace CatEngine
 
 			std::streampos end = stream.tellg();
 			stream.seekg(0, std::ios::beg);
-			uint32_t size = end - stream.tellg();
+			uint64_t size = end - stream.tellg();
 
 			if (size == 0)
 				CE_API_CRITICAL("File - {0} - is empty!");
@@ -33,7 +33,7 @@ namespace CatEngine
 			stream.read((char*)buffer, size);
 			stream.close();
 
-			*outSize = size;
+			*outSize = (uint32_t)size;
 			return buffer;
 		}
 
@@ -96,43 +96,43 @@ namespace CatEngine
 		ScriptClass EntityScriptClass;
 	};
 
-	static ScriptEngineData* s_Data = nullptr;
+	static ScriptEngineData* s_ScriptData = nullptr;
 
 	void ScriptEngine::Init()
 	{
-		s_Data = new ScriptEngineData();
+		s_ScriptData = new ScriptEngineData();
 
 		InitMono();
 		LoadAssembly("Resources/Scripts/Cat-ScriptCore.dll");
 
 		ScriptGlue::RegisterFunctions();
 
-		s_Data->EntityScriptClass = ScriptClass("CatEngine", "Entity");
-		s_Data->EntityClassInstance = s_Data->EntityScriptClass.Instantiate();
+		s_ScriptData->EntityScriptClass = ScriptClass("CatEngine", "Entity");
+		s_ScriptData->EntityClassInstance = s_ScriptData->EntityScriptClass.Instantiate();
 
 		// Put specific events here - i.e. Start, Update, Awake, Collision, Possibly Triggers
-		s_Data->OnStartMethod = s_Data->EntityScriptClass.GetMethod("Start", 0);
-		if (s_Data->OnStartMethod) mono_runtime_invoke(s_Data->OnStartMethod, s_Data->EntityClassInstance, nullptr, nullptr);
+		s_ScriptData->OnStartMethod = s_ScriptData->EntityScriptClass.GetMethod("Start");
+		if (s_ScriptData->OnStartMethod) s_ScriptData->EntityScriptClass.InvokeMethod(s_ScriptData->EntityClassInstance, s_ScriptData->OnStartMethod);
 
-		s_Data->OnUpdateMethod = s_Data->EntityScriptClass.GetMethod("Update", 0);
+		s_ScriptData->OnUpdateMethod = s_ScriptData->EntityScriptClass.GetMethod("Update");
 
 	}
 	void ScriptEngine::Shutdown()
 	{
 		ShutdownMono();
-		delete s_Data;
+		delete s_ScriptData;
 	}
 
 	void ScriptEngine::LoadAssembly(const std::filesystem::path& filePath)
 	{
-		s_Data->AppDomain = mono_domain_create_appdomain("CatScriptRuntime", nullptr);
-		mono_domain_set(s_Data->AppDomain, true);
+		s_ScriptData->AppDomain = mono_domain_create_appdomain("CatScriptRuntime", nullptr);
+		mono_domain_set(s_ScriptData->AppDomain, true);
 
-		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filePath);
-		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filePath);
+		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
 
 
-		//PrintAssemblyTypes(s_Data->CoreAssembly);
+		//PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 	}
 
 	void ScriptEngine::InitMono()
@@ -142,20 +142,20 @@ namespace CatEngine
 		MonoDomain* rootDomain = mono_jit_init("CatEngineJITRuntime");
 		CE_API_ASSERT(rootDomain, "Could not load Root Domain \"CatEngineJITRuntime\"");
 
-		s_Data->RootDomain = rootDomain;
+		s_ScriptData->RootDomain = rootDomain;
 
 	}
 	void ScriptEngine::ShutdownMono()
 	{
-		mono_jit_cleanup(s_Data->RootDomain);
-		s_Data->AppDomain = nullptr;
-		s_Data->RootDomain = nullptr;
+		mono_jit_cleanup(s_ScriptData->RootDomain);
+		s_ScriptData->AppDomain = nullptr;
+		s_ScriptData->RootDomain = nullptr;
 	}
 
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
 	{
-		MonoObject* instance = mono_object_new(s_Data->AppDomain, monoClass);
+		MonoObject* instance = mono_object_new(s_ScriptData->AppDomain, monoClass);
 		mono_runtime_object_init(instance);
 		return instance;
 	}
@@ -166,7 +166,7 @@ namespace CatEngine
 	ScriptClass::ScriptClass(const char* classNamespace, const char* className)
 		: m_ClassNamespace(classNamespace), m_ClassName(className)
 	{
-		m_MonoClass = mono_class_from_name(s_Data->CoreAssemblyImage, classNamespace, className);
+		m_MonoClass = mono_class_from_name(s_ScriptData->CoreAssemblyImage, classNamespace, className);
 	}
 	MonoObject* ScriptClass::Instantiate()
 	{
@@ -175,5 +175,9 @@ namespace CatEngine
 	MonoMethod* ScriptClass::GetMethod(const char* methodName, int parameterCount)
 	{
 		return mono_class_get_method_from_name(m_MonoClass, methodName, parameterCount);
+	}
+	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
+	{
+		return mono_runtime_invoke(method, instance, params, nullptr);
 	}
 }

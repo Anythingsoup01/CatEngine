@@ -33,7 +33,8 @@ namespace CatEngine
 		ScriptClass(const char* classNamespace, const char* className);
 
 		MonoObject* Instantiate();
-		MonoMethod* GetMethod(const char* methodName, int parameterCount);
+		MonoMethod* GetMethod(const char* methodName, int parameterCount = 0);
+		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
 	private:
 		const char* m_ClassNamespace;
 		const char* m_ClassName;

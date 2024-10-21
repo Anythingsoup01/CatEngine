@@ -44,4 +44,14 @@ namespace CatEngine
 		NameComponent(const std::string& name)
 			: Name(name) {}
 	};
+
+	//struct ObjectStateComponent
+	//{
+	//	bool IsActive = true;
+
+	//	ObjectStateComponent() = default;
+	//	ObjectStateComponent(const ObjectStateComponent&) = default;
+	//	ObjectStateComponent(bool& isActive)
+	//		: IsActive(isActive) {}
+	//};
 }
