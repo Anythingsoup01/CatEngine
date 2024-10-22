@@ -39,24 +39,6 @@ namespace CatEngine
 			return buffer;
 		}
 
-		void PrintAssemblyTypes(MonoAssembly* assembly)
-		{
-			MonoImage* image = mono_assembly_get_image(assembly);
-			const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
-			int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-
-			for (int32_t i = 0; i < numTypes; i++)
-			{
-				uint32_t cols[MONO_TYPEDEF_SIZE];
-				mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
-
-				const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-
-				CE_API_TRACE("{}.{}", nameSpace, name);
-			}
-		}
-
 		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& filePath)
 		{
 			uint32_t fileSize = 0;
@@ -80,6 +62,25 @@ namespace CatEngine
 
 			return assembly;
 		}
+
+		void PrintAssemblyTypes(MonoAssembly* assembly)
+		{
+			MonoImage* image = mono_assembly_get_image(assembly);
+			const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+			int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+
+			for (int32_t i = 0; i < numTypes; i++)
+			{
+				uint32_t cols[MONO_TYPEDEF_SIZE];
+				mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+				const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+
+				CE_API_TRACE("{}.{}", nameSpace, name);
+			}
+		}
+
 	}
 
 	struct ScriptEngineData
@@ -90,12 +91,13 @@ namespace CatEngine
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
 
-		MonoObject* EntityClassInstance = nullptr;
+		ScriptClass MeownoClass;
 
-		MonoMethod* OnStartMethod = nullptr;
-		MonoMethod* OnUpdateMethod = nullptr;
+		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
+		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
 
-		ScriptClass EntityScriptClass;
+		// TODO : Make this take a ref
+		Scene* SceneContext = nullptr;
 	};
 
 	static ScriptEngineData* s_ScriptData = nullptr;
@@ -106,17 +108,18 @@ namespace CatEngine
 
 		InitMono();
 		LoadAssembly("Resources/Scripts/Cat-ScriptCore.dll");
+		LoadAssemblyClasses(s_ScriptData->CoreAssembly);
+		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 
 		ScriptGlue::RegisterFunctions();
 
-		s_ScriptData->EntityScriptClass = ScriptClass("CatEngine", "Entity");
-		s_ScriptData->EntityClassInstance = s_ScriptData->EntityScriptClass.Instantiate();
+		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "MeownoBehaviour");
 
-		// Put specific events here - i.e. Start, Update, Awake, Collision, Possibly Triggers
-		s_ScriptData->OnStartMethod = s_ScriptData->EntityScriptClass.GetMethod("Start");
-		if (s_ScriptData->OnStartMethod) s_ScriptData->EntityScriptClass.InvokeMethod(s_ScriptData->EntityClassInstance, s_ScriptData->OnStartMethod);
+		for (auto& [name, scriptClass]: s_ScriptData->EntityClasses)
+		{
+			scriptClass->Instantiate();
+		}
 
-		s_ScriptData->OnUpdateMethod = s_ScriptData->EntityScriptClass.GetMethod("Update");
 
 	}
 	void ScriptEngine::Shutdown()
@@ -129,12 +132,65 @@ namespace CatEngine
 	{
 		s_ScriptData->AppDomain = mono_domain_create_appdomain("CatScriptRuntime", nullptr);
 		mono_domain_set(s_ScriptData->AppDomain, true);
-
+		
 		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filePath);
 		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
 
+	}
 
-		//PrintAssemblyTypes(s_ScriptData->CoreAssembly);
+	void ScriptEngine::OnRuntimeStart(Scene* scene)
+	{
+		s_ScriptData->SceneContext = scene;
+	}
+
+	void ScriptEngine::OnRuntimeStop()
+	{
+		s_ScriptData->SceneContext = nullptr;
+
+		s_ScriptData->EntityInstances.clear();
+	}
+
+	bool ScriptEngine::EntityClassExists(const std::string& fullClassName)
+	{
+		return s_ScriptData->EntityClasses.find(fullClassName) != s_ScriptData->EntityClasses.end();
+	}
+
+	void ScriptEngine::OnStartEntity(Entity e)
+	{
+
+		const auto& sc = e.GetComponent<ScriptComponent>();
+
+		if (ScriptEngine::EntityClassExists(sc.ClassName))
+		{
+			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_ScriptData->EntityClasses[sc.ClassName], e);
+			s_ScriptData->EntityInstances[e.GetUUID()] = instance;
+
+			instance->InvokeStartMethod();
+		}
+	}
+
+	void ScriptEngine::OnUpdateEntity(Entity e, float ts)
+	{
+		UUID entityUUID = e.GetUUID();
+
+		if (s_ScriptData->EntityInstances.find(entityUUID) != s_ScriptData->EntityInstances.end());
+		{
+			Ref<ScriptInstance> instance = s_ScriptData->EntityInstances[entityUUID];
+			instance->InvokeUpdateMethod(ts);
+		}
+
+		// Else run through the logger
+
+	}
+
+	Scene* ScriptEngine::GetSceneContext()
+	{
+		return s_ScriptData->SceneContext;
+	}
+
+	std::unordered_map<std::string, Ref<ScriptClass>>& ScriptEngine::GetScriptClasses()
+	{
+		return s_ScriptData->EntityClasses;
 	}
 
 	void ScriptEngine::InitMono()
@@ -154,6 +210,49 @@ namespace CatEngine
 		s_ScriptData->RootDomain = nullptr;
 	}
 
+	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	{
+		s_ScriptData->EntityClasses.clear();
+		MonoImage* image = mono_assembly_get_image(assembly);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+		MonoClass* entityClass = mono_class_from_name(image, "CatEngine", "MeownoBehaviour");
+		
+
+		for (int32_t i = 0; i < numTypes; i++)
+		{
+
+			uint32_t cols[MONO_TYPEDEF_SIZE];
+			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+
+			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+			std::string fullName;
+			if (strlen(nameSpace) != 0)
+				fullName = fmt::format("{}.{}", nameSpace, name);
+			else
+				fullName = name;
+			
+			MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
+			
+			if (monoClass == entityClass)
+				continue;
+
+			bool isEntity = false;
+			if (monoClass && entityClass)
+				isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
+
+			if (isEntity)
+			{
+				s_ScriptData->EntityClasses[fullName] = CreateRef<ScriptClass>(nameSpace, name);
+				auto& scriptClass = s_ScriptData->EntityClasses[fullName];
+			}
+
+
+			CE_API_TRACE("{}.{}", nameSpace, name);
+		}
+	}
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
 	{

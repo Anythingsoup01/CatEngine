@@ -49,4 +49,32 @@ namespace CatEngine
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_StartMethod = nullptr;
 	};
+
+
+	class ScriptEngine
+	{
+	public:
+		static void Init();
+		static void Shutdown();
+
+		static void LoadAssembly(const std::filesystem::path& filePath);
+		static void OnRuntimeStart(Scene* scene);
+		static void OnRuntimeStop();
+
+		static bool EntityClassExists(const std::string& fullClassName);
+		static void OnStartEntity(Entity e);
+		static void OnUpdateEntity(Entity e, float ts);
+
+		static Scene* GetSceneContext();
+		static std::unordered_map<std::string, Ref<ScriptClass>>& GetScriptClasses();
+	private:
+		static void InitMono();
+		static void ShutdownMono();
+
+		static MonoObject* InstantiateClass(MonoClass* monoClass);
+		static void LoadAssemblyClasses(MonoAssembly* assembly);
+
+		friend class ScriptClass;
+	};
+
 }
