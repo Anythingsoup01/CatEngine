@@ -91,6 +91,7 @@ namespace CatEngine
 						ImGui::TreePop();
 					}
 				}
+				DisplayAddScriptComponent("Script");
 				ImGui::EndPopup();
 			}
 
@@ -388,9 +389,23 @@ namespace CatEngine
 				ImGuiDraw::DrawVec1Control("Restitution Threshold", component.RestitutionThreshold, 0.025f, 0.0001, 100000.f);
 			});
 
-		DrawComponent<NativeScriptComponent>("Script", selection, [](auto& component) 
+		DrawComponent<ScriptComponent>("Script", selection, [](auto& component) 
 		{
-			auto& nsc = component;
+			auto& sc = component;
+			bool scriptClassExists = ScriptEngine::EntityClassExists(sc.ClassName);
+			const auto& entityClasses = ScriptEngine::GetScriptClasses();
+
+			if (!scriptClassExists)
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f));
+
+			char buffer[256];
+			strcpy_s(buffer, sc.ClassName.c_str());
+
+			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+				sc.ClassName = buffer;
+
+			if (!scriptClassExists)
+				ImGui::PopStyleColor();
 		});
 	}
 
@@ -425,4 +440,15 @@ namespace CatEngine
 			}
 		}
 	}
+	
+	void SceneHierarchyPanel::DisplayAddScriptComponent(const std::string& name)
+	{
+
+		if (ImGui::MenuItem(name.c_str()))
+		{
+			m_SelectionContext.AddComponent<ScriptComponent>();
+			ImGui::CloseCurrentPopup();
+		}
+	}
+	
 }

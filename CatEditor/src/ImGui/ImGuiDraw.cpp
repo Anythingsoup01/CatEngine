@@ -22,10 +22,8 @@ namespace CatEngine
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 
 		ImGui::ColorEdit4("##CO", glm::value_ptr(values), ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine();
-		ImGui::ColorEdit4("##CI", glm::value_ptr(values), ImGuiColorEditFlags_NoSmallPreview);
 
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
@@ -36,10 +34,8 @@ namespace CatEngine
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 
 		ImGui::ColorEdit3("##CO", glm::value_ptr(values), ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine();
-		ImGui::ColorEdit3("##CI", glm::value_ptr(values), ImGuiColorEditFlags_NoSmallPreview);
 
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<typename T>
@@ -62,7 +58,7 @@ namespace CatEngine
 			ImGui::SameLine();
 			ImGui::PopID();
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
@@ -79,7 +75,7 @@ namespace CatEngine
 			ImGui::SameLine();
 			ImGui::PopID();
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
@@ -96,7 +92,7 @@ namespace CatEngine
 			ImGui::SameLine();
 			ImGui::PopID();
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
@@ -112,7 +108,7 @@ namespace CatEngine
 		ImGui::SameLine();
 		ImGui::PopID();
 		
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	void ImGuiDraw::DrawColorEdit4Control(const std::string& label, glm::vec4& values, float columnWidth)
