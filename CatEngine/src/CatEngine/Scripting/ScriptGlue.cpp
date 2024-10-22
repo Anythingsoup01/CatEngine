@@ -1,45 +1,48 @@
 #include "cepch.h"
 #include "ScriptGlue.h"
+#include "CatEngine/Core/UUID.h"
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 
+#include "CatEngine/Core/Input.h"
+#include "CatEngine/Core/KeyCodes.h"
+#include "CatEngine/Core/MouseButtonCodes.h"
+
 #include "CatEngine/Math/Math.h"
+#include "CatEngine/Scene/Scene.h"
+#include "CatEngine/Scene/Entity.h"
+#include "ScriptEngine.h"
 
 namespace CatEngine
 {
 
-#define CE_ADD_INTERNAL_CALL(Name) mono_add_internal_call("CatEngine.InternalCalls::" #Name, Name)
+#define CE_ADD_INTERNAL_CALL(Name) mono_add_internal_call("CatEngine.MeownoBehaviour::" #Name, Name)
 
-	static void NativeLogString(MonoString* text, int parameter)
+	static void Entity_GetPosition(UUID entityID, glm::vec3* outPosition)
 	{
-		char* cStr = mono_string_to_utf8(text);
-		std::string str(cStr);
-		mono_free(cStr);
-		CE_CLI_INFO("{0}-{1}", str, parameter);
+		Scene* scene = ScriptEngine::GetSceneContext();
+
+		Entity entity = scene->GetEntityByUUID(entityID);
+		*outPosition = entity.GetComponent<TransformComponent>().Position;
 	}
 
-	static void NativeLogVector3(Math::Vector3* parameter)
+	static void Entity_SetPosition(UUID entityID, glm::vec3* position)
 	{
-		CE_CLI_INFO("Vec3 - {0}", *parameter);
-	}
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(entityID);
+		entity.GetComponent<TransformComponent>().Position = *position;
+ 	}
 
-	static void NativeLogVector2(Math::Vector2* parameter)
+	static bool Input_IsKeyDown(KeyCode keyCode)
 	{
-		CE_CLI_INFO("Vec2 - {0}", *parameter);
-	}
-
-	static Math::Vector3 AddVector3(Math::Vector3* value1, Math::Vector3* value2)
-	{
-
-		return *value1 += *value2;
+		return Input::IsKeyPressed(keyCode);
 	}
 
 	void ScriptGlue::RegisterFunctions()
 	{
-		CE_ADD_INTERNAL_CALL(NativeLogString);
-		CE_ADD_INTERNAL_CALL(NativeLogVector2);
-		CE_ADD_INTERNAL_CALL(NativeLogVector3);
-		CE_ADD_INTERNAL_CALL(AddVector3);
+		CE_ADD_INTERNAL_CALL(Entity_GetPosition);
+		CE_ADD_INTERNAL_CALL(Entity_SetPosition);
+		CE_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}
 }
