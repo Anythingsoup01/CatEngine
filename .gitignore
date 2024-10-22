@@ -384,3 +384,4 @@ FodyWeavers.xsd
 *.vert
 /CatEditor/imgui.ini
 
+/CatEditor/Resources/Scripts/Cat-ScriptCore.dll
