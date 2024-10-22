@@ -111,6 +111,7 @@ namespace CatEngine
 		LoadAssemblyClasses(s_ScriptData->CoreAssembly);
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
 		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "MeownoBehaviour");
@@ -252,6 +253,11 @@ namespace CatEngine
 
 			CE_API_TRACE("{}.{}", nameSpace, name);
 		}
+	}
+
+	MonoImage* ScriptEngine::GetCoreImage()
+	{
+		return s_ScriptData->CoreAssemblyImage;
 	}
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)

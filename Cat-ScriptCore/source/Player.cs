@@ -30,13 +30,13 @@ public class Player : MeownoBehaviour
 		if (Input.IsKeyDown(KeyCode.A))
 			m_Velocity.X = -1f;
 
-		Vector3 position = Transform.Position;
-
-		position += m_Velocity * m_Speed * ts;
-
-		
-		
-		Transform.Position = position;
+		//Vector3 position = transform ;
+		//
+		//position += m_Velocity * m_Speed * ts;
+		//
+		//
+		//
+		//Transform.Position = position;
 	}
 
 }

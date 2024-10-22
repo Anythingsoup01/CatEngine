@@ -4,7 +4,7 @@
 	{
 		public static bool IsKeyDown(KeyCode keyCode)
 		{
-			return MeownoBehaviour.Input_IsKeyDown(keyCode);
+			return InternalCalls.Input_IsKeyDown(keyCode);
 		}
 	}
 }
