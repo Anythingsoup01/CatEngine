@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 #include "CatEngine/Components/Components.h"
-#include "SoloAction.h"
+#include "CatEngine/Scripting/ScriptEngine.h"
 #include "Entity.h"
 
 #include "CatEngine/Renderer/Renderer2D.h"
@@ -200,9 +200,21 @@ namespace CatEngine
 		m_PhysicsWorld = nullptr;
 	}
 
+	void Scene::OnScriptStart()
+	{
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			ScriptEngine::OnStartEntity(entity);
+		}
+	}
+
 	void Scene::OnRuntimeStart()
 	{
 		// TODO: Start scripts before physics
+		ScriptEngine::OnRuntimeStart(this);
+		OnScriptStart();
 
 		OnPhysics2DStart();
 			
@@ -215,17 +227,12 @@ namespace CatEngine
 
 		// Update Scripts
 		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
 			{
-				if (!nsc.Instance)
-				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity{ entity, this };
-					nsc.Instance->Start();
-				}
-
-				nsc.Instance->Update(time);
-			});
+				Entity entity = { e, this };
+				ScriptEngine::OnUpdateEntity(entity, time.deltaTime());
+			}
 		}
 
 		// Physics 2D
@@ -304,6 +311,7 @@ namespace CatEngine
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
@@ -401,6 +409,11 @@ namespace CatEngine
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 		return newEntity;
 	}
+	Entity Scene::GetEntityByUUID(UUID entityID)
+	{
+		if (m_EntityMap.find(entityID) != m_EntityMap.end())
+			return { m_EntityMap.at(entityID), this };
+	}
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		CE_PROFILE_FUNCTION();
@@ -434,11 +447,14 @@ namespace CatEngine
 
 		entity.AddComponent<TransformComponent>();
 
+		m_EntityMap[uuid] = entity.GetEntityID();
+
 		return entity;
 	}
 	void Scene::DeleteEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	template<typename T>
@@ -483,7 +499,7 @@ namespace CatEngine
 
 	}
 	template<>
-	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
 	{
 	}
 	template<>

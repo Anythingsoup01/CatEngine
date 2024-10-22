@@ -89,6 +89,12 @@ namespace YAML {
 
 namespace CatEngine
 {
+
+
+
+
+
+
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
 	{
 		out << YAML::Flow;
@@ -128,9 +134,11 @@ namespace CatEngine
 	{
 	}
 
+
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		CE_PROFILE_FUNCTION();
+
 		out << YAML::BeginMap; // Entity
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetComponent<IDComponent>().ID;
 		if (entity.HasComponent<TagComponent>())
@@ -267,6 +275,16 @@ namespace CatEngine
 			out << YAML::Key << "Restitution" << YAML::Value << cc2d.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2d.RestitutionThreshold;
 			out << YAML::EndMap; // CircleCollider2DComponent
+
+		}
+
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			auto& sc = entity.GetComponent<ScriptComponent>();
+			out << YAML::Key << "ScriptComponent" << YAML::Value;
+			out << YAML::BeginMap; // ScriptComponent
+			out << YAML::Key << "ClassName" << YAML::Value << sc.ClassName;
+			out << YAML::EndMap; // ScriptComponent
 
 		}
 
@@ -430,6 +448,14 @@ namespace CatEngine
 					cc2d.Friction = circleCollider2D["Friction"].as<float>();
 					cc2d.Restitution = circleCollider2D["Restitution"].as<float>();
 					cc2d.RestitutionThreshold = circleCollider2D["RestitutionThreshold"].as<float>();
+
+				}
+				auto scriptComponent = entity["ScriptComponent"];
+				if (scriptComponent)
+				{
+					auto& sc = deserializedEntity.AddComponent<ScriptComponent>();
+
+					sc.ClassName = scriptComponent["ClassName"].as<std::string>();
 
 				}
 			}
