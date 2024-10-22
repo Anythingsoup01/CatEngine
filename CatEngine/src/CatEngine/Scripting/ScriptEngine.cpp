@@ -7,6 +7,8 @@
 #include "ScriptGlue.h"
 
 #include "CatEngine/Math/Math.h"
+#include "CatEngine/Scene/Scene.h"
+#include "CatEngine/Scene/Entity.h"
 
 namespace CatEngine
 {
@@ -179,5 +181,37 @@ namespace CatEngine
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
 		return mono_runtime_invoke(method, instance, params, nullptr);
+	}
+
+	///////////////////////////////////////////////////////
+	// SCRIPT INSTANCE ////////////////////////////////////
+	///////////////////////////////////////////////////////
+
+	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity)
+		: m_ScriptClass(scriptClass)
+	{ 
+		// Put specific events here - i.e. Start, Update, Awake, Collision, Possibly Triggers
+		m_Instance = scriptClass->Instantiate();
+
+		m_Constructor = s_ScriptData->MeownoClass.GetMethod(".ctor", 1);
+		m_StartMethod = scriptClass->GetMethod("Start");
+		m_UpdateMethod = scriptClass->GetMethod("Update", 1);
+
+		{
+			UUID entityID = entity.GetUUID();
+			void* params = &entityID;
+			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &params);
+		}
+	}
+
+	void ScriptInstance::InvokeUpdateMethod(float ts)
+	{
+		void* param = &ts;
+		m_ScriptClass->InvokeMethod(m_Instance, m_UpdateMethod, &param);
+	}
+
+	void ScriptInstance::InvokeStartMethod()
+	{
+		m_ScriptClass->InvokeMethod(m_Instance, m_StartMethod);
 	}
 }

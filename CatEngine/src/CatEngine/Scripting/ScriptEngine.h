@@ -6,25 +6,14 @@ extern "C" {
 	typedef struct _MonoClass MonoClass;
 	typedef struct _MonoObject MonoObject;
 	typedef struct _MonoMethod MonoMethod;
+	typedef struct _MonoAssembly MonoAssembly;
 }
 
 namespace CatEngine
 {
-	class ScriptEngine
-	{
-	public:
-		static void Init();
-		static void Shutdown();
+	class Scene;
+	class Entity;
 
-		static void LoadAssembly(const std::filesystem::path& filePath);
-	private:
-		static void InitMono();
-		static void ShutdownMono();
-
-		static MonoObject* InstantiateClass(MonoClass* monoClass);
-
-		friend class ScriptClass;
-	};
 
 	class ScriptClass
 	{
@@ -35,11 +24,29 @@ namespace CatEngine
 		MonoObject* Instantiate();
 		MonoMethod* GetMethod(const char* methodName, int parameterCount = 0);
 		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
+
 	private:
 		const char* m_ClassNamespace;
 		const char* m_ClassName;
 
 		MonoClass* m_MonoClass = nullptr;
 
+		friend class ScriptEngine;
+	};
+
+	class ScriptInstance
+	{
+	public:
+		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity);
+
+		void InvokeUpdateMethod(float ts);
+		void InvokeStartMethod();
+	private:
+		Ref<ScriptClass> m_ScriptClass;
+
+		MonoObject* m_Instance = nullptr;
+		MonoMethod* m_UpdateMethod = nullptr;
+		MonoMethod* m_Constructor = nullptr;
+		MonoMethod* m_StartMethod = nullptr;
 	};
 }
