@@ -9,6 +9,7 @@
 #ifdef CE_DEBUG
 #if defined(CE_PLATFORM_WINDOWS)
 #define CE_DEBUGBREAK() __debugbreak()
+#define CE_PROFILE 0
 #elif defined(CE_PLATFORM_LINUX)
 #include <signal.h>
 #define CE_DEBUGBREAK() raise(SIGTRAP)
