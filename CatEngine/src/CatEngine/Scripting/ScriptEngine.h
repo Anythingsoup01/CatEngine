@@ -68,6 +68,7 @@ namespace CatEngine
 
 		static Scene* GetSceneContext();
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetScriptClasses();
+		static MonoImage* GetCoreImage();
 	private:
 		static void InitMono();
 		static void ShutdownMono();
@@ -75,7 +76,6 @@ namespace CatEngine
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 		static void LoadAssemblyClasses(MonoAssembly* assembly);
 
-		static MonoImage* GetCoreImage();
 
 		friend class ScriptClass;
 		friend class ScriptGlue;
