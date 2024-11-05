@@ -24,15 +24,19 @@ namespace CatEngine
 	static void Transform_GetPosition(UUID entityID, glm::vec3* outPosition)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
-
+		CE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
+		CE_ASSERT(entity);
 		*outPosition = entity.GetComponent<TransformComponent>().Position;
 	}
 
 	static void Transform_SetPosition(UUID entityID, glm::vec3* position)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
+		CE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
+		CE_ASSERT(entity);
+
 		entity.GetComponent<TransformComponent>().Position = *position;
  	}
 
