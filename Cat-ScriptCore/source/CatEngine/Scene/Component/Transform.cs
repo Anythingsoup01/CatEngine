@@ -12,12 +12,12 @@ namespace CatEngine
 		{
 			get
 			{
-				InternalCalls.Transform_GetPosition(MeownoBehaviour.ID, out Vector3 position);
+				InternalCalls.Transform_GetPosition(Object.ID, out Vector3 position);
 				return position;
 			}
 			set
 			{
-				InternalCalls.Transform_SetPosition(MeownoBehaviour.ID, ref value);
+				InternalCalls.Transform_SetPosition(Object.ID, ref value);
 			}
 		}
 
