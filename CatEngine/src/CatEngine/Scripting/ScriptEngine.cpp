@@ -311,12 +311,16 @@ namespace CatEngine
 
 	void ScriptInstance::InvokeUpdateMethod(float ts)
 	{
+		if (m_UpdateMethod)
+		{
 		void* param = &ts;
 		m_ScriptClass->InvokeMethod(m_Instance, m_UpdateMethod, &param);
+	}
 	}
 
 	void ScriptInstance::InvokeStartMethod()
 	{
+		if (m_StartMethod)
 		m_ScriptClass->InvokeMethod(m_Instance, m_StartMethod);
 	}
 }
