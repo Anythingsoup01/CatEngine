@@ -6,37 +6,59 @@ public class Player : MeownoBehaviour
 	public float m_Speed = 5f;
 	public Vector3 m_Velocity;
 
+	public float m_Vertical;
+	public float m_Horizontal;
+
+	private Transform m_Transform;
+	private Rigidbody2D m_Rigidbody2D;
+
+	private string m_Tag;
+
 	private void Start()
 	{
-		Console.WriteLine("Hello World!");
+		m_Transform = GetComponent<Transform>();
+		m_Rigidbody2D = GetComponent<Rigidbody2D>();
 	}
 
 	private void Update(float ts)
 	{
-		// Basic movement
-		//Vector3 position = Position;
-		//position.X += m_Speed * ts;
-		//Position = position;
 
-		// Intermediate movement
-		m_Velocity = Vector3.Zero;
+		m_Velocity = Vector3.zero;
+
+		Vector2 vertical;
+		Vector2 horizontal;
 
 		if (Input.IsKeyDown(KeyCode.W))
-			m_Velocity.Y = 1f;
+			vertical.X = 1f;
+		else
+			vertical.X = 0f;
 		if (Input.IsKeyDown(KeyCode.S))
-			m_Velocity.Y = -1f;
+			vertical.Y = -1f;
+		else
+			vertical.Y = 0f;
 		if (Input.IsKeyDown(KeyCode.D))
-			m_Velocity.X = 1f;
+			horizontal.X = 1f;
+		else
+			horizontal.X = 0f;
 		if (Input.IsKeyDown(KeyCode.A))
-			m_Velocity.X = -1f;
+			horizontal.Y = -1f;
+		else
+			horizontal.Y = 0f;
 
-		//Vector3 position = transform ;
-		//
-		//position += m_Velocity * m_Speed * ts;
-		//
-		//
-		//
-		//Transform.Position = position;
+		if (Input.IsKeyDown(KeyCode.R))
+			m_Transform.Position = Vector3.zero;
+
+		m_Vertical = vertical.X + vertical.Y;
+		m_Horizontal = horizontal.X + horizontal.Y;
+
+		m_Velocity = new Vector3(m_Horizontal, m_Vertical, 0f).normalized;
+
+		m_Rigidbody2D.ApplyLinearImpulse(m_Velocity.XY, true);
+
+
+		//Vector3 pos = m_Transform.Position;
+		//pos += m_Velocity * m_Speed * ts;
+		//m_Transform.Position = pos;
 	}
 
 }
