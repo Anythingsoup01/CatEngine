@@ -14,12 +14,14 @@
 #include "CatEngine/Scene/Entity.h"
 #include "ScriptEngine.h"
 
+#include "box2d/b2_body.h"
+
 namespace CatEngine
 {
 
 	static std::unordered_map < MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
 
-#define CE_ADD_INTERNAL_CALL(Name) mono_add_internal_call("CatEngine.MeownoBehaviour::" #Name, Name)
+#define CE_ADD_INTERNAL_CALL(Name) mono_add_internal_call("CatEngine.InternalCalls::" #Name, Name)
 
 	static void Transform_GetPosition(UUID entityID, glm::vec3* outPosition)
 	{
@@ -34,11 +36,33 @@ namespace CatEngine
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		CE_ASSERT(scene);
-		Entity entity = scene->GetEntityByUUID(entityID);
+		Entity entity = scene->GetEntityByUUID(entityID); 
 		CE_ASSERT(entity);
 
 		entity.GetComponent<TransformComponent>().Position = *position;
  	}
+
+	static void Rigidbody2D_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext(); 
+		CE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		CE_ASSERT(entity);
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyLinearImpulse(b2Vec2(impulse->x, impulse->y), b2Vec2(point->x, point->y), wake);
+	}
+
+	static void Rigidbody2D_ApplyLinearImpulseToCenter(UUID entityID, glm::vec2* impulse, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		CE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		CE_ASSERT(entity);
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
+	}
 
 	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
 	{
@@ -63,9 +87,9 @@ namespace CatEngine
 		([]()
 		{
 			std::string_view fullTypeName = typeid(Component).name();
-		size_t pos = fullTypeName.find_last_of(":");
+			size_t pos = fullTypeName.find_last_of(":");
 			std::string_view typeName = fullTypeName.substr(pos + 1);
-		pos = typeName.size() - sizeof("Component");
+			pos = typeName.size() - sizeof("Component");
 			std::string_view componentName = typeName.substr(0, pos + 1);
 			std::string managedTypename = fmt::format("CatEngine.{}", componentName);
 
@@ -94,6 +118,8 @@ namespace CatEngine
 	{
 		CE_ADD_INTERNAL_CALL(Transform_GetPosition);
 		CE_ADD_INTERNAL_CALL(Transform_SetPosition);
+		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyLinearImpulse);
+		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyLinearImpulseToCenter);
 		CE_ADD_INTERNAL_CALL(Entity_HasComponent);
 		CE_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}
