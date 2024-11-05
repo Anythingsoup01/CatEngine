@@ -114,7 +114,7 @@ namespace CatEngine
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
-		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "MeownoBehaviour");
+		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object");
 
 		for (auto& [name, scriptClass]: s_ScriptData->EntityClasses)
 		{
