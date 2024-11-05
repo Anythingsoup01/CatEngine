@@ -56,23 +56,38 @@ namespace CatEngine
 	{
 		return Input::IsKeyPressed(keyCode);
 	}
-	template<typename Component>
+	template<typename ... Component>
 	static void RegisterComponent()
 	{
-		std::string fullTypeName = typeid(Component).name();
+
+		([]()
+		{
+			std::string_view fullTypeName = typeid(Component).name();
 		size_t pos = fullTypeName.find_last_of(":");
-		std::string typeName = fullTypeName.substr(pos + 1);
+			std::string_view typeName = fullTypeName.substr(pos + 1);
 		pos = typeName.size() - sizeof("Component");
-		std::string componentName = typeName.substr(0,pos);
-		CE_ASSERT(false);
+			std::string_view componentName = typeName.substr(0, pos + 1);
+			std::string managedTypename = fmt::format("CatEngine.{}", componentName);
+
+			MonoType* managedType = mono_reflection_type_from_name(managedTypename.data(), ScriptEngine::GetCoreImage());
+			if (!managedType)
+			{
+				CE_API_ERROR("Could not find component type {}", managedTypename);
+				return;
+			}
+			s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<Component>(); };
+		}(), ...);
 	}
+
+	template<typename ... Component>
+	static void RegisterComponent(ComponentGroup<Component ...>)
+	{
+		RegisterComponent<Component ...>();
+	}
+
 	void ScriptGlue::RegisterComponents()
 	{
-		RegisterComponent<TransformComponent>();
-
-		MonoType* managedType = mono_reflection_type_from_name("CatEngine.Transform", ScriptEngine::GetCoreImage());
-		s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<TransformComponent>(); };
-
+		RegisterComponent(AllComponents{});
 	}
 
 	void ScriptGlue::RegisterFunctions()
