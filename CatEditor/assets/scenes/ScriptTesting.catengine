@@ -28,7 +28,7 @@ Entities:
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: GameObject
+      Name: Player
     TransformComponent:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -37,5 +37,43 @@ Entities:
       Color: [1, 1, 1, 1]
       Thickness: 1
       Fade: 0.00499999989
+    Rigidbody2DComponent:
+      BodyType: 2
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      ShowColliderBounds: true
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
     ScriptComponent:
       ClassName: Player
+  - Entity: 16908208199180960631
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Ground
+    TransformComponent:
+      Position: [0, -1.12548065, 0]
+      Rotation: [0, 0, 0]
+      Scale: [8.34079552, 0.488691926, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: assets\textures\checkered.png
+      Tiling: 1
+    Rigidbody2DComponent:
+      BodyType: 0
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Rotation: 0
+      ShowColliderBounds: true
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
