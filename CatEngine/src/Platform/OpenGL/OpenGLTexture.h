@@ -23,8 +23,6 @@ namespace CatEngine
 
 		virtual bool IsLoaded() const override { return m_IsLoaded; }
 
-		virtual void Unbind() const override;
-
 
 		virtual bool operator==(const Texture& other) const override
 		{
