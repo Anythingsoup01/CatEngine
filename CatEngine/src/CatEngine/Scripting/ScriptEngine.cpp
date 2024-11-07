@@ -107,6 +107,16 @@ namespace CatEngine
 			}
 		}
 
+		ScriptFieldType MonoTypeToScriptFieldType(MonoType* monoType)
+		{
+			std::string typeName = mono_type_get_name(monoType);
+			auto& it = s_ScriptFieldTypeMap.find(typeName);
+			
+			if (it != s_ScriptFieldTypeMap.end())
+				return it->second;
+
+			CE_API_ERROR("Not supported type {}", typeName);
+			return ScriptFieldType::None;
 	}
 
 	struct ScriptEngineData
