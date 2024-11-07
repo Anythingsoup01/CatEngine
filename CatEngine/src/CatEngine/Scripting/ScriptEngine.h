@@ -15,6 +15,7 @@ extern "C" {
 
 namespace CatEngine
 {
+
 	class Scene;
 	class Entity;
 
@@ -22,7 +23,7 @@ namespace CatEngine
 	{
 		None = 0,
 		Float, Double,
-		SByte, Char, Int16, Int32, Int64, Boolean, 
+		SByte, Char, Int16, Int32, Int64, Boolean,
 		Byte, UInt16, UInt32, UInt64,
 		String,
 		Vector2, Vector3, Vector4,
@@ -59,7 +60,7 @@ namespace CatEngine
 			memcpy(m_Data, &value, sizeof(T));
 		}
 
-	
+
 	private:
 
 		char m_Data[128];
@@ -163,6 +164,7 @@ namespace CatEngine
 		static Ref<ScriptClass> GetScriptClass(const std::string& name);
 		static ScriptFieldMap& GetScriptFieldMap(Entity entity);
 
+
 		static MonoImage* GetCoreImage();
 	private:
 		static void InitMono();
@@ -176,4 +178,63 @@ namespace CatEngine
 		friend class ScriptGlue;
 	};
 
+	namespace Utils
+	{
+		static const char* ScriptFieldTypeToString(ScriptFieldType fieldType)
+		{
+			switch (fieldType)
+			{
+			case ScriptFieldType::None:					return "None";
+			case ScriptFieldType::Float:					return "Float";
+			case ScriptFieldType::Double:					return "Double";
+			case ScriptFieldType::SByte:					return "SByte";
+			case ScriptFieldType::Char:						return "Char";
+			case ScriptFieldType::Int16:					return "Int16";
+			case ScriptFieldType::Int32:					return "Int32";
+			case ScriptFieldType::Int64:					return "Int64";
+			case ScriptFieldType::Boolean:					return "Bool";
+			case ScriptFieldType::Byte:						return "Byte";
+			case ScriptFieldType::UInt16:					return "UInt16";
+			case ScriptFieldType::UInt32:					return "UInt32";
+			case ScriptFieldType::UInt64:					return "UInt64";
+			case ScriptFieldType::String:					return "String";
+			case ScriptFieldType::Vector2:					return "Vector2";
+			case ScriptFieldType::Vector3:					return "Vector3";
+			case ScriptFieldType::Vector4:					return "Vector4";
+			case ScriptFieldType::Object:					return "Object";
+			case ScriptFieldType::Component:				return "Component";
+			case ScriptFieldType::MeownoBehaviour:			return "MeownoBehaviour";
+			case ScriptFieldType::TransformComponent:		return "TransformComponent";
+			case ScriptFieldType::Rigidbody2DComponent:		return "Rigidbody2DComponent";
+			}
+			CE_API_ASSERT(false, "Unknown Field Type!");
+			return "None";
+		}
+		static ScriptFieldType StringToScriptFieldType(std::string_view fieldType)
+		{
+			if (fieldType == "Float")					return ScriptFieldType::Float;
+			if (fieldType == "Double")					return ScriptFieldType::Double;
+			if (fieldType == "SByte")					return ScriptFieldType::SByte;
+			if (fieldType == "Char")					return ScriptFieldType::Char;
+			if (fieldType == "Int16")					return ScriptFieldType::Int16;
+			if (fieldType == "Int32")					return ScriptFieldType::Int32;
+			if (fieldType == "Int64")					return ScriptFieldType::Int64;
+			if (fieldType == "Boolean")					return ScriptFieldType::Boolean;
+			if (fieldType == "Byte")					return ScriptFieldType::Byte;
+			if (fieldType == "UInt16")					return ScriptFieldType::UInt16;
+			if (fieldType == "UInt32")					return ScriptFieldType::UInt32;
+			if (fieldType == "UInt64")					return ScriptFieldType::UInt64;
+			if (fieldType == "String")					return ScriptFieldType::String;
+			if (fieldType == "Vector2")					return ScriptFieldType::Vector2;
+			if (fieldType == "Vector3")					return ScriptFieldType::Vector3;
+			if (fieldType == "Vector4")					return ScriptFieldType::Vector4;
+			if (fieldType == "Object")					return ScriptFieldType::Object;
+			if (fieldType == "Component")				return ScriptFieldType::Component;
+			if (fieldType == "MeownoBehaviour")			return ScriptFieldType::MeownoBehaviour;
+			if (fieldType == "TransformComponent")		return ScriptFieldType::TransformComponent;
+			if (fieldType == "Rigidbody2DComponent")	return ScriptFieldType::Rigidbody2DComponent;
+			return ScriptFieldType::None;
+		}
+		
+	}
 }

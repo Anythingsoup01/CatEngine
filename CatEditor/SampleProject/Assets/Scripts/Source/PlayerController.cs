@@ -5,7 +5,7 @@ using CatEngine;
 public class PlayerController : MeownoBehaviour
 {
 
-	public float m_Speed = 0f;
+	public float m_Speed = 1f;
 	public Vector2 m_Velocity;
 
 	private float m_Vertical;
@@ -61,7 +61,7 @@ public class PlayerController : MeownoBehaviour
 
 		m_Velocity = new Vector2(m_Horizontal, m_Vertical).normalized * m_Speed * ts;
 
-		m_Rigidbody2D.ApplyLinearImpulse(m_Velocity, true);
+		m_Rigidbody2D.ApplyForce(m_Velocity, true);
 
 
 	}

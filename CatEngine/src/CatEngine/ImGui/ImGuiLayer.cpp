@@ -62,7 +62,11 @@ namespace CatEngine {
 
 	void ImGuiLayer::OnEvent(Event& e)
 	{
-		if (m_BlockEvents) {
+		if (m_BlockKeyboardEvents) {
+			ImGuiIO& io = ImGui::GetIO();
+			e.Handled |= e.IsInCategory(CategoryKeyboardEvent) & io.WantCaptureKeyboard;
+		}
+		if (m_BlockMouseEvents) {
 			ImGuiIO& io = ImGui::GetIO();
 			e.Handled |= e.IsInCategory(CategoryMouseEvent) & io.WantCaptureMouse;
 		}

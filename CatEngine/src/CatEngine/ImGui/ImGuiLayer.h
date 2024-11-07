@@ -22,12 +22,14 @@ namespace CatEngine {
 		void Begin();
 		void End();
 
-		bool BlockEvents(bool block) { m_BlockEvents = block; return block; }
+		bool BlockKeyboardEvents(bool block) { m_BlockKeyboardEvents = block; return block; }
+		bool BlockMouseEvents(bool block) { m_BlockMouseEvents = block; return block; }
 		void SetDarkThemeColors();
 		void SetDefaultEditorStyle();
 	private:
 	private:
-		bool m_BlockEvents = true;
+		bool m_BlockKeyboardEvents = true;
+		bool m_BlockMouseEvents = true;
 		float m_Time = 0.0;
 	};
 

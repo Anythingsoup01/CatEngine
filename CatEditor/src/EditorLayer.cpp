@@ -12,119 +12,123 @@
 
 #define PROFILE(name) PROFILE_SCOPE(name, [&](ProfileResult profileResult) {m_ProfileResults.push_back(profileResult);})
 
-namespace CatEngine 
+namespace CatEngine
 {
-    EditorLayer::EditorLayer()
-        : Layer("Application")
-    {
-    }
+	EditorLayer::EditorLayer()
+		: Layer("Application")
+	{
+	}
 
-    void EditorLayer::OnAttach()
-    {
+	void EditorLayer::OnAttach()
+	{
 
-        m_IconStartRuntime = Texture2D::Create("Resources/Icons/Editor/Start-Runtime.png");
+		m_IconStartRuntime = Texture2D::Create("Resources/Icons/Editor/Start-Runtime.png");
 		m_IconPauseRuntime = Texture2D::Create("Resources/Icons/Editor/Pause-Runtime.png");
 		m_IconPauseRuntimeSelected = Texture2D::Create("Resources/Icons/Editor/Pause-Runtime-Selected.png");
 		m_IconNextFrameRuntime = Texture2D::Create("Resources/Icons/Editor/NextFrame-Runtime.png");
-        m_IconStopRuntime = Texture2D::Create("Resources/Icons/Editor/Stop-Runtime.png");
+		m_IconStopRuntime = Texture2D::Create("Resources/Icons/Editor/Stop-Runtime.png");
 
-        m_IconStartSimulation = Texture2D::Create("Resources/Icons/Editor/Start-Simulation.png");
+		m_IconStartSimulation = Texture2D::Create("Resources/Icons/Editor/Start-Simulation.png");
 
-        FramebufferSpecification fbSpec;
-        fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-        fbSpec.Width = 1280;
-        fbSpec.Height = 720;
-        m_Framebuffer = Framebuffer::Create(fbSpec);
+		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+		fbSpec.Width = 1280;
+		fbSpec.Height = 720;
+		m_Framebuffer = Framebuffer::Create(fbSpec);
 
-        // Entity
-        m_ActiveScene = CreateRef<Scene>();
+		// Entity
+		m_ActiveScene = CreateRef<Scene>();
 
-        auto commandLineArgs = Application::Get().GetSpecification().CommandlineArgs;
-        if (commandLineArgs.Count > 1)
-        {
-            auto sceneFilePath = commandLineArgs[1];
-            SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(sceneFilePath);
-        }
-        
-        m_EditorCamera = EditorCamera(30.f, 1.778f, 0.1f, 1000.f);
+		m_CurrentProjectName = "SampleProject";
 
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-    }
+		m_ProjectAssetsDirectory = std::filesystem::path(m_CurrentProjectName + "/Assets");
+		auto commandLineArgs = Application::Get().GetSpecification().CommandlineArgs;
+		if (commandLineArgs.Count > 1)
+		{
+			auto sceneFilePath = commandLineArgs[1];
+			m_SceneFilePath = sceneFilePath;
+			OpenScene(m_SceneFilePath);
+		}
+		m_MouseInUse = false;
+		m_EditorCamera = EditorCamera(30.f, 1.778f, 0.1f, 1000.f);
 
-    void EditorLayer::OnDetach()
-    {
-    }
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
 
-    void EditorLayer::OnUpdate(Time time)
-    {
-        CE_PROFILE_FUNCTION();
+	void EditorLayer::OnDetach()
+	{
+	}
 
-        //Resize
+	void EditorLayer::OnUpdate(Time time)
+	{
+		CE_PROFILE_FUNCTION();
 
-        if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
-            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
-            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
-        {
-            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-        }
-        
-        // Render
-        Renderer2D::ResetStats();
+		//Resize
 
-        m_Framebuffer->Bind();
-        RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
+		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
 
-        m_Framebuffer->ClearAttachment(1, -1);
+		// Render
+		Renderer2D::ResetStats();
 
-        // Update Scene
-        switch (m_SceneState)
-        {
-            case SceneState::Edit:
-            {
-                // Update Camera
-                if (!ImGuizmo::IsUsing() && !m_BlockEvents)
-                    m_EditorCamera.OnUpdate(time);
+		m_Framebuffer->Bind();
+		RenderCommand::Clear({ 0.1, 0.1, 0.1, 1.0 });
 
-                m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
-                break;
-            }
-            case SceneState::Play:
-            {
-				if (!m_IsScenePaused)
-					m_ActiveScene->OnUpdateRuntime(time);
-				OnScenePause();
-                break;
-            }
-            case SceneState::Simulate:
-			{
-                m_ActiveScene->OnUpdateSimulation(time, m_EditorCamera);
-                m_EditorCamera.OnUpdate(time);
-                break;
-			}
-        }
+		m_Framebuffer->ClearAttachment(1, -1);
 
-        auto [mx, my] = ImGui::GetMousePos();
-        mx -= m_ViewportBounds[0].x;
-        my -= m_ViewportBounds[0].y;
-        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-        my = viewportSize.y - my;
+		// Update Scene
+		switch (m_SceneState)
+		{
+		case SceneState::Edit:
+		{
+			// Update Camera movement
+			// Not using guizmo      Block mouse events true   Mouse is in use
+			if (!ImGuizmo::IsUsing() && (!m_BlockMouseEvents))
+				m_EditorCamera.OnUpdate(time);
 
-        int mouseX = (int)mx;
-        int mouseY = (int)my;
+			m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
+			break;
+		}
+		case SceneState::Play:
+		{
+			if (!m_IsScenePaused)
+				m_ActiveScene->OnUpdateRuntime(time);
+			OnScenePause();
+			break;
+		}
+		case SceneState::Simulate:
+		{
+			m_ActiveScene->OnUpdateSimulation(time, m_EditorCamera);
+			m_EditorCamera.OnUpdate(time);
+			break;
+		}
+		}
 
-        if ((mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y))
-        {
-            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-            m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
-        }
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= m_ViewportBounds[0].x;
+		my -= m_ViewportBounds[0].y;
+		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+		my = viewportSize.y - my;
 
-        OnOverlayRender();
+		int mouseX = (int)mx;
+		int mouseY = (int)my;
 
-        m_Framebuffer->Unbind();
-    }
+		if ((mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y))
+		{
+			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
+		}
+		
+		OnOverlayRender();
+
+		m_Framebuffer->Unbind();
+	}
 
     void EditorLayer::OnImGuiDraw()
     {
@@ -401,7 +405,9 @@ namespace CatEngine
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		m_BlockEvents = Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused);
+
+		m_BlockKeyboardEvents = Application::Get().GetImGuiLayer()->BlockKeyboardEvents(false);
+		m_BlockMouseEvents = Application::Get().GetImGuiLayer()->BlockMouseEvents(!m_ViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -413,7 +419,7 @@ namespace CatEngine
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				std::filesystem::path filePath = std::filesystem::path("assets") / path;
+				std::filesystem::path filePath = std::filesystem::path(m_ProjectAssetsDirectory) / path;
 
 				if (filePath.extension().string() == ".catengine" && m_SceneState == SceneState::Edit)
 				{
@@ -422,7 +428,7 @@ namespace CatEngine
 				}
 				else if (filePath.extension().string() == ".png")
 				{
-					std::filesystem::path texturePath = std::filesystem::path("assets") / path;
+					std::filesystem::path texturePath = std::filesystem::path(m_ProjectAssetsDirectory) / path;
 					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 					if (texture->IsLoaded())
 					{
@@ -455,7 +461,7 @@ namespace CatEngine
 
 			// Camera
 
-			if (m_SceneState == SceneState::Edit)
+			if (m_SceneState == SceneState::Edit && m_ViewportFocused)
 			{
 				const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
 				glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
@@ -479,12 +485,10 @@ namespace CatEngine
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
     {   
-        // Shortcuts
-        //if (!e.IsRepeat())
-        //    return false;
 
         bool control = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
-        bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
+		bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
+		// Shortcuts
         switch (e.GetKeyCode())
         {
             case KeyCode::C:
@@ -548,19 +552,28 @@ namespace CatEngine
                     m_SceneState == SceneState::Edit ? OnSceneSimulateStart() : OnSceneSimulateStop();
                 break;
             }
-            case KeyCode::Q:
-            {
-                m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-                break;
-            }
+			case KeyCode::Q:
+			{
+				if (m_ViewportFocused)
+					m_GizmoType = ImGuizmo::OPERATION::BOUNDS;
+				break;
+			}
             case KeyCode::W:
             {
-                m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				if (m_ViewportFocused)
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
                 break;
             }
             case KeyCode::E:
             {
-                m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				if (m_ViewportFocused)
+					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+                break;
+            }
+            case KeyCode::R:
+            {
+				if (m_ViewportFocused)
+					m_GizmoType = ImGuizmo::OPERATION::SCALE;
                 break;
             }
             case KeyCode::Delete:
@@ -570,16 +583,122 @@ namespace CatEngine
             default:
                 break;
         }
+
+		// Mouse in use checks
+	
+
         return false;
     }
 
     bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
     {
-        if (e.GetMouseButton() == MouseCode::ButtonLeft)
-        {
-            if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(KeyCode::LeftAlt) && m_SceneState == SceneState::Edit)
-                m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
-        }
+		bool alt = Input::IsKeyPressed(KeyCode::LeftAlt) || Input::IsKeyPressed(KeyCode::RightAlt);
+		bool isButtonDown =  Input::IsMouseButtonPressed(MouseCode::ButtonMiddle) || Input::IsMouseButtonPressed(MouseCode::ButtonLeft) || Input::IsMouseButtonPressed(MouseCode::ButtonRight);
+		if (Input::IsMouseButtonPressed(MouseCode::ButtonLeft))
+		{
+			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(KeyCode::LeftAlt) && m_SceneState == SceneState::Edit)
+				m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+		}
+
+		//switch (e.GetMouseButton())
+		//{
+		//	case MouseCode::ButtonMiddle:
+		//	{
+		//		if (!m_BlockMouseEvents)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else if (m_BlockMouseEvents && m_MouseInUse)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else
+		//			m_MouseInUse = alt && isButtonDown;
+
+		//		break;
+		//	}
+		//	case MouseCode::ButtonLeft:
+		//	{
+
+
+		//		// if mouse in use camera will move freely
+
+		//		
+		//		if (!m_BlockMouseEvents && !m_MouseInUseFlag)
+		//		{
+		//			m_MouseInUseFlag = alt && isButtonDown;
+		//		}
+		//		else if ((m_MouseInUseFlag && alt && isButtonDown))
+		//		{
+		//			m_MouseInUse = true;
+		//		}
+		//		else if (m_MouseInUseFlag && (!alt || !isButtonDown))
+		//		{
+		//			m_MouseInUseFlag = false;
+		//			m_MouseInUse = false;
+		//		}
+
+
+		//		break;
+		//	}
+		//	case MouseCode::ButtonRight:
+		//	{
+		//		if (!m_BlockMouseEvents)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else if (m_BlockMouseEvents && m_MouseInUse)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else
+		//			m_MouseInUse = alt && isButtonDown;
+
+		//			
+		//		break;
+		//	}
+		//}switch (e.GetMouseButton())
+		//{
+		//	case MouseCode::ButtonMiddle:
+		//	{
+		//		if (!m_BlockMouseEvents)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else if (m_BlockMouseEvents && m_MouseInUse)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else
+		//			m_MouseInUse = alt && isButtonDown;
+
+		//		break;
+		//	}
+		//	case MouseCode::ButtonLeft:
+		//	{
+
+
+		//		// if mouse in use camera will move freely
+
+		//		
+		//		if (!m_BlockMouseEvents && !m_MouseInUseFlag)
+		//		{
+		//			m_MouseInUseFlag = alt && isButtonDown;
+		//		}
+		//		else if ((m_MouseInUseFlag && alt && isButtonDown))
+		//		{
+		//			m_MouseInUse = true;
+		//		}
+		//		else if (m_MouseInUseFlag && (!alt || !isButtonDown))
+		//		{
+		//			m_MouseInUseFlag = false;
+		//			m_MouseInUse = false;
+		//		}
+
+
+		//		break;
+		//	}
+		//	case MouseCode::ButtonRight:
+		//	{
+		//		if (!m_BlockMouseEvents)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else if (m_BlockMouseEvents && m_MouseInUse)
+		//			m_MouseInUse = alt && isButtonDown;
+		//		else
+		//			m_MouseInUse = alt && isButtonDown;
+
+		//			
+		//		break;
+		//	}
+		//}
         return false;
     }
 

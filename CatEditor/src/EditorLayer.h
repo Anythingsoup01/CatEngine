@@ -49,8 +49,6 @@ namespace CatEngine
 		void PasteEntity();
 
 
-
-
 		// TODO: Implement pausing and simulating physics
 
 		void OnOverlayRender();
@@ -66,11 +64,18 @@ namespace CatEngine
 	private:
 
 		std::filesystem::path m_SceneFilePath;
+		std::filesystem::path m_ProjectAssetsDirectory;
+
+		std::string m_CurrentProjectName;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 
 		bool m_Minimized = false;
-		bool m_BlockEvents = false;
+		bool m_BlockKeyboardEvents = false;
+		bool m_BlockMouseEvents = false;
+
+		bool m_MouseInUse = false;
+		bool m_MouseInUseFlag = false;
 
 		bool m_IsScenePaused = false;
 

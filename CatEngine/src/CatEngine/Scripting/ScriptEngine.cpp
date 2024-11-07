@@ -111,44 +111,16 @@ namespace CatEngine
 		{
 			std::string typeName = mono_type_get_name(monoType);
 			auto& it = s_ScriptFieldTypeMap.find(typeName);
-			
+
 			if (it != s_ScriptFieldTypeMap.end())
 				return it->second;
 
 			CE_API_ERROR("Not supported type {}", typeName);
 			return ScriptFieldType::None;
 		}
-
-		const char* ScriptFieldTypeToString(ScriptFieldType fieldType)
-		{
-			switch (fieldType)
-			{
-			case ScriptFieldType::Float:					return "Float";
-			case ScriptFieldType::Double:					return "Double";
-			case ScriptFieldType::SByte:					return "SByte";
-			case ScriptFieldType::Char:						return "Char";
-			case ScriptFieldType::Int16:					return "Int16";
-			case ScriptFieldType::Int32:					return "Int32";
-			case ScriptFieldType::Int64:					return "Int64";
-			case ScriptFieldType::Boolean:					return "Bool";
-			case ScriptFieldType::Byte:						return "Byte";
-			case ScriptFieldType::UInt16:					return "UInt16";
-			case ScriptFieldType::UInt32:					return "UInt32";
-			case ScriptFieldType::UInt64:					return "UInt64";
-			case ScriptFieldType::String:					return "String";
-			case ScriptFieldType::Vector2:					return "Vector2";
-			case ScriptFieldType::Vector3:					return "Vector3";
-			case ScriptFieldType::Vector4:					return "Vector4";
-			case ScriptFieldType::Object:					return "Object";
-			case ScriptFieldType::Component:				return "Component";
-			case ScriptFieldType::MeownoBehaviour:			return "MeownoBehaviour";
-			case ScriptFieldType::TransformComponent:		return "TransformComponent";
-			case ScriptFieldType::Rigidbody2DComponent:		return "Rigidbody2DComponent";
-			default: return "<INVALID>";
-			}
-		}
-
 	}
+
+	
 
 	struct ScriptEngineData
 	{

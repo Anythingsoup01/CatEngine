@@ -1,27 +1,32 @@
 Scene: SampleScene
 Entities:
-  - Entity: 10375907877104484598
+  - Entity: 16908208199180960631
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Camera
+      Name: Ground
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [0, -1.12548065, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 10000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
+      Scale: [8.34079552, 0.488691926, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: SampleProject/Assets\Textures\checkered.png
+      Tiling: 1
+    Rigidbody2DComponent:
+      BodyType: 0
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Rotation: 0
+      ShowColliderBounds: true
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
   - Entity: 11822063603308732852
     TagComponent:
       Tag: None
@@ -50,30 +55,25 @@ Entities:
       RestitutionThreshold: 0.5
     ScriptComponent:
       ClassName: Player
-  - Entity: 16908208199180960631
+  - Entity: 10375907877104484598
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Ground
+      Name: Camera
     TransformComponent:
-      Position: [0, -1.12548065, 0]
+      Position: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [8.34079552, 0.488691926, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      Texture: assets\textures\checkered.png
-      Tiling: 1
-    Rigidbody2DComponent:
-      BodyType: 0
-      FixedRotation: true
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Rotation: 0
-      ShowColliderBounds: true
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 10000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false

@@ -5,7 +5,7 @@
 namespace CatEngine
 {
 	// TODO: Once projects are introduced, change this!
-	static const std::filesystem::path s_AssetPath = "assets";
+	static const std::filesystem::path s_AssetPath = "SampleProject/Assets";
 
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_CurrentDirectory(s_AssetPath)
