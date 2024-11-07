@@ -3,6 +3,7 @@
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
+#include "mono/metadata/tabledefs.h"
 
 #include "ScriptGlue.h"
 
@@ -12,6 +13,31 @@
 
 namespace CatEngine
 {
+	std::unordered_map<std::string, ScriptFieldType> s_ScriptFieldTypeMap =
+	{
+		{"System.Single", ScriptFieldType::Float},
+		{"System.Double", ScriptFieldType::Double},
+		{"System.SByte",ScriptFieldType::SByte},
+		{"System.Char",ScriptFieldType::Char},
+		{"System.Int16", ScriptFieldType::Int16},
+		{"System.Int32", ScriptFieldType::Int32},
+		{"System.Int64", ScriptFieldType::Int64},
+		{"System.Boolean", ScriptFieldType::Boolean},
+		{"System.Byte", ScriptFieldType::Byte},
+		{"System.UInt16", ScriptFieldType::UInt16},
+		{"System.UInt32", ScriptFieldType::UInt32},
+		{"System.UInt64", ScriptFieldType::UInt64},
+		{"System.String", ScriptFieldType::String},
+		{"CatEngine.Vector2", ScriptFieldType::Vector2},
+		{"CatEngine.Vector3", ScriptFieldType::Vector3},
+		{"CatEngine.Vector4", ScriptFieldType::Vector4},
+		{"CatEngine.Object", ScriptFieldType::Object},
+		{"CatEngine.Component", ScriptFieldType::Component},
+		{"CatEngine.MeownoBehaviour", ScriptFieldType::MeownoBehaviour},
+		{"CatEngine.Transform", ScriptFieldType::TransformComponent},
+		{"CatEngine.Rigidbody2D", ScriptFieldType::Rigidbody2DComponent},
+
+	};
 
 	namespace Utils
 	{
