@@ -212,6 +212,8 @@ namespace CatEngine
 
 	void Scene::OnRuntimeStart()
 	{
+		m_IsRunning = true;
+
 		// TODO: Start scripts before physics
 		ScriptEngine::OnRuntimeStart(this);
 		OnScriptStart();
@@ -310,6 +312,7 @@ namespace CatEngine
 
 	void Scene::OnRuntimeStop()
 	{
+		m_IsRunning = false;
 		OnPhysics2DStop();
 		ScriptEngine::OnRuntimeStop();
 	}

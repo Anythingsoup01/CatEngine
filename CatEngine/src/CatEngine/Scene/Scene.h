@@ -50,6 +50,8 @@ namespace CatEngine
 			return m_Registry.view<Components...>();
 		}
 
+		bool IsRunning() { return m_IsRunning; }
+
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
@@ -66,6 +68,8 @@ namespace CatEngine
 		b2World* m_PhysicsWorld = nullptr;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
+
+		bool m_IsRunning = false;
 
 		friend class Entity;
 		friend class SceneSerializer;
