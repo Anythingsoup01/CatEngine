@@ -117,7 +117,7 @@ namespace CatEngine
 
 			CE_API_ERROR("Not supported type {}", typeName);
 			return ScriptFieldType::None;
-	}
+		}
 
 		const char* ScriptFieldTypeToString(ScriptFieldType fieldType)
 		{
@@ -158,10 +158,15 @@ namespace CatEngine
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
 
+		MonoAssembly* AppAssembly = nullptr;
+		MonoImage* AppAssemblyImage = nullptr;
+
 		ScriptClass MeownoClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+
+		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
 		// TODO : Make this take a ref
 		Scene* SceneContext = nullptr;
@@ -175,13 +180,14 @@ namespace CatEngine
 
 		InitMono();
 		LoadAssembly("Resources/Scripts/Cat-ScriptCore.dll");
-		LoadAssemblyClasses(s_ScriptData->CoreAssembly);
+		LoadAppAssembly("SampleProject/Assets/Scripts/Binaries/AssemblyC#.dll");
+		LoadAssemblyClasses();
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
-		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object");
+		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object", true);
 
 		for (auto& [name, scriptClass]: s_ScriptData->EntityClasses)
 		{
@@ -206,6 +212,12 @@ namespace CatEngine
 
 	}
 
+	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filePath)
+	{
+		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filePath);
+		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
+	}
+
 	void ScriptEngine::OnRuntimeStart(Scene* scene)
 	{
 		s_ScriptData->SceneContext = scene;
@@ -218,7 +230,7 @@ namespace CatEngine
 		s_ScriptData->EntityInstances.clear();
 	}
 
-	bool ScriptEngine::EntityClassExists(const std::string& fullClassName)
+	bool ScriptEngine::ScriptClassExists(const std::string& fullClassName)
 	{
 		return s_ScriptData->EntityClasses.find(fullClassName) != s_ScriptData->EntityClasses.end();
 	}
@@ -228,10 +240,22 @@ namespace CatEngine
 
 		const auto& sc = e.GetComponent<ScriptComponent>();
 
-		if (ScriptEngine::EntityClassExists(sc.ClassName))
+		if (ScriptEngine::ScriptClassExists(sc.ClassName))
 		{
+			UUID entityID = e.GetUUID();
 			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_ScriptData->EntityClasses[sc.ClassName], e);
-			s_ScriptData->EntityInstances[e.GetUUID()] = instance;
+			s_ScriptData->EntityInstances[entityID] = instance;
+
+			// Copy field value
+			if (s_ScriptData->EntityScriptFields.find(entityID) != s_ScriptData->EntityScriptFields.end())
+			{
+				const ScriptFieldMap& scriptFieldMap = s_ScriptData->EntityScriptFields.at(entityID);
+
+				for (const auto& [name, fieldInstance] : scriptFieldMap)
+				{
+					instance->SetFieldDataInternal(name, (void*)fieldInstance.m_Data);
+				}
+			}
 
 			instance->InvokeStartMethod();
 		}
@@ -241,7 +265,7 @@ namespace CatEngine
 	{
 		UUID entityUUID = e.GetUUID();
 
-		if (s_ScriptData->EntityInstances.find(entityUUID) != s_ScriptData->EntityInstances.end());
+		if (s_ScriptData->EntityInstances.find(entityUUID) != s_ScriptData->EntityInstances.end())
 		{
 			Ref<ScriptInstance> instance = s_ScriptData->EntityInstances[entityUUID];
 			instance->InvokeUpdateMethod(ts);
@@ -256,9 +280,36 @@ namespace CatEngine
 		return s_ScriptData->SceneContext;
 	}
 
+	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entityID)
+	{
+		auto& it = s_ScriptData->EntityInstances.find(entityID);
+		if (it == s_ScriptData->EntityInstances.end())
+			return nullptr;
+
+		return it->second;
+	}
+
 	std::unordered_map<std::string, Ref<ScriptClass>>& ScriptEngine::GetScriptClasses()
 	{
 		return s_ScriptData->EntityClasses;
+	}
+
+	Ref<ScriptClass> ScriptEngine::GetScriptClass(const std::string& name)
+	{
+		if (s_ScriptData->EntityClasses.find(name) != s_ScriptData->EntityClasses.end())
+			return s_ScriptData->EntityClasses.at(name);
+
+		return nullptr;
+	}
+
+	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
+	{
+		CE_ASSERT(entity);
+
+		UUID entityID = entity.GetUUID();
+		//CE_ASSERT(s_ScriptData->EntityScriptFields.find(entityID) != s_ScriptData->EntityScriptFields.end());
+
+		return s_ScriptData->EntityScriptFields[entityID];
 	}
 
 	void ScriptEngine::InitMono()
@@ -278,13 +329,12 @@ namespace CatEngine
 		s_ScriptData->RootDomain = nullptr;
 	}
 
-	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	void ScriptEngine::LoadAssemblyClasses()
 	{
 		s_ScriptData->EntityClasses.clear();
-		MonoImage* image = mono_assembly_get_image(assembly);
-		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(s_ScriptData->AppAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-		MonoClass* entityClass = mono_class_from_name(image, "CatEngine", "MeownoBehaviour");
+		MonoClass* entityClass = mono_class_from_name(s_ScriptData->CoreAssemblyImage, "CatEngine", "MeownoBehaviour");
 		
 
 		for (int32_t i = 0; i < numTypes; i++)
@@ -294,15 +344,15 @@ namespace CatEngine
 			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
 
-			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+			const char* nameSpace = mono_metadata_string_heap(s_ScriptData->AppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(s_ScriptData->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
 			std::string fullName;
 			if (strlen(nameSpace) != 0)
 				fullName = fmt::format("{}.{}", nameSpace, name);
 			else
 				fullName = name;
 			
-			MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
+			MonoClass* monoClass = mono_class_from_name(s_ScriptData->AppAssemblyImage, nameSpace, name);
 			
 			if (monoClass == entityClass)
 				continue;
@@ -311,15 +361,32 @@ namespace CatEngine
 			if (monoClass && entityClass)
 				isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
 
-			if (isEntity)
+			if (!isEntity)
+				continue;
+
+			Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nameSpace, name);
+
+			s_ScriptData->EntityClasses[fullName] = scriptClass;
+
+			void* iterator = nullptr;
+			while (MonoClassField* field = mono_class_get_fields(monoClass, &iterator))
 			{
-				s_ScriptData->EntityClasses[fullName] = CreateRef<ScriptClass>(nameSpace, name);
-				auto& scriptClass = s_ScriptData->EntityClasses[fullName];
+				const char* fieldName = mono_field_get_name(field);
+				uint32_t fieldFlag = mono_field_get_flags(field);
+
+				if (fieldFlag == METHOD_ATTRIBUTE_PUBLIC)
+				{
+					MonoType* type = mono_field_get_type(field);
+					ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(type);
+
+					scriptClass->m_Fields[fieldName] = { fieldType, fieldName, field };
+				}
+				
 			}
 
-
-			CE_API_TRACE("{}.{}", nameSpace, name);
 		}
+
+
 	}
 
 	MonoImage* ScriptEngine::GetCoreImage()
@@ -337,10 +404,11 @@ namespace CatEngine
 	// SCRIPT CLASS ///////////////////////////////////////
 	///////////////////////////////////////////////////////
 
-	ScriptClass::ScriptClass(const char* classNamespace, const char* className)
+	ScriptClass::ScriptClass(const char* classNamespace, const char* className, bool isCore)
 		: m_ClassNamespace(classNamespace), m_ClassName(className)
 	{
-		m_MonoClass = mono_class_from_name(s_ScriptData->CoreAssemblyImage, classNamespace, className);
+		m_MonoClass = mono_class_from_name(isCore ? s_ScriptData->CoreAssemblyImage : s_ScriptData->AppAssemblyImage, classNamespace, className);
+
 	}
 	MonoObject* ScriptClass::Instantiate()
 	{
@@ -389,5 +457,27 @@ namespace CatEngine
 	{
 		if (m_StartMethod)
 			m_ScriptClass->InvokeMethod(m_Instance, m_StartMethod);
+	}
+	bool ScriptInstance::GetFieldDataInternal(const std::string& name, void* buffer)
+	{
+		const auto& fields = m_ScriptClass->GetFields();
+		auto& it = fields.find(name);
+
+		if (it == fields.end())
+			return false;
+		const ScriptField& field = it->second;
+		mono_field_get_value(m_Instance, field.ClassField, buffer);
+		return true;
+	}
+
+	void ScriptInstance::SetFieldDataInternal(const std::string& name, void* value)
+	{
+		const auto& fields = m_ScriptClass->GetFields();
+		auto& it = fields.find(name);
+
+		if (it == fields.end())
+			return;
+		const ScriptField& field = it->second;
+		mono_field_set_value(m_Instance, field.ClassField, value);
 	}
 }
