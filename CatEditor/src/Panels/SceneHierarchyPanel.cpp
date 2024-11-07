@@ -389,10 +389,10 @@ namespace CatEngine
 				ImGuiDraw::DrawVec1Control("Restitution Threshold", component.RestitutionThreshold, 0.025f, 0.0001, 100000.f);
 			});
 
-		DrawComponent<ScriptComponent>("Script", selection, [](auto& component) 
+		DrawComponent<ScriptComponent>("Script", selection, [selection, this](auto& component) mutable
 		{
 			auto& sc = component;
-			bool scriptClassExists = ScriptEngine::EntityClassExists(sc.ClassName);
+			bool scriptClassExists = ScriptEngine::ScriptClassExists(sc.ClassName);
 			const auto& entityClasses = ScriptEngine::GetScriptClasses();
 
 			if (!scriptClassExists)
@@ -402,7 +402,75 @@ namespace CatEngine
 			strcpy_s(buffer, sc.ClassName.c_str());
 
 			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+			{
 				sc.ClassName = buffer;
+			}
+
+			bool sceneRunning = m_Context->IsRunning();
+			if (sceneRunning)
+			{
+				Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(selection.GetUUID());
+				if (scriptInstance)
+				{
+					const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+
+					for (const auto& [name, field] : fields)
+					{
+						if (field.Type == ScriptFieldType::Float)
+						{
+							float data = scriptInstance->GetFieldData<float>(name);
+							if (ImGui::DragFloat(name.c_str(), &data))
+								scriptInstance->SetFieldData(name, &data);
+						}
+					}
+
+				}
+			}
+			else
+			{
+				if(scriptClassExists)
+				{
+					Ref<ScriptClass> scriptClass = ScriptEngine::GetScriptClass(component.ClassName);
+					const auto& fields = scriptClass->GetFields();
+
+					auto& scriptFields = ScriptEngine::GetScriptFieldMap(selection);
+
+					for (const auto& [name, field] : fields)
+					{
+						if (scriptFields.find(name) != scriptFields.end())
+						{
+							// Display control to set it
+							if (field.Type == ScriptFieldType::Float)
+							{
+
+								ScriptFieldInstance& scriptFieldInstance = scriptFields.at(name);
+
+								float data = scriptFieldInstance.GetValue<float>();
+								if (ImGui::DragFloat(name.c_str(), &data))
+								{
+									scriptFieldInstance.SetValue(data);
+								}
+							}
+						}
+						else
+						{
+							// Display control to set it
+							if (field.Type == ScriptFieldType::Float)
+							{
+								float data = 0.0f;
+								if (ImGui::DragFloat(name.c_str(), &data))
+								{
+									ScriptFieldInstance& sfi = scriptFields[name];
+									sfi.Field = field;
+									sfi.SetValue(data);
+								}
+							}
+						}
+
+					}
+				}
+
+			}
 
 			if (!scriptClassExists)
 				ImGui::PopStyleColor();
