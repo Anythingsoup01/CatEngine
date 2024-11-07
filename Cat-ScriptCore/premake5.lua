@@ -1,10 +1,12 @@
+CatEngineRootDir = '../'
+
 project "Cat-ScriptCore"
 	kind "SharedLib"
 	language "C#"
 	dotnetframework "4.7.2"
 
-	targetdir ("%{wks.location}/CatEditor/Resources/Scripts")
-	objdir ("%{wks.location}/CatEditor/Resources/Intermediates")
+	targetdir (CatEngineRootDir .. "/CatEditor/Resources/Scripts")
+	objdir (CatEngineRootDir .. "/CatEditor/Resources/Intermediates")
 
 
 	files {
