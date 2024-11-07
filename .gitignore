@@ -386,3 +386,4 @@ FodyWeavers.xsd
 
 /CatEditor/Resources/Scripts/Cat-ScriptCore.dll
 /CatEditor/SampleProject/Assets/Scripts/Binaries
+*.sln
