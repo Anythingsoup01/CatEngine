@@ -33,7 +33,17 @@ namespace CatEngine
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Transform_SetPosition(ulong entityID, ref Vector3 position);
 
-		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Transform_GetRotation(ulong entityID, out Vector3 rotation);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Transform_SetRotation(ulong entityID, ref Vector3 rotation);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Transform_GetScale(ulong entityID, out Vector3 scale);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Transform_SetScale(ulong entityID, ref Vector3 scale);
 		#endregion
 	}
 }
