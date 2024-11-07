@@ -81,6 +81,7 @@ namespace CatEngine
 		}
 
 		public static Vector3 operator *(Vector3 vec, float num) => new Vector3(vec.X * num, vec.Y * num, vec.Z * num);
+		public static Vector3 operator *(Vector3 vec1, Vector3 vec2) => new Vector3(vec1.X * vec2.X, vec1.Y * vec2.Y, vec1.Z * vec2.Z);
 		public static Vector3 operator +(Vector3 vec1, Vector3 vec2) => new Vector3(vec1.X + vec2.X, vec1.Y + vec2.Y, vec1.Z + vec2.Z);
 		public static Vector3 operator/(Vector3 vec, float fl) => new Vector3(vec.X / fl, vec.Y / fl, vec.Z / fl);
 
@@ -93,6 +94,7 @@ namespace CatEngine
 		static readonly Vector3 forwardVector = new Vector3(0f, 0f, 1f);
 
 		public static Vector3 zero { get { return zeroVector; } }
+		public static Vector3 forward { get { return forwardVector; } }
 
 		public const float cEpsilon = 0.00001F;
 	}
