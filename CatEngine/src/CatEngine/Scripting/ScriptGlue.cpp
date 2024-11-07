@@ -14,7 +14,8 @@
 #include "CatEngine/Scene/Entity.h"
 #include "ScriptEngine.h"
 
-#include "box2d/b2_body.h"
+#include "CatEngine/Physics/Physics2D.h"
+
 
 namespace CatEngine
 {
@@ -23,63 +24,97 @@ namespace CatEngine
 
 #define CE_ADD_INTERNAL_CALL(Name) mono_add_internal_call("CatEngine.InternalCalls::" #Name, Name)
 
-	static void Transform_GetPosition(UUID entityID, glm::vec3* outPosition)
+	static Entity GetEntity(UUID entityID)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		CE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
 		CE_ASSERT(entity);
-		*outPosition = entity.GetComponent<TransformComponent>().Position;
-	}
-
-	static void Transform_SetPosition(UUID entityID, glm::vec3* position)
-	{
-		Scene* scene = ScriptEngine::GetSceneContext();
-		CE_ASSERT(scene);
-		Entity entity = scene->GetEntityByUUID(entityID); 
-		CE_ASSERT(entity);
-
-		entity.GetComponent<TransformComponent>().Position = *position;
- 	}
-
-	static void Rigidbody2D_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
-	{
-		Scene* scene = ScriptEngine::GetSceneContext(); 
-		CE_ASSERT(scene);
-		Entity entity = scene->GetEntityByUUID(entityID);
-		CE_ASSERT(entity);
-		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		body->ApplyLinearImpulse(b2Vec2(impulse->x, impulse->y), b2Vec2(point->x, point->y), wake);
-	}
-
-	static void Rigidbody2D_ApplyLinearImpulseToCenter(UUID entityID, glm::vec2* impulse, bool wake)
-	{
-		Scene* scene = ScriptEngine::GetSceneContext();
-		CE_ASSERT(scene);
-		Entity entity = scene->GetEntityByUUID(entityID);
-		CE_ASSERT(entity);
-		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
-	}
-
-	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
-	{
-		Scene* scene = ScriptEngine::GetSceneContext();
-		CE_ASSERT(scene);
-		Entity entity = scene->GetEntityByUUID(entityID);
-		CE_ASSERT(entity);
-
-		MonoType* managedType = mono_reflection_type_get_type(componentType);
-		CE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end());
-		return s_EntityHasComponentFuncs.at(managedType)(entity);
+		return entity;
 	}
 
 	static bool Input_IsKeyDown(KeyCode keyCode)
 	{
 		return Input::IsKeyPressed(keyCode);
 	}
+
+#pragma region Rigidbody2D
+
+	static void Rigidbody2D_ApplyForce(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
+	{
+		Entity& entity = GetEntity(entityID);
+		Physics2D::ApplyForce(entity, *impulse, *point, wake);
+	}
+	static void Rigidbody2D_ApplyForceToCenter(UUID entityID, glm::vec2* impulse, bool wake)
+	{
+		Entity& entity = GetEntity(entityID);
+		Physics2D::ApplyForceToCenter(entity, *impulse, wake);
+	}
+	static void Rigidbody2D_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
+	{
+		Entity& entity = GetEntity(entityID);
+		Physics2D::ApplyLinearImpulse(entity, *impulse, *point, wake);
+	}
+	static void Rigidbody2D_ApplyLinearImpulseToCenter(UUID entityID, glm::vec2* impulse, bool wake)
+	{
+		Entity& entity = GetEntity(entityID);
+		Physics2D::ApplyLinearImpulseToCenter(entity, *impulse, wake);
+	}
+
+
+#pragma endregion
+
+#pragma region Transform
+
+	static void Transform_GetPosition(UUID entityID, glm::vec3* outPosition)
+	{
+		Entity& entity = GetEntity(entityID);
+		*outPosition = entity.GetComponent<TransformComponent>().Position;
+	}
+
+	static void Transform_SetPosition(UUID entityID, glm::vec3* position)
+	{
+		Entity& entity = GetEntity(entityID);
+
+		entity.GetComponent<TransformComponent>().Position = *position;
+	}
+
+	static void Transform_GetRotation(UUID entityID, glm::vec3* outRotation)
+	{
+		Entity& entity = GetEntity(entityID);
+		*outRotation = entity.GetComponent<TransformComponent>().Rotation;
+	}
+
+	static void Transform_SetRotation(UUID entityID, glm::vec3* rotation)
+	{
+		Entity& entity = GetEntity(entityID);
+
+		entity.GetComponent<TransformComponent>().Rotation = *rotation;
+	}
+
+	static void Transform_GetScale(UUID entityID, glm::vec3* outScale)
+	{
+		Entity& entity = GetEntity(entityID);
+		*outScale = entity.GetComponent<TransformComponent>().Scale;
+	}
+
+	static void Transform_SetScale(UUID entityID, glm::vec3* scale)
+	{
+		Entity& entity = GetEntity(entityID);
+
+		entity.GetComponent<TransformComponent>().Scale = *scale;
+	}
+
+#pragma endregion
+	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
+	{
+		Entity& entity = GetEntity(entityID);
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		CE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end());
+		return s_EntityHasComponentFuncs.at(managedType)(entity);
+	}
+
 	template<typename ... Component>
 	static void RegisterComponent()
 	{
@@ -116,11 +151,24 @@ namespace CatEngine
 
 	void ScriptGlue::RegisterFunctions()
 	{
-		CE_ADD_INTERNAL_CALL(Transform_GetPosition);
-		CE_ADD_INTERNAL_CALL(Transform_SetPosition);
-		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyLinearImpulse);
-		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyLinearImpulseToCenter);
 		CE_ADD_INTERNAL_CALL(Entity_HasComponent);
 		CE_ADD_INTERNAL_CALL(Input_IsKeyDown);
+
+#pragma region Rigidbody2D
+		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyForce);
+		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyForceToCenter);
+		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyLinearImpulse);
+		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyLinearImpulseToCenter);
+#pragma endregion
+
+#pragma region Transform
+		CE_ADD_INTERNAL_CALL(Transform_GetPosition);
+		CE_ADD_INTERNAL_CALL(Transform_SetPosition);
+		CE_ADD_INTERNAL_CALL(Transform_GetRotation);
+		CE_ADD_INTERNAL_CALL(Transform_SetRotation);
+		CE_ADD_INTERNAL_CALL(Transform_GetScale);
+		CE_ADD_INTERNAL_CALL(Transform_SetScale);
+#pragma endregion
+
 	}
 }
