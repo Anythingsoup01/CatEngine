@@ -2,6 +2,8 @@
 #include "CatEngine/Components/Components.h"
 #include "ImGui/ImGuiDraw.h"
 
+#include "CatEngine/UI/UI.h"
+
 #include <glm/gtc/type_ptr.hpp>
 
 #include <imgui.h>
@@ -395,15 +397,15 @@ namespace CatEngine
 			bool scriptClassExists = ScriptEngine::ScriptClassExists(sc.ClassName);
 			const auto& entityClasses = ScriptEngine::GetScriptClasses();
 
-			if (!scriptClassExists)
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f));
+			UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f), !scriptClassExists);
 
 			char buffer[256];
-			strcpy_s(buffer, sc.ClassName.c_str());
+			strcpy_s(buffer, sizeof(buffer), sc.ClassName.c_str());
 
 			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 			{
 				sc.ClassName = buffer;
+				return;
 			}
 
 			bool sceneRunning = m_Context->IsRunning();
@@ -877,8 +879,6 @@ namespace CatEngine
 
 			}
 
-			if (!scriptClassExists)
-				ImGui::PopStyleColor();
 		});
 	}
 

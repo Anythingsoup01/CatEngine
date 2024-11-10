@@ -25,8 +25,8 @@ Entities:
       ShowColliderBounds: false
       Density: 1
       Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
+      Restitution: 5.3499999
+      RestitutionThreshold: 0.280000001
     ScriptComponent:
       ClassName: PlayerController
       ScriptFields:

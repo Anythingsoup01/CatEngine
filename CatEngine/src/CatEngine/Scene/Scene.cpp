@@ -214,8 +214,7 @@ namespace CatEngine
 	{
 		m_IsRunning = true;
 
-		// TODO: Start scripts before physics
-		ScriptEngine::OnRuntimeStart(this);
+		ScriptEngine::GetSceneContext(this);
 		OnScriptStart();
 
 		OnPhysics2DStart();

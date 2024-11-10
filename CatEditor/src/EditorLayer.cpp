@@ -318,6 +318,11 @@ namespace CatEngine
 				if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Mono"))
+			{
+				if (ImGui::MenuItem("Reload Assembly", "Ctrl+Shift+R")) ScriptEngine::ReloadAssembly();
+				ImGui::EndMenu();
+			}
 
 			if (ImGui::BeginMenu("Scene"))
 			{
@@ -573,7 +578,9 @@ namespace CatEngine
             }
             case KeyCode::R:
             {
-				if (m_ViewportFocused)
+				if (control && shift && m_SceneState == SceneState::Edit)
+					ScriptEngine::ReloadAssembly();
+				else if (m_ViewportFocused)
 					m_GizmoType = ImGuizmo::OPERATION::SCALE;
                 break;
             }
@@ -731,7 +738,7 @@ namespace CatEngine
         m_SceneState = SceneState::Edit;
         
 		m_ActiveScene->OnSimulationStop();
-        m_ActiveScene = m_EditorScene;
+        m_ActiveScene = Scene::Copy(m_EditorScene);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 

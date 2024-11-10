@@ -8,6 +8,8 @@ public class PlayerController : MeownoBehaviour
 	public float m_Speed = 1f;
 	public Vector2 m_Velocity;
 
+	public float TestFloat;
+
 	public CameraController m_CameraController;
 
 	private Transform m_Transform;

@@ -152,8 +152,10 @@ namespace CatEngine
 		static void LoadAssembly(const std::filesystem::path& filePath);
 		static void LoadAppAssembly(const std::filesystem::path& filePath);
 
-		static void OnRuntimeStart(Scene* scene);
+		static void GetSceneContext(Scene* scene);
 		static void OnRuntimeStop();
+
+		static void ReloadAssembly();
 
 		static bool ScriptClassExists(const std::string& fullClassName);
 		static void OnStartEntity(Entity e);

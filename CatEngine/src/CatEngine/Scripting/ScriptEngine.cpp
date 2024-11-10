@@ -133,6 +133,9 @@ namespace CatEngine
 		MonoAssembly* AppAssembly = nullptr;
 		MonoImage* AppAssemblyImage = nullptr;
 
+		std::filesystem::path CoreAssemblyFilepath;
+		std::filesystem::path AppAssemblyFilepath;
+
 		ScriptClass MeownoClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
@@ -160,13 +163,6 @@ namespace CatEngine
 		ScriptGlue::RegisterFunctions();
 
 		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object", true);
-
-		for (auto& [name, scriptClass]: s_ScriptData->EntityClasses)
-		{
-			scriptClass->Instantiate();
-		}
-
-
 	}
 	void ScriptEngine::Shutdown()
 	{
@@ -179,6 +175,7 @@ namespace CatEngine
 		s_ScriptData->AppDomain = mono_domain_create_appdomain("CatScriptRuntime", nullptr);
 		mono_domain_set(s_ScriptData->AppDomain, true);
 		
+		s_ScriptData->CoreAssemblyFilepath = filePath;
 		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filePath);
 		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
 
@@ -186,11 +183,12 @@ namespace CatEngine
 
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filePath)
 	{
+		s_ScriptData->AppAssemblyFilepath = filePath;
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filePath);
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
 	}
 
-	void ScriptEngine::OnRuntimeStart(Scene* scene)
+	void ScriptEngine::GetSceneContext(Scene* scene)
 	{
 		s_ScriptData->SceneContext = scene;
 	}
@@ -198,8 +196,26 @@ namespace CatEngine
 	void ScriptEngine::OnRuntimeStop()
 	{
 		s_ScriptData->SceneContext = nullptr;
-
 		s_ScriptData->EntityInstances.clear();
+
+	}
+
+	void ScriptEngine::ReloadAssembly()
+	{
+		mono_domain_set(mono_get_root_domain(), false);
+
+		mono_domain_unload(s_ScriptData->AppDomain);
+
+
+		LoadAssembly(s_ScriptData->CoreAssemblyFilepath);
+		LoadAppAssembly(s_ScriptData->AppAssemblyFilepath);
+
+		LoadAssemblyClasses();
+
+
+		ScriptGlue::RegisterComponents();
+
+		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object", true);
 	}
 
 	bool ScriptEngine::ScriptClassExists(const std::string& fullClassName)
@@ -242,8 +258,6 @@ namespace CatEngine
 			Ref<ScriptInstance> instance = s_ScriptData->EntityInstances[entityUUID];
 			instance->InvokeUpdateMethod(ts);
 		}
-
-		// Else run through the logger
 
 	}
 
@@ -303,8 +317,12 @@ namespace CatEngine
 	}
 	void ScriptEngine::ShutdownMono()
 	{
-		mono_jit_cleanup(s_ScriptData->RootDomain);
+		mono_domain_set(mono_get_root_domain(), false);
+
+		mono_domain_unload(s_ScriptData->AppDomain);
 		s_ScriptData->AppDomain = nullptr;
+		
+		mono_jit_cleanup(s_ScriptData->RootDomain);
 		s_ScriptData->RootDomain = nullptr;
 	}
 
