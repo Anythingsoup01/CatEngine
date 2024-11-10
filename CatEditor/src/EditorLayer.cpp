@@ -64,6 +64,7 @@ namespace CatEngine
 		CE_PROFILE_FUNCTION();
 
 		//Resize
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
 		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
@@ -71,7 +72,6 @@ namespace CatEngine
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
 		// Render
@@ -600,105 +600,6 @@ namespace CatEngine
 				m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
 		}
 
-		//switch (e.GetMouseButton())
-		//{
-		//	case MouseCode::ButtonMiddle:
-		//	{
-		//		if (!m_BlockMouseEvents)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else if (m_BlockMouseEvents && m_MouseInUse)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else
-		//			m_MouseInUse = alt && isButtonDown;
-
-		//		break;
-		//	}
-		//	case MouseCode::ButtonLeft:
-		//	{
-
-
-		//		// if mouse in use camera will move freely
-
-		//		
-		//		if (!m_BlockMouseEvents && !m_MouseInUseFlag)
-		//		{
-		//			m_MouseInUseFlag = alt && isButtonDown;
-		//		}
-		//		else if ((m_MouseInUseFlag && alt && isButtonDown))
-		//		{
-		//			m_MouseInUse = true;
-		//		}
-		//		else if (m_MouseInUseFlag && (!alt || !isButtonDown))
-		//		{
-		//			m_MouseInUseFlag = false;
-		//			m_MouseInUse = false;
-		//		}
-
-
-		//		break;
-		//	}
-		//	case MouseCode::ButtonRight:
-		//	{
-		//		if (!m_BlockMouseEvents)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else if (m_BlockMouseEvents && m_MouseInUse)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else
-		//			m_MouseInUse = alt && isButtonDown;
-
-		//			
-		//		break;
-		//	}
-		//}switch (e.GetMouseButton())
-		//{
-		//	case MouseCode::ButtonMiddle:
-		//	{
-		//		if (!m_BlockMouseEvents)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else if (m_BlockMouseEvents && m_MouseInUse)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else
-		//			m_MouseInUse = alt && isButtonDown;
-
-		//		break;
-		//	}
-		//	case MouseCode::ButtonLeft:
-		//	{
-
-
-		//		// if mouse in use camera will move freely
-
-		//		
-		//		if (!m_BlockMouseEvents && !m_MouseInUseFlag)
-		//		{
-		//			m_MouseInUseFlag = alt && isButtonDown;
-		//		}
-		//		else if ((m_MouseInUseFlag && alt && isButtonDown))
-		//		{
-		//			m_MouseInUse = true;
-		//		}
-		//		else if (m_MouseInUseFlag && (!alt || !isButtonDown))
-		//		{
-		//			m_MouseInUseFlag = false;
-		//			m_MouseInUse = false;
-		//		}
-
-
-		//		break;
-		//	}
-		//	case MouseCode::ButtonRight:
-		//	{
-		//		if (!m_BlockMouseEvents)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else if (m_BlockMouseEvents && m_MouseInUse)
-		//			m_MouseInUse = alt && isButtonDown;
-		//		else
-		//			m_MouseInUse = alt && isButtonDown;
-
-		//			
-		//		break;
-		//	}
-		//}
         return false;
     }
 
