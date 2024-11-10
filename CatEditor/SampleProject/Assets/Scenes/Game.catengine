@@ -1,58 +1,5 @@
 Scene: SampleScene
 Entities:
-  - Entity: 15871396935545557737
-    TagComponent:
-      Tag: None
-    LayerComponent:
-      Layer: Default
-    NameComponent:
-      Name: Ground
-    TransformComponent:
-      Position: [0, -1.18973982, 0]
-      Rotation: [0, 0, 0]
-      Scale: [7, 0.5, 1]
-    SpriteRendererComponent:
-      Color: [0.635514021, 0.350423604, 0.350423604, 1]
-      Texture: ""
-      Tiling: 1
-    Rigidbody2DComponent:
-      BodyType: 0
-      FixedRotation: true
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Rotation: 0
-      ShowColliderBounds: true
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 13806782013592827664
-    TagComponent:
-      Tag: None
-    LayerComponent:
-      Layer: Default
-    NameComponent:
-      Name: Camera
-    TransformComponent:
-      Position: [-1.08435754e-12, -1.93488472e-06, 7.26782179]
-      Rotation: [5.64463562e-07, 0, -5.60424951e-07]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 10000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-    ScriptComponent:
-      ClassName: FlyingCameraController
-      ScriptFields:
-        []
   - Entity: 15107716884144345136
     TagComponent:
       Tag: None
@@ -85,7 +32,60 @@ Entities:
       ScriptFields:
         - Name: m_Speed
           Type: Float
-          Data: 99
+          Data: 3
         - Name: m_Velocity
           Type: Vector2
           Data: [12, 16]
+  - Entity: 13806782013592827664
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Camera
+    TransformComponent:
+      Position: [-1.08435754e-12, -1.93488472e-06, 7.26782179]
+      Rotation: [5.64463562e-07, 0, -5.60424951e-07]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 10000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+    ScriptComponent:
+      ClassName: CameraController
+      ScriptFields:
+        []
+  - Entity: 15871396935545557737
+    TagComponent:
+      Tag: None
+    LayerComponent:
+      Layer: Default
+    NameComponent:
+      Name: Ground
+    TransformComponent:
+      Position: [0, -1.18973982, 0]
+      Rotation: [0, 0, 0]
+      Scale: [7, 0.5, 1]
+    SpriteRendererComponent:
+      Color: [0.635514021, 0.350423604, 0.350423604, 1]
+      Texture: ""
+      Tiling: 1
+    Rigidbody2DComponent:
+      BodyType: 0
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Rotation: 0
+      ShowColliderBounds: true
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
