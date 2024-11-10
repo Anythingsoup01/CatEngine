@@ -11,6 +11,7 @@
 
 #include "CatEngine/Application.h"
 
+#include <imgui_internal.h>
 #include "ImGuizmo.h"
 
 namespace CatEngine {
@@ -32,6 +33,8 @@ namespace CatEngine {
 		io.Fonts->AddFontFromFileTTF("Resources/fonts/opensans/static/OpenSans-Bold.ttf", 16.f);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("Resources/fonts/opensans/static/OpenSans-Regular.ttf", 16.f);
 
+		ImGui::GetCurrentContext()->NavWindowingToggleLayer = false;
+
 		// ImGui Style
 		ImGui::StyleColorsDark();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -51,6 +54,11 @@ namespace CatEngine {
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 430");
+	}
+
+	void ImGuiLayer::OnUpdate(Time deltaTime)
+	{
+		ImGui::GetCurrentContext()->NavWindowingToggleLayer = false;
 	}
 
 	void ImGuiLayer::OnDetach()
