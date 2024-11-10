@@ -6,24 +6,11 @@ namespace CatEngine
 	{
 
 		public Object Object { get; internal set; }
-
-		public Component gameObject
+		public Tag tag
 		{
 			get
 			{
-				return this;
-			}
-		}
-
-		public string tag
-		{
-			get
-			{
-				return gameObject.tag;
-			}
-			set
-			{
-				gameObject.tag = value;
+				return GetComponent<Tag>();
 			}
 		}
 
@@ -31,36 +18,16 @@ namespace CatEngine
 		{
 			get
 			{
-				return gameObject.layer;
+				return GetComponent<Layer>();
 			}
 		}
 
-		public Vector3 position
+		public Transform transform
 		{
 			get
 			{
-				InternalCalls.Transform_GetPosition(ID, out Vector3 result);
-				return result;
+				return GetComponent<Transform>();
 			}
-			set
-			{
-				InternalCalls.Transform_SetPosition(ID, ref value);
-			}
-		}
-
-		public bool HasComponent<T>() where T : Component, new()
-		{
-			Type componentType = typeof(T);
-			return InternalCalls.Entity_HasComponent(ID, componentType);
-		}
-
-		public T GetComponent<T>() where T : Component, new()
-		{
-			if (!HasComponent<T>())
-				return null;
-
-			T component = new T() { Object = this };
-			return component;
 		}
 
 	}

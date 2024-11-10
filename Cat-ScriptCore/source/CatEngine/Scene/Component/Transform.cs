@@ -8,41 +8,41 @@ namespace CatEngine
 {
 	public class Transform : Component
 	{
-		public Vector3 Position
+		public Vector3 position
 		{
 			get
 			{
-				InternalCalls.Transform_GetPosition(Object.ID, out Vector3 position);
+				InternalCalls.Transform_GetPosition(Object.m_InstanceID, out Vector3 position);
 				return position;
 			}
 			set
 			{
-				InternalCalls.Transform_SetPosition(Object.ID, ref value);
+				InternalCalls.Transform_SetPosition(Object.m_InstanceID, ref value);
 			}
 		}
-		public Vector3 Rotation
+		public Vector3 rotation
 		{
 			get
 			{
-				InternalCalls.Transform_GetRotation(Object.ID, out Vector3 rotation);
+				InternalCalls.Transform_GetRotation(Object.m_InstanceID, out Vector3 rotation);
 				return rotation;
 			}
 			set
 			{
-				InternalCalls.Transform_SetRotation(Object.ID, ref value);
+				InternalCalls.Transform_SetRotation(Object.m_InstanceID, ref value);
 			}
 		}
 
-		public Vector3 Scale
+		public Vector3 scale
 		{
 			get
 			{
-				InternalCalls.Transform_GetScale(Object.ID, out Vector3 scale);
+				InternalCalls.Transform_GetScale(Object.m_InstanceID, out Vector3 scale);
 				return scale;
 			}
 			set
 			{
-				InternalCalls.Transform_SetScale(Object.ID, ref value);
+				InternalCalls.Transform_SetScale(Object.m_InstanceID, ref value);
 			}
 		}
 
