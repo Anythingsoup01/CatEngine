@@ -261,6 +261,13 @@ namespace CatEngine
 		return it->second;
 	}
 
+	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid)
+	{
+		CE_ASSERT(s_ScriptData->EntityInstances.find(uuid) != s_ScriptData->EntityInstances.end());
+
+		return s_ScriptData->EntityInstances.at(uuid)->GetManagedObject();;
+	}
+
 	std::unordered_map<std::string, Ref<ScriptClass>>& ScriptEngine::GetScriptClasses()
 	{
 		return s_ScriptData->EntityClasses;
@@ -409,6 +416,7 @@ namespace CatEngine
 		m_StartMethod = scriptClass->GetMethod("Start");
 		m_UpdateMethod = scriptClass->GetMethod("Update", 1);
 
+		if (m_Constructor)
 		{
 			UUID entityID = entity.GetUUID();
 			void* params = &entityID;

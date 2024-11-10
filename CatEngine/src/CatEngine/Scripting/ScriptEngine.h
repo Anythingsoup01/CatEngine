@@ -123,6 +123,8 @@ namespace CatEngine
 			SetFieldDataInternal(name, value);
 		}
 
+		MonoObject* GetManagedObject() { return m_Instance; }
+
 	private:
 		bool GetFieldDataInternal(const std::string& name, void* buffer);
 		void SetFieldDataInternal(const std::string& name, void* value);
@@ -159,6 +161,8 @@ namespace CatEngine
 
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID entityID);
+
+		static MonoObject* GetManagedInstance(UUID uuid);
 
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetScriptClasses();
 		static Ref<ScriptClass> GetScriptClass(const std::string& name);

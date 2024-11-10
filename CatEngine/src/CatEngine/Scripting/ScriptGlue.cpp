@@ -37,6 +37,45 @@ namespace CatEngine
 	{
 		return Input::IsKeyPressed(keyCode);
 	}
+#pragma region Object
+
+	static bool Object_HasComponent(UUID entityID, MonoReflectionType* componentType)
+	{
+		Entity& entity = GetEntity(entityID);
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		CE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end());
+		return s_EntityHasComponentFuncs.at(managedType)(entity);
+	}
+
+	static uint64_t Object_FindObjectByName(MonoString* name)
+	{
+		char* cStr = mono_string_to_utf8(name);
+
+		Scene* scene = ScriptEngine::GetSceneContext();
+		CE_ASSERT(scene);
+		Entity entity = scene->FindEntityByName(cStr);
+		CE_ASSERT(entity);
+		mono_free(cStr);
+		
+		if (!entity)
+			return 0;
+
+		return entity.GetUUID();
+
+	}
+
+#pragma endregion
+
+#pragma region Scripts
+
+	static MonoObject* GetScriptInstance(UUID entityID)
+	{
+		return ScriptEngine::GetManagedInstance(entityID);
+	}
+
+#pragma endregion
+
 
 #pragma region Rigidbody2D
 
@@ -106,14 +145,7 @@ namespace CatEngine
 	}
 
 #pragma endregion
-	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
-	{
-		Entity& entity = GetEntity(entityID);
 
-		MonoType* managedType = mono_reflection_type_get_type(componentType);
-		CE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end());
-		return s_EntityHasComponentFuncs.at(managedType)(entity);
-	}
 
 	template<typename ... Component>
 	static void RegisterComponent()
@@ -151,8 +183,22 @@ namespace CatEngine
 
 	void ScriptGlue::RegisterFunctions()
 	{
-		CE_ADD_INTERNAL_CALL(Entity_HasComponent);
 		CE_ADD_INTERNAL_CALL(Input_IsKeyDown);
+
+#pragma region Object
+
+		CE_ADD_INTERNAL_CALL(Object_HasComponent);
+		CE_ADD_INTERNAL_CALL(Object_FindObjectByName);
+
+
+#pragma endregion
+
+#pragma region Scripts
+
+		CE_ADD_INTERNAL_CALL(GetScriptInstance);
+
+#pragma endregion
+
 
 #pragma region Rigidbody2D
 		CE_ADD_INTERNAL_CALL(Rigidbody2D_ApplyForce);
