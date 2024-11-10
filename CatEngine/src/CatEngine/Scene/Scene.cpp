@@ -382,6 +382,9 @@ namespace CatEngine
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		if (m_ViewportWidth == width && m_ViewportHeight == height)
+			return;
+
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
@@ -411,6 +414,19 @@ namespace CatEngine
 		Entity newEntity = CreateEntity(entity.GetName() + "(Copied from " + entity.GetName() + ")");
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 		return newEntity;
+	}
+	Entity Scene::FindEntityByName(std::string_view name)
+	{
+		auto view = m_Registry.view<NameComponent>();
+		for (auto entity : view)
+		{
+			const NameComponent& nameComponent = view.get<NameComponent>(entity);
+			if (nameComponent.Name == name)
+			{
+				return Entity{ entity, this };
+			}
+		}
+		return {};
 	}
 	Entity Scene::GetEntityByUUID(UUID entityID)
 	{

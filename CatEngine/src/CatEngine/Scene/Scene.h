@@ -40,6 +40,7 @@ namespace CatEngine
 		void DuplicateEntity(Entity entity);
 		Entity PasteEntity(Entity entity);
 
+		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID entityID);
 
 		Entity GetPrimaryCameraEntity();
