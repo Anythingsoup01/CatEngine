@@ -314,6 +314,7 @@ namespace CatEngine
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
 
 
+
 				if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
 				ImGui::EndMenu();
 			}
@@ -709,7 +710,7 @@ namespace CatEngine
         m_SceneState = SceneState::Edit;
 
         m_ActiveScene->OnRuntimeStop();
-        m_ActiveScene = m_EditorScene;
+        m_ActiveScene = Scene::Copy(m_EditorScene);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
