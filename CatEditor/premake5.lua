@@ -19,6 +19,8 @@ project "CatEditor"
 		"%{wks.location}/CatEngine/vendors/spdlog/include",
 		"%{wks.location}/CatEngine/src",
 		"%{wks.location}/CatEngine/vendors",
+		"%{wks.location}/CatEngine/vendors/mono/include",
+		"%{IncludeDir.FileWatch}",
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",

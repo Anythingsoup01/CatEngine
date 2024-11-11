@@ -26,6 +26,7 @@ project "CatEngine"
 		"vendors/spdlog/include",
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.EnTT}",
+		"%{IncludeDir.FileWatch}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",

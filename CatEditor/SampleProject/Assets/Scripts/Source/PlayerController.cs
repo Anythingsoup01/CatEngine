@@ -8,7 +8,6 @@ public class PlayerController : MeownoBehaviour
 	public float m_Speed = 1f;
 	public Vector2 m_Velocity;
 
-	public float TestFloat;
 
 	public CameraController m_CameraController;
 
@@ -26,6 +25,7 @@ public class PlayerController : MeownoBehaviour
 			Console.WriteLine("Camera Controller not null!");
 			m_CameraController = camera.As<CameraController>(); 
 		}
+
 	}
 
 	private void Update(float ts)
@@ -68,7 +68,7 @@ public class PlayerController : MeownoBehaviour
 
 		m_Velocity = new Vector2(m_Horizontal, m_Vertical).normalized * m_Speed * ts;
 
-		m_Rigidbody2D.ApplyLinearImpulse(m_Velocity, true);
+		m_Rigidbody2D.ApplyForce(m_Velocity, true);
 
 	}
 

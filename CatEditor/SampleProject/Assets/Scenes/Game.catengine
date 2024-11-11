@@ -23,19 +23,19 @@ Entities:
       Size: [0.5, 0.5]
       Rotation: 0
       ShowColliderBounds: false
-      Density: 1
+      Density: 260.429993
       Friction: 0.5
-      Restitution: 5.3499999
+      Restitution: 9.99999975e-05
       RestitutionThreshold: 0.280000001
     ScriptComponent:
       ClassName: PlayerController
       ScriptFields:
         - Name: m_Speed
           Type: Float
-          Data: 3
+          Data: 10
         - Name: m_Velocity
           Type: Vector2
-          Data: [12, 16]
+          Data: [0, 0]
   - Entity: 13806782013592827664
     TagComponent:
       Tag: None
@@ -61,7 +61,9 @@ Entities:
     ScriptComponent:
       ClassName: CameraController
       ScriptFields:
-        []
+        - Name: m_CameraDistanceFromPlayer
+          Type: Float
+          Data: 25
   - Entity: 15871396935545557737
     TagComponent:
       Tag: None

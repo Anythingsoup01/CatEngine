@@ -76,7 +76,6 @@ namespace CatEngine {
 		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
 
 		// Setting GLFW Callbacks-------------------------------------------------------------------
 
