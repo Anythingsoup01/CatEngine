@@ -5,11 +5,16 @@
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/tabledefs.h"
 
+#include "FileWatch.hpp"
+
 #include "ScriptGlue.h"
 
 #include "CatEngine/Math/Math.h"
 #include "CatEngine/Scene/Scene.h"
 #include "CatEngine/Scene/Entity.h"
+#include "CatEngine/core/Timer.h"
+
+#include "CatEngine/Application.h"
 
 namespace CatEngine
 {
@@ -143,8 +148,15 @@ namespace CatEngine
 
 		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
-		// TODO : Make this take a ref
-		Scene* SceneContext = nullptr;
+		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
+
+		std::vector <std::function<void()>> MainThreadQueue;
+
+		bool AppAssemblyReloadPending = false;
+
+		Ref<Scene> SceneContext = nullptr;
+
+		Timer ReloadTimer;
 	};
 
 	static ScriptEngineData* s_ScriptData = nullptr;
@@ -181,14 +193,69 @@ namespace CatEngine
 
 	}
 
+	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+		
+		if (change_type == filewatch::Event::modified)
+		{
+			bool isRunning = s_ScriptData->SceneContext->IsRunning();
+
+			s_ScriptData->ReloadTimer = Timer();
+
+			if (isRunning)
+			{
+				if (!s_ScriptData->AppAssemblyReloadPending)
+				{
+					s_ScriptData->AppAssemblyReloadPending = true;
+					s_ScriptData->MainThreadQueue.emplace_back([]()
+					{
+						s_ScriptData->AppAssemblyFileWatcher.reset();
+						ScriptEngine::ReloadAssembly();
+					});
+				}
+				else if (s_ScriptData->AppAssemblyReloadPending)
+				{
+					s_ScriptData->MainThreadQueue.clear();
+					s_ScriptData->MainThreadQueue.emplace_back([]()
+					{
+						s_ScriptData->AppAssemblyFileWatcher.reset();
+						ScriptEngine::ReloadAssembly();
+					});
+				}
+
+			}
+			else if (!isRunning)
+			{
+				using namespace std::chrono;
+				//std::this_thread::sleep_for(500ms);
+				if (!s_ScriptData->AppAssemblyReloadPending)
+				{
+					s_ScriptData->AppAssemblyReloadPending = true;
+					Application::Get().SubmitToMainThread([]()
+					{
+						s_ScriptData->AppAssemblyFileWatcher.reset();
+						ScriptEngine::ReloadAssembly();
+					});
+				}
+
+			}
+
+		}
+
+
+	}
+
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filePath)
 	{
 		s_ScriptData->AppAssemblyFilepath = filePath;
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filePath);
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
+
+		s_ScriptData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
+			filePath.string(), OnAppAssemblyFileSystemEvent);
 	}
 
-	void ScriptEngine::GetSceneContext(Scene* scene)
+	void ScriptEngine::SetSceneContext(Ref<Scene> scene)
 	{
 		s_ScriptData->SceneContext = scene;
 	}
@@ -197,11 +264,17 @@ namespace CatEngine
 	{
 		s_ScriptData->SceneContext = nullptr;
 		s_ScriptData->EntityInstances.clear();
-
+		
+		if (s_ScriptData->AppAssemblyReloadPending || !s_ScriptData->MainThreadQueue.empty())
+			Application::Get().SubmitToMainThread(s_ScriptData->MainThreadQueue.at(0));
 	}
 
 	void ScriptEngine::ReloadAssembly()
 	{
+#ifdef CE_RELEASE || CE_DIST
+		CE_CLI_TRACE(s_ScriptData->ReloadTimer.ElapsedMillis());
+#endif
+		CE_API_TRACE(s_ScriptData->ReloadTimer.ElapsedMillis());
 		mono_domain_set(mono_get_root_domain(), false);
 
 		mono_domain_unload(s_ScriptData->AppDomain);
@@ -216,6 +289,7 @@ namespace CatEngine
 		ScriptGlue::RegisterComponents();
 
 		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object", true);
+		s_ScriptData->AppAssemblyReloadPending = false;
 	}
 
 	bool ScriptEngine::ScriptClassExists(const std::string& fullClassName)
@@ -261,7 +335,7 @@ namespace CatEngine
 
 	}
 
-	Scene* ScriptEngine::GetSceneContext()
+	Ref<Scene> ScriptEngine::GetSceneContext()
 	{
 		return s_ScriptData->SceneContext;
 	}
