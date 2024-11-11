@@ -399,7 +399,7 @@ namespace CatEngine
 
 			UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f), !scriptClassExists);
 
-			char buffer[256];
+			char buffer[64];
 			strcpy_s(buffer, sizeof(buffer), sc.ClassName.c_str());
 
 			if (ImGui::InputText("Class", buffer, sizeof(buffer)))

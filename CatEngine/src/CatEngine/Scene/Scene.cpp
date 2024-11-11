@@ -214,7 +214,6 @@ namespace CatEngine
 	{
 		m_IsRunning = true;
 
-		ScriptEngine::GetSceneContext(this);
 		OnScriptStart();
 
 		OnPhysics2DStart();

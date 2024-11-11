@@ -152,7 +152,7 @@ namespace CatEngine
 		static void LoadAssembly(const std::filesystem::path& filePath);
 		static void LoadAppAssembly(const std::filesystem::path& filePath);
 
-		static void GetSceneContext(Scene* scene);
+		static void SetSceneContext(Ref<Scene> scene);
 		static void OnRuntimeStop();
 
 		static void ReloadAssembly();
@@ -161,7 +161,7 @@ namespace CatEngine
 		static void OnStartEntity(Entity e);
 		static void OnUpdateEntity(Entity e, float ts);
 
-		static Scene* GetSceneContext();
+		static Ref<Scene> GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID entityID);
 
 		static MonoObject* GetManagedInstance(UUID uuid);

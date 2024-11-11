@@ -26,7 +26,7 @@ namespace CatEngine
 
 	static Entity GetEntity(UUID entityID)
 	{
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Ref<Scene> scene = ScriptEngine::GetSceneContext();
 		CE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
 		CE_ASSERT(entity);
@@ -52,7 +52,7 @@ namespace CatEngine
 	{
 		char* cStr = mono_string_to_utf8(name);
 
-		Scene* scene = ScriptEngine::GetSceneContext();
+		Ref<Scene> scene = ScriptEngine::GetSceneContext();
 		CE_ASSERT(scene);
 		Entity entity = scene->FindEntityByName(cStr);
 		CE_ASSERT(entity);

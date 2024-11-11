@@ -53,6 +53,7 @@ namespace CatEngine
 		m_EditorCamera = EditorCamera(30.f, 1.778f, 0.1f, 1000.f);
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		ScriptEngine::SetSceneContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -176,8 +177,6 @@ namespace CatEngine
 
             }
             ImGui::End();
-            
-			ImGui::ShowDemoWindow();
 			
 			ImGui::PopStyleVar();
 
@@ -669,7 +668,7 @@ namespace CatEngine
             m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_ActiveScene = m_EditorScene;
             m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
+			ScriptEngine::SetSceneContext(m_ActiveScene);
         }
     }
 
@@ -682,6 +681,7 @@ namespace CatEngine
         m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_ActiveScene = m_EditorScene;
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		ScriptEngine::SetSceneContext(m_ActiveScene);
     }
 
     void EditorLayer::OnEvent(Event& e)
@@ -703,6 +703,7 @@ namespace CatEngine
         m_EditorScene = Scene::Copy(m_ActiveScene);
         m_ActiveScene->OnRuntimeStart();
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		ScriptEngine::SetSceneContext(m_ActiveScene);
     }
 
 	void EditorLayer::OnScenePause()
@@ -719,6 +720,7 @@ namespace CatEngine
         m_ActiveScene->OnRuntimeStop();
         m_ActiveScene = Scene::Copy(m_EditorScene);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		ScriptEngine::SetSceneContext(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneSimulateStart()
@@ -730,6 +732,7 @@ namespace CatEngine
 		m_EditorScene = Scene::Copy(m_ActiveScene);
         m_ActiveScene->OnSimulationStart();
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		ScriptEngine::SetSceneContext(m_ActiveScene);
     }
     void EditorLayer::OnSceneSimulateStop()
     {
@@ -740,6 +743,7 @@ namespace CatEngine
 		m_ActiveScene->OnSimulationStop();
         m_ActiveScene = Scene::Copy(m_EditorScene);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		ScriptEngine::SetSceneContext(m_ActiveScene);
     }
 
     void EditorLayer::DuplicateEntity()
