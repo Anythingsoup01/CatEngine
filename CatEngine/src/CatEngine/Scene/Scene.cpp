@@ -443,6 +443,7 @@ namespace CatEngine
 	{
 		if (m_EntityMap.find(entityID) != m_EntityMap.end())
 			return { m_EntityMap.at(entityID), this };
+		return {};
 	}
 	Entity Scene::GetPrimaryCameraEntity()
 	{

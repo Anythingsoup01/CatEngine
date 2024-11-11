@@ -9,7 +9,7 @@
 #ifdef CE_DEBUG
 #if defined(CE_PLATFORM_WINDOWS)
 #define CE_DEBUGBREAK() __debugbreak()
-#define CE_PROFILE 0
+#define CE_PROFILE
 #elif defined(CE_PLATFORM_LINUX)
 #include <signal.h>
 #define CE_DEBUGBREAK() raise(SIGTRAP)
@@ -27,6 +27,15 @@
 #define BIT(x) (1 << x)
 
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
+#ifdef CE_ENABLE_ASSERTS
+// Currently accepts at least the condition and one additional parameter (the message) being optional
+#define CE_ASSERT(x) if (!(x)) { __debugbreak(); }
+#define CE_API_ASSERT(x, ...) if (!(x)) { CatEngine::Logger::GetAPILogger()->critical(__VA_ARGS__); __debugbreak(); } 
+#else
+#define CE_ASSERT(...)
+#define CE_API_ASSERT(...)
+#endif
 
 
 namespace CatEngine
@@ -48,6 +57,3 @@ namespace CatEngine
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
 }
-
-#include "CatEngine/Core/Log.h"
-#include "CatEngine/Core/Assert.h"

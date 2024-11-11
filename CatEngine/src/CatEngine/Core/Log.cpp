@@ -7,11 +7,11 @@
 
 namespace CatEngine {
 
-    void Log::GLClearError() {
+    void Logger::GLClearError() {
         while (glGetError() != GL_NO_ERROR);
     }
 
-    bool Log::GLLog(const char* function, const char* file, int line)
+    bool Logger::GLLog(const char* function, const char* file, int line)
     {
         if (GLenum error = glGetError()) {
             if (GLenum error = GL_INVALID_ENUM) {
@@ -42,10 +42,10 @@ namespace CatEngine {
         return true;
     }
 
-	std::shared_ptr<spdlog::logger> Log::s_APILogger;
-	std::shared_ptr<spdlog::logger> Log::s_CLILogger;
+	Ref<spdlog::logger> Logger::s_APILogger;
+	Ref<spdlog::logger> Logger::s_CLILogger;
 
-	void Log::Init() {
+	void Logger::Init() {
 		spdlog::set_pattern("%^[%T] %n: %v%$");
 		s_APILogger = spdlog::stdout_color_mt("CEAPI");
 		s_APILogger->set_level(spdlog::level::trace);

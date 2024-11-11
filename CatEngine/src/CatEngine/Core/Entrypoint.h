@@ -5,7 +5,7 @@
 extern CatEngine::Application* CatEngine::CreateApplication(CatEngine::ApplicationCommandLineArgs args);
 
 int main(int argc, char** argv) {
-	CatEngine::Log::Init();
+	CatEngine::Logger::Init();
 
 	CE_PROFILE_BEGIN_SESSION("Startup", "CatEngine-Startup.json");
 	auto app = CatEngine::CreateApplication({argc, argv});

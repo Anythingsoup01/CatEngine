@@ -71,7 +71,7 @@ namespace CatEngine
 
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (((float)contentRegionAvailable.x - ((float)contentRegionAvailable.x / 2)) * .5));
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (((float)contentRegionAvailable.x - ((float)contentRegionAvailable.x / 2.f)) * .5f));
 
 			bool Components2DAvaliable = ((!m_SelectionContext.HasComponent<SpriteRendererComponent>() && !m_SelectionContext.HasComponent<CircleRendererComponent>()) || !m_SelectionContext.HasComponent<Rigidbody2DComponent>() || (!m_SelectionContext.HasComponent<BoxCollider2DComponent>() && !m_SelectionContext.HasComponent<CircleCollider2DComponent>()));
 
@@ -363,13 +363,13 @@ namespace CatEngine
 				float& restitutionThreshold = component.RestitutionThreshold;
 
 				ImGuiDraw::DrawVec2Control("Offset", component.Offset);
-				ImGuiDraw::DrawVec2Control("Size", component.Size, 0.025f, 0.0001, 100000.f);
+				ImGuiDraw::DrawVec2Control("Size", component.Size, 0.025f, 0.0001f, 100000.f);
 				ImGuiDraw::DrawVec1Control("Rotation", component.Rotation, 0.025f, 0, 0);
 				ImGuiDraw::DrawCheckBox("Show Collider", component.ShowColliderBounds);
-				ImGuiDraw::DrawVec1Control("Density", component.Density, 0.025f, 0.0001, 100000.f);
-				ImGuiDraw::DrawVec1Control("Friction", component.Friction, 0.025f, 0.0001, 100000.f);
-				ImGuiDraw::DrawVec1Control("Restitution", component.Restitution, 0.025f, 0.0001, 100000.f);
-				ImGuiDraw::DrawVec1Control("Restitution Threshold", component.RestitutionThreshold, 0.025f, 0.0001, 100000.f);
+				ImGuiDraw::DrawVec1Control("Density", component.Density, 0.025f, 0.0001f, 100000.f);
+				ImGuiDraw::DrawVec1Control("Friction", component.Friction, 0.025f, 0.0001f, 100000.f);
+				ImGuiDraw::DrawVec1Control("Restitution", component.Restitution, 0.025f, 0.0001f, 100000.f);
+				ImGuiDraw::DrawVec1Control("Restitution Threshold", component.RestitutionThreshold, 0.025f, 0.0001f, 100000.f);
 			});
 
 		DrawComponent<CircleCollider2DComponent>("CircleCollider 2D", selection, [](auto& component)
@@ -383,12 +383,12 @@ namespace CatEngine
 				float& restitutionThreshold = component.RestitutionThreshold;
 
 				ImGuiDraw::DrawVec2Control("Offset", component.Offset);
-				ImGuiDraw::DrawVec1Control("Radius", component.Radius, 0.025f, 0.0001, 100000.f);
+				ImGuiDraw::DrawVec1Control("Radius", component.Radius, 0.025f, 0.0001f, 100000.f);
 				ImGuiDraw::DrawCheckBox("Show Collider", component.ShowColliderBounds);
-				ImGuiDraw::DrawVec1Control("Density", component.Density, 0.025f, 0.0001, 100000.f);
-				ImGuiDraw::DrawVec1Control("Friction", component.Friction, 0.025f, 0.0001, 100000.f);
-				ImGuiDraw::DrawVec1Control("Restitution", component.Restitution, 0.025f, 0.0001, 100000.f);
-				ImGuiDraw::DrawVec1Control("Restitution Threshold", component.RestitutionThreshold, 0.025f, 0.0001, 100000.f);
+				ImGuiDraw::DrawVec1Control("Density", component.Density, 0.025f, 0.0001f, 100000.f);
+				ImGuiDraw::DrawVec1Control("Friction", component.Friction, 0.025f, 0.0001f, 100000.f);
+				ImGuiDraw::DrawVec1Control("Restitution", component.Restitution, 0.025f, 0.0001f, 100000.f);
+				ImGuiDraw::DrawVec1Control("Restitution Threshold", component.RestitutionThreshold, 0.025f, 0.0001f, 100000.f);
 			});
 
 		DrawComponent<ScriptComponent>("Script", selection, [selection, this](auto& component) mutable

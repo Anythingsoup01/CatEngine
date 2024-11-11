@@ -20,7 +20,7 @@ namespace CatEngine
 		TransformComponent(const glm::vec3& position)
 			: Position(position) {}
 
-		glm::mat4& GetTransform() const
+		glm::mat4 GetTransform() const
 		{
 			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
 

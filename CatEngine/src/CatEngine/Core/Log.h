@@ -1,20 +1,18 @@
 #pragma once
 #include "cepch.h"
 
-#include "CatEngine/Core/Core.h"
-
 #pragma warning(push, 0)
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
 
 #define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) Log::GLClearError();x;ASSERT(Log::GLLog(#x, __FILE__, __LINE__));
+#define GLCall(x) Logger::GLClearError();x;ASSERT(Logger::GLLog(#x, __FILE__, __LINE__));
 
 
 
 namespace CatEngine {
-	class Log
+	class Logger
 	{
 	public:
 		static void GLClearError();
@@ -23,11 +21,11 @@ namespace CatEngine {
 
 		static void Init();
 
-		inline static std::shared_ptr<spdlog::logger>& GetAPILogger() { return s_APILogger; }
-		inline static std::shared_ptr<spdlog::logger>& GetCLILogger() { return s_CLILogger; }
+		inline static Ref<spdlog::logger>& GetAPILogger() { return s_APILogger; }
+		inline static Ref<spdlog::logger>& GetCLILogger() { return s_CLILogger; }
 	private:
-		static std::shared_ptr<spdlog::logger> s_APILogger;
-		static std::shared_ptr<spdlog::logger> s_CLILogger;
+		static Ref<spdlog::logger> s_APILogger;
+		static Ref<spdlog::logger> s_CLILogger;
 	};
 }
 
@@ -54,18 +52,18 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternio)
 #ifdef CE_DEBUG
 
 // Core Log Macros
-#define CE_API_CRITICAL(...)             ::CatEngine::Log::GetAPILogger()->critical(__VA_ARGS__)
-#define CE_API_ERROR(...)                ::CatEngine::Log::GetAPILogger()->error(__VA_ARGS__)
-#define CE_API_WARN(...)                 ::CatEngine::Log::GetAPILogger()->warn(__VA_ARGS__)
-#define CE_API_INFO(...)                 ::CatEngine::Log::GetAPILogger()->info(__VA_ARGS__)
-#define CE_API_TRACE(...)                ::CatEngine::Log::GetAPILogger()->trace(__VA_ARGS__)
+#define CE_API_CRITICAL(...)             ::CatEngine::Logger::GetAPILogger()->critical(__VA_ARGS__)
+#define CE_API_ERROR(...)                ::CatEngine::Logger::GetAPILogger()->error(__VA_ARGS__)
+#define CE_API_WARN(...)                 ::CatEngine::Logger::GetAPILogger()->warn(__VA_ARGS__)
+#define CE_API_INFO(...)                 ::CatEngine::Logger::GetAPILogger()->info(__VA_ARGS__)
+#define CE_API_TRACE(...)                ::CatEngine::Logger::GetAPILogger()->trace(__VA_ARGS__)
 
 // Client Log Macros
-#define CE_CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
-#define CE_CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
-#define CE_CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
-#define CE_CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
-#define CE_CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
+#define CE_CLI_CRITICAL(...)             ::CatEngine::Logger::GetCLILogger()->critical(__VA_ARGS__)
+#define CE_CLI_ERROR(...)                ::CatEngine::Logger::GetCLILogger()->error(__VA_ARGS__)
+#define CE_CLI_WARN(...)                 ::CatEngine::Logger::GetCLILogger()->warn(__VA_ARGS__)
+#define CE_CLI_INFO(...)                 ::CatEngine::Logger::GetCLILogger()->info(__VA_ARGS__)
+#define CE_CLI_TRACE(...)                ::CatEngine::Logger::GetCLILogger()->trace(__VA_ARGS__)
 #elif CE_RELEASE || CE_DIST
 // Core Log Macros
 #define CE_API_CRITICAL(...)
@@ -75,11 +73,11 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternio)
 #define CE_API_TRACE(...)
 
 // Client Log Macros
-#define CE_CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)
-#define CE_CLI_ERROR(...)                ::CatEngine::Log::GetCLILogger()->error(__VA_ARGS__)
-#define CE_CLI_WARN(...)                 ::CatEngine::Log::GetCLILogger()->warn(__VA_ARGS__)
-#define CE_CLI_INFO(...)                 ::CatEngine::Log::GetCLILogger()->info(__VA_ARGS__)
-#define CE_CLI_TRACE(...)                ::CatEngine::Log::GetCLILogger()->trace(__VA_ARGS__)
+#define CE_CLI_CRITICAL(...)             ::CatEngine::Logger::GetCLILogger()->critical(__VA_ARGS__)
+#define CE_CLI_ERROR(...)                ::CatEngine::Logger::GetCLILogger()->error(__VA_ARGS__)
+#define CE_CLI_WARN(...)                 ::CatEngine::Logger::GetCLILogger()->warn(__VA_ARGS__)
+#define CE_CLI_INFO(...)                 ::CatEngine::Logger::GetCLILogger()->info(__VA_ARGS__)
+#define CE_CLI_TRACE(...)                ::CatEngine::Logger::GetCLILogger()->trace(__VA_ARGS__)
 
 #endif // CE_DEBUG
 

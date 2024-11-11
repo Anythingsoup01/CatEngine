@@ -4,6 +4,7 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/tabledefs.h"
+#include "mono/metadata/mono-debug.h"
 
 #include "FileWatch.hpp"
 
@@ -12,7 +13,10 @@
 #include "CatEngine/Math/Math.h"
 #include "CatEngine/Scene/Scene.h"
 #include "CatEngine/Scene/Entity.h"
-#include "CatEngine/core/Timer.h"
+
+#include "CatEngine/Core/Timer.h"
+#include "CatEngine/Core/Buffer.h"
+#include "CatEngine/Core/Filesystem.h"
 
 #include "CatEngine/Application.h"
 
@@ -46,38 +50,12 @@ namespace CatEngine
 
 	namespace Utils
 	{
-
-		// Todo - Move to a filesystem class
-		static char* ReadBytes(const std::filesystem::path& filePath, uint32_t* outSize)
+		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& filePath, bool loadPDB = false)
 		{
-			std::ifstream stream(filePath, std::ios::binary | std::ios::ate);
-
-			if (!stream)
-				CE_API_CRITICAL("Could not open file");
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint64_t size = end - stream.tellg();
-
-			if (size == 0)
-				CE_API_CRITICAL("File - {0} - is empty!");
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = (uint32_t)size;
-			return buffer;
-		}
-
-		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& filePath)
-		{
-			uint32_t fileSize = 0;
-			std::string& path = filePath.string();
-			char* fileData = ReadBytes(filePath, &fileSize);
+			ScopedBuffer fileData(FileSystem::ReadFileBinary(filePath));
 
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full((char*)fileData.Data(), (uint32_t)fileData.Size(), 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -86,10 +64,23 @@ namespace CatEngine
 				return nullptr;
 			}
 
-			MonoAssembly* assembly = mono_assembly_load_from_full(image, path.c_str(), &status, 0);
-			mono_image_close(image);
+			if (loadPDB)
+			{
+				std::filesystem::path pdbPath = filePath;
+				pdbPath.replace_extension(".pdb");
 
-			delete[] fileData;
+				if (std::filesystem::exists(pdbPath))
+				{
+					ScopedBuffer pdbFileData = FileSystem::ReadFileBinary(pdbPath);
+					mono_debug_open_image_from_memory(image, pdbFileData.As<const mono_byte>(), (uint32_t)pdbFileData.Size());
+					CE_API_INFO("Loaded PDB {}", pdbPath.string());
+				}
+
+			}
+
+			std::string pathString = filePath.string();
+			MonoAssembly* assembly = mono_assembly_load_from_full(image, pathString.c_str(), &status, 0);
+			mono_image_close(image);
 
 			return assembly;
 		}
@@ -271,7 +262,7 @@ namespace CatEngine
 
 	void ScriptEngine::ReloadAssembly()
 	{
-#ifdef CE_RELEASE || CE_DIST
+#ifdef CE_RELEASE
 		CE_CLI_TRACE(s_ScriptData->ReloadTimer.ElapsedMillis());
 #endif
 		CE_API_TRACE(s_ScriptData->ReloadTimer.ElapsedMillis());

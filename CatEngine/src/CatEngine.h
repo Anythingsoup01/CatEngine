@@ -42,4 +42,4 @@
 
 // Profiling -----------------------------------------
 #include "CatEngine/Core/Timer.h"
-#include "CatEngine/Debug/Instrumentor.h"
+#include "CatEngine/CatDebug/Instrumentor.h"

@@ -368,7 +368,7 @@ namespace CatEngine
 			Ref<Texture2D> simulationIcon = m_SceneState == SceneState::Simulate ? m_IconStopRuntime : m_IconStartSimulation;
 
             ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f - (size * 0.5f)));
-            if (ImGui::ImageButton((ImTextureID)runtimeIcon->GetRendererID(), ImVec2(size * 1.403, size), {0, 0}, {1, 1}, 0))
+            if (ImGui::ImageButton((ImTextureID)(uint64_t)runtimeIcon->GetRendererID(), ImVec2(size * 1.403f, size), {0, 0}, {1, 1}, 0))
             {
                 if (m_SceneState == SceneState::Edit)
                     OnScenePlay();
@@ -376,7 +376,7 @@ namespace CatEngine
                     OnSceneStop();
             }
 			ImGui::SameLine();
-			if (ImGui::ImageButton((ImTextureID)pauseIcon->GetRendererID(), ImVec2(size * 1.403, size), { 0, 0 }, { 1, 1 }, 0))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)pauseIcon->GetRendererID(), ImVec2(size * 1.403f, size), { 0, 0 }, { 1, 1 }, 0))
 			{
 				if (m_SceneState == SceneState::Edit)
 				{
@@ -391,7 +391,7 @@ namespace CatEngine
 				
 			}
 			ImGui::SameLine();
-			if (ImGui::ImageButton((ImTextureID)simulationIcon->GetRendererID(), ImVec2(size * 1.403, size), { 0, 0 }, { 1, 1 }, 0))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)simulationIcon->GetRendererID(), ImVec2(size * 1.403f, size), { 0, 0 }, { 1, 1 }, 0))
 			{
 				if (m_SceneState == SceneState::Edit)
 					OnSceneSimulateStart();
@@ -426,7 +426,7 @@ namespace CatEngine
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(0);
-		ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((void*)(uint64_t)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_MANAGER_ITEM"))

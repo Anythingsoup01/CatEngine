@@ -13,7 +13,7 @@ namespace CatEngine
 		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = nullptr;
 		{
-			CE_PROFILE_SCOPE();
+			CE_PROFILE_SCOPE("Load Image");
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		}
 		if (data)

@@ -24,7 +24,8 @@
 #include <unordered_set>
 
 #include "CatEngine/Core/Core.h"
-#include "CatEngine/Debug/Instrumentor.h"
+#include "CatEngine/Core/Log.h"
+#include "CatEngine/CatDebug/Instrumentor.h"
 
 #ifdef CE_PLATFORM_WINDOWS
 #include <Windows.h>
