@@ -288,58 +288,62 @@ namespace CatEngine
 
 			// Fields
 			Ref<ScriptClass> scriptClass = ScriptEngine::GetScriptClass(sc.ClassName);
-			const auto& fields = scriptClass->GetFields();
-			if (fields.size() > 0)
+
+			if (scriptClass)
 			{
-				out << YAML::Key << "ScriptFields" << YAML::Value;
-				auto& scriptFields = ScriptEngine::GetScriptFieldMap(entity);
-				out << YAML::BeginSeq;
-				for (const auto& [name, field] : fields)
+				const auto& fields = scriptClass->GetFields();
+				if (fields.size() > 0)
 				{
-					if (scriptFields.find(name) == scriptFields.end())
-						continue;
+					out << YAML::Key << "ScriptFields" << YAML::Value;
+					auto& scriptFields = ScriptEngine::GetScriptFieldMap(entity);
+					out << YAML::BeginSeq;
+					for (const auto& [name, field] : fields)
+					{
+						if (scriptFields.find(name) == scriptFields.end())
+							continue;
 
-					// - Name : FieldName
-					//   Type : 1
-					//   Data : 6.0f
+						// - Name : FieldName
+						//   Type : 1
+						//   Data : 6.0f
 
-					out << YAML::BeginMap; // ScriptFields
+						out << YAML::BeginMap; // ScriptFields
 
-					out << YAML::Key << "Name" << YAML::Value << name;
-					out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
-					out << YAML::Key << "Data" << YAML::Value;
+						out << YAML::Key << "Name" << YAML::Value << name;
+						out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
+						out << YAML::Key << "Data" << YAML::Value;
 
-					ScriptFieldInstance& scriptFieldInstance = scriptFields.at(name);
+						ScriptFieldInstance& scriptFieldInstance = scriptFields.at(name);
 
 #define FIELD_TYPE(FieldType, Type) case ScriptFieldType::FieldType:\
 										out << scriptFieldInstance.GetValue<Type>();\
 										break;
 
-					switch (field.Type)
-					{
-						FIELD_TYPE(Float, float);
-						FIELD_TYPE(Double, double);
-						FIELD_TYPE(SByte, int8_t);
-						FIELD_TYPE(Char, char);
-						FIELD_TYPE(Int16, int16_t);
-						FIELD_TYPE(Int32, int32_t);
-						FIELD_TYPE(Int64, int64_t);
-						FIELD_TYPE(Boolean, bool);
-						FIELD_TYPE(Byte, uint8_t);
-						FIELD_TYPE(UInt16, uint16_t);
-						FIELD_TYPE(UInt32, uint32_t);
-						FIELD_TYPE(UInt64, uint64_t);
-						FIELD_TYPE(String, char*);
-						FIELD_TYPE(Vector2, glm::vec2);
-						FIELD_TYPE(Vector3, glm::vec3);
-						FIELD_TYPE(Vector4, glm::vec4);
-						FIELD_TYPE(Object, uint64_t);
-					}
+						switch (field.Type)
+						{
+							FIELD_TYPE(Float, float);
+							FIELD_TYPE(Double, double);
+							FIELD_TYPE(SByte, int8_t);
+							FIELD_TYPE(Char, char);
+							FIELD_TYPE(Int16, int16_t);
+							FIELD_TYPE(Int32, int32_t);
+							FIELD_TYPE(Int64, int64_t);
+							FIELD_TYPE(Boolean, bool);
+							FIELD_TYPE(Byte, uint8_t);
+							FIELD_TYPE(UInt16, uint16_t);
+							FIELD_TYPE(UInt32, uint32_t);
+							FIELD_TYPE(UInt64, uint64_t);
+							FIELD_TYPE(String, char*);
+							FIELD_TYPE(Vector2, glm::vec2);
+							FIELD_TYPE(Vector3, glm::vec3);
+							FIELD_TYPE(Vector4, glm::vec4);
+							FIELD_TYPE(Object, uint64_t);
+						}
 #undef FIELD_TYPE
 
-					out << YAML::EndMap; // ScriptFields
+						out << YAML::EndMap; // ScriptFields
+					}
+					out << YAML::EndSeq;
 				}
-				out << YAML::EndSeq;
 			}
 			out << YAML::EndMap; // ScriptComponent
 
@@ -519,8 +523,9 @@ namespace CatEngine
 					if (scriptFields)
 					{
 						Ref<ScriptClass> scriptClass = ScriptEngine::GetScriptClass(sc.ClassName);
+						if (!scriptClass)
+							continue;
 						const auto& fields = scriptClass->GetFields();
-
 						auto& scriptFieldMap = ScriptEngine::GetScriptFieldMap(deserializedEntity);
 
 						for (auto scriptField : scriptFields)

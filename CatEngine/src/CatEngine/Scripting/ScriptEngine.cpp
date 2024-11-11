@@ -145,6 +145,8 @@ namespace CatEngine
 
 		bool AppAssemblyReloadPending = false;
 
+		bool FunctionRegistered = false;
+
 		Ref<Scene> SceneContext = nullptr;
 
 		Timer ReloadTimer;
@@ -157,13 +159,25 @@ namespace CatEngine
 		s_ScriptData = new ScriptEngineData();
 
 		InitMono();
-		LoadAssembly("Resources/Scripts/Cat-ScriptCore.dll");
-		LoadAppAssembly("SampleProject/Assets/Scripts/Binaries/AssemblyC#.dll");
+		bool status = LoadAssembly("Resources/Scripts/Cat-ScriptCore.dll");
+		if (!status)
+		{
+			CE_API_ERROR("[Script Engine] - Could not load Core Assembly!");
+			return;
+		}
+		status = LoadAppAssembly("SampleProject/Assets/Scripts/Binaries/AssemblyC#.dll");
+		if (!status)
+		{
+			CE_API_ERROR("[Script Engine] - Could not load App Assembly!");
+			return;
+		}
 		LoadAssemblyClasses();
 		//Utils::PrintAssemblyTypes(s_ScriptData->CoreAssembly);
 
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
+
+		s_ScriptData->FunctionRegistered = true;
 
 		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object", true);
 	}
@@ -173,14 +187,19 @@ namespace CatEngine
 		delete s_ScriptData;
 	}
 
-	void ScriptEngine::LoadAssembly(const std::filesystem::path& filePath)
+	bool ScriptEngine::LoadAssembly(const std::filesystem::path& filePath)
 	{
 		s_ScriptData->AppDomain = mono_domain_create_appdomain("CatScriptRuntime", nullptr);
+
+		if (!s_ScriptData->AppDomain)
+			return false;
+
 		mono_domain_set(s_ScriptData->AppDomain, true);
 		
 		s_ScriptData->CoreAssemblyFilepath = filePath;
 		s_ScriptData->CoreAssembly = Utils::LoadMonoAssembly(filePath);
 		s_ScriptData->CoreAssemblyImage = mono_assembly_get_image(s_ScriptData->CoreAssembly);
+		return true;
 
 	}
 
@@ -236,14 +255,20 @@ namespace CatEngine
 
 	}
 
-	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filePath)
+	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path& filePath)
 	{
 		s_ScriptData->AppAssemblyFilepath = filePath;
 		s_ScriptData->AppAssembly = Utils::LoadMonoAssembly(filePath);
+
+		if (!s_ScriptData->AppAssembly)
+			return false;
+
 		s_ScriptData->AppAssemblyImage = mono_assembly_get_image(s_ScriptData->AppAssembly);
 
 		s_ScriptData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
 			filePath.string(), OnAppAssemblyFileSystemEvent);
+
+		return true;
 	}
 
 	void ScriptEngine::SetSceneContext(Ref<Scene> scene)
@@ -269,15 +294,28 @@ namespace CatEngine
 		mono_domain_set(mono_get_root_domain(), false);
 
 		mono_domain_unload(s_ScriptData->AppDomain);
-
-
-		LoadAssembly(s_ScriptData->CoreAssemblyFilepath);
-		LoadAppAssembly(s_ScriptData->AppAssemblyFilepath);
-
+		bool status = LoadAssembly(s_ScriptData->CoreAssemblyFilepath);
+		if (!status)
+		{
+			CE_API_ERROR("[Script Engine] - Could not load Core Assembly!");
+			return;
+		}
+		status = LoadAppAssembly(s_ScriptData->AppAssemblyFilepath);
+		if (!status)
+		{
+			CE_API_ERROR("[Script Engine] - Could not load App Assembly!");
+			return;
+		}
 		LoadAssemblyClasses();
 
 
 		ScriptGlue::RegisterComponents();
+
+		if (!s_ScriptData->FunctionRegistered)
+		{
+			ScriptGlue::RegisterFunctions();
+			s_ScriptData->FunctionRegistered = true;
+		}
 
 		s_ScriptData->MeownoClass = ScriptClass("CatEngine", "Object", true);
 		s_ScriptData->AppAssemblyReloadPending = false;
@@ -323,6 +361,10 @@ namespace CatEngine
 			Ref<ScriptInstance> instance = s_ScriptData->EntityInstances[entityUUID];
 			instance->InvokeUpdateMethod(ts);
 		}
+		else
+		{
+			CE_API_ERROR("Could not find script instance {}", (uint64_t)entityUUID);
+		}
 
 	}
 
@@ -342,9 +384,10 @@ namespace CatEngine
 
 	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid)
 	{
-		CE_ASSERT(s_ScriptData->EntityInstances.find(uuid) != s_ScriptData->EntityInstances.end());
+		if(s_ScriptData->EntityInstances.find(uuid) != s_ScriptData->EntityInstances.end())
+			return s_ScriptData->EntityInstances.at(uuid)->GetManagedObject();
 
-		return s_ScriptData->EntityInstances.at(uuid)->GetManagedObject();;
+		return nullptr;
 	}
 
 	std::unordered_map<std::string, Ref<ScriptClass>>& ScriptEngine::GetScriptClasses()
@@ -362,12 +405,17 @@ namespace CatEngine
 
 	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
 	{
-		CE_ASSERT(entity);
-
-		UUID entityID = entity.GetUUID();
-		//CE_ASSERT(s_ScriptData->EntityScriptFields.find(entityID) != s_ScriptData->EntityScriptFields.end());
-
-		return s_ScriptData->EntityScriptFields[entityID];
+		
+		if (entity)
+		{
+			UUID entityID = entity.GetUUID();
+			return s_ScriptData->EntityScriptFields[entityID];
+		}
+		else
+		{
+			CE_API_ERROR("Could not get script fields");
+			return ScriptFieldMap();
+		}
 	}
 
 	void ScriptEngine::InitMono()
@@ -375,9 +423,10 @@ namespace CatEngine
 		mono_set_assemblies_path("mono/lib");
 
 		MonoDomain* rootDomain = mono_jit_init("CatEngineJITRuntime");
-		CE_API_ASSERT(rootDomain, "Could not load Root Domain \"CatEngineJITRuntime\"");
-
-		s_ScriptData->RootDomain = rootDomain;
+		if (rootDomain)
+			s_ScriptData->RootDomain = rootDomain;
+		else
+			CE_API_ERROR("Could not load Jit!");
 
 	}
 	void ScriptEngine::ShutdownMono()
