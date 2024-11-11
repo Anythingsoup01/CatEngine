@@ -98,14 +98,18 @@ namespace CatEngine
 		}
 		case SceneState::Play:
 		{
-			if (!m_IsScenePaused)
-				m_ActiveScene->OnUpdateRuntime(time);
-			OnScenePause();
+			m_ActiveScene->OnUpdateRuntime(time);
 			break;
 		}
 		case SceneState::Simulate:
 		{
 			m_ActiveScene->OnUpdateSimulation(time, m_EditorCamera);
+			m_EditorCamera.OnUpdate(time);
+			break;
+		}
+		case SceneState::Pause:
+		{
+			m_ActiveScene->OnUpdateRuntime(time);
 			m_EditorCamera.OnUpdate(time);
 			break;
 		}
@@ -328,8 +332,6 @@ namespace CatEngine
 				const char* runtimeText = m_SceneState == SceneState::Edit ? "Start Runtime" : "Stop Runtime";
 				if (ImGui::MenuItem(runtimeText, "Ctrl+F5"))  m_SceneState == SceneState::Edit ? OnScenePlay() : OnSceneStop();
 
-				if (ImGui::MenuItem("Pause Runtime", "Ctrl+Shift+F5")) OnScenePause();
-
 				if (ImGui::MenuItem("Simulate Runtime", "Ctrl+F7")) m_SceneState == SceneState::Edit ? OnSceneSimulateStart() : OnSceneSimulateStop();
 
 				if (ImGui::MenuItem("Exit")) Application::Get().CloseEditor();
@@ -377,9 +379,15 @@ namespace CatEngine
 			if (ImGui::ImageButton((ImTextureID)pauseIcon->GetRendererID(), ImVec2(size * 1.403, size), { 0, 0 }, { 1, 1 }, 0))
 			{
 				if (m_SceneState == SceneState::Edit)
+				{
 					m_IsScenePaused = !m_IsScenePaused;
+					OnScenePause(m_IsScenePaused);
+				}
 				else if (m_SceneState == SceneState::Play)
+				{
 					m_IsScenePaused = !m_IsScenePaused;
+					OnScenePause(m_IsScenePaused);
+				}
 				
 			}
 			ImGui::SameLine();
@@ -545,8 +553,10 @@ namespace CatEngine
             }
             case KeyCode::F5:
             {
-                if (control && shift)
-                    OnScenePause();
+				if (control && shift)
+				{
+
+				}
                 else if (control)
                     m_SceneState == SceneState::Edit ? OnScenePlay() : OnSceneStop();
                 break;
@@ -706,9 +716,12 @@ namespace CatEngine
 		ScriptEngine::SetSceneContext(m_ActiveScene);
     }
 
-	void EditorLayer::OnScenePause()
+	void EditorLayer::OnScenePause(bool isPaused)
 	{
-
+		if (isPaused)
+			m_ActiveScene->OnPauseStart();
+		else
+			m_ActiveScene->OnPauseStop();
 	}
 
     void EditorLayer::OnSceneStop()

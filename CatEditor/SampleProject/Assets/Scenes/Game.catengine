@@ -1,41 +1,32 @@
 Scene: SampleScene
 Entities:
-  - Entity: 15107716884144345136
+  - Entity: 15871396935545557737
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Player
+      Name: Ground
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [0, -1.18973982, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [7, 0.5, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      Texture: SampleProject/Assets\Textures\checkered.png
+      Color: [0.635514021, 0.350423604, 0.350423604, 1]
+      Texture: ""
       Tiling: 1
     Rigidbody2DComponent:
-      BodyType: 2
-      FixedRotation: false
+      BodyType: 0
+      FixedRotation: true
     BoxCollider2DComponent:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Rotation: 0
-      ShowColliderBounds: false
-      Density: 260.429993
+      ShowColliderBounds: true
+      Density: 1
       Friction: 0.5
-      Restitution: 9.99999975e-05
-      RestitutionThreshold: 0.280000001
-    ScriptComponent:
-      ClassName: PlayerController
-      ScriptFields:
-        - Name: m_Speed
-          Type: Float
-          Data: 10
-        - Name: m_Velocity
-          Type: Vector2
-          Data: [0, 0]
+      Restitution: 0
+      RestitutionThreshold: 0.5
   - Entity: 13806782013592827664
     TagComponent:
       Tag: None
@@ -64,30 +55,39 @@ Entities:
         - Name: m_CameraDistanceFromPlayer
           Type: Float
           Data: 25
-  - Entity: 15871396935545557737
+  - Entity: 15107716884144345136
     TagComponent:
       Tag: None
     LayerComponent:
       Layer: Default
     NameComponent:
-      Name: Ground
+      Name: Player
     TransformComponent:
-      Position: [0, -1.18973982, 0]
+      Position: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [7, 0.5, 1]
+      Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.635514021, 0.350423604, 0.350423604, 1]
-      Texture: ""
+      Color: [1, 1, 1, 1]
+      Texture: SampleProject/Assets\Textures\checkered.png
       Tiling: 1
     Rigidbody2DComponent:
-      BodyType: 0
-      FixedRotation: true
+      BodyType: 2
+      FixedRotation: false
     BoxCollider2DComponent:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Rotation: 0
-      ShowColliderBounds: true
-      Density: 1
+      ShowColliderBounds: false
+      Density: 9.99999975e-05
       Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
+      Restitution: 9.99999975e-05
+      RestitutionThreshold: 0.280000001
+    ScriptComponent:
+      ClassName: PlayerController
+      ScriptFields:
+        - Name: m_Speed
+          Type: Float
+          Data: 10
+        - Name: m_Velocity
+          Type: Vector2
+          Data: [0, 0]

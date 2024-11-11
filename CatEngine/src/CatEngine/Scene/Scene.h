@@ -26,6 +26,9 @@ namespace CatEngine
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DeleteEntity(Entity entity);
 
+		void OnPauseStart();
+		void OnPauseStop();
+
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
@@ -71,6 +74,7 @@ namespace CatEngine
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		bool m_IsRunning = false;
+		bool m_IsPaused = false;
 
 		friend class Entity;
 		friend class SceneSerializer;

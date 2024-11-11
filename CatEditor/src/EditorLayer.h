@@ -35,7 +35,7 @@ namespace CatEngine
 		void NewScene();
 		
 		void OnScenePlay();
-		void OnScenePause();
+		void OnScenePause(bool isPaused);
 		void OnSceneStop();
 
 		void OnSceneSimulateStart();
@@ -47,9 +47,6 @@ namespace CatEngine
 		void DeleteEntity();
 		void CopyEntity();
 		void PasteEntity();
-
-
-		// TODO: Implement pausing and simulating physics
 
 		void OnOverlayRender();
 
@@ -83,7 +80,8 @@ namespace CatEngine
 		{
 			Edit = 0,
 			Play = 1,
-			Simulate = 2
+			Simulate = 2,
+			Pause = 3
 		};
 		SceneState m_SceneState = SceneState::Edit;
 		

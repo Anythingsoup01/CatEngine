@@ -210,6 +210,17 @@ namespace CatEngine
 		}
 	}
 
+	void Scene::OnPauseStart()
+	{
+		m_IsPaused = true;
+	}
+
+	void Scene::OnPauseStop()
+	{
+		m_IsPaused = false;
+	}
+
+
 	void Scene::OnRuntimeStart()
 	{
 		m_IsRunning = true;
@@ -224,40 +235,42 @@ namespace CatEngine
 	void Scene::OnUpdateRuntime(Time time)
 	{
 		CE_PROFILE_FUNCTION();
-
-		// Update Scripts
+		if (!m_IsPaused)
 		{
-			auto view = m_Registry.view<ScriptComponent>();
-			for (auto e : view)
+			// Update Scripts
 			{
-				Entity entity = { e, this };
-				ScriptEngine::OnUpdateEntity(entity, time.deltaTime());
-			}
-		}
-
-		// Physics 2D
-
-		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-
-			m_PhysicsWorld->Step(time.deltaTime(), velocityIterations, positionIterations);
-
-			// Retrieve transform from Box2D
-			auto view = m_Registry.view<Rigidbody2DComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				const auto& position = body->GetPosition();
-				transform.Position.x = position.x;
-				transform.Position.y = position.y;
-				transform.Rotation.z = body->GetAngle();
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					ScriptEngine::OnUpdateEntity(entity, time.deltaTime());
+				}
 			}
 
+			// Physics 2D
+
+			{
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+
+				m_PhysicsWorld->Step(time.deltaTime(), velocityIterations, positionIterations);
+
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<Rigidbody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity{ e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					const auto& position = body->GetPosition();
+					transform.Position.x = position.x;
+					transform.Position.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+				}
+
+			}
 		}
 
 
@@ -473,6 +486,7 @@ namespace CatEngine
 		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.GetUUID());
 	}
+
 
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
