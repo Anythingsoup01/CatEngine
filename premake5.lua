@@ -38,6 +38,7 @@ group ""
 
 group "Core"
 	include "CatEngine"
+	include "Cat-ScriptCore"
 group ""
 
 group "Misc"

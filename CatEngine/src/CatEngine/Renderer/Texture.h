@@ -20,8 +20,6 @@ namespace CatEngine
 
 		virtual bool IsLoaded() const = 0;
 
-		virtual void Unbind() const = 0;
-
 		virtual bool operator==(const Texture& other) const = 0;
 
 		virtual uint32_t GetRendererID() const = 0;

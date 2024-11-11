@@ -25,15 +25,17 @@ project "CatEngine"
 		"src",
 		"vendors/spdlog/include",
 		"%{IncludeDir.Box2D}",
-		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb}",
 		"%{IncludeDir.EnTT}",
-		"%{IncludeDir.yaml}",
+		"%{IncludeDir.FileWatch}",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.mono}",
+		"%{IncludeDir.stb}",
 		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.yaml}",
     }
 
 	defines
@@ -47,7 +49,9 @@ project "CatEngine"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		"opengl32.lib"
+		"opengl32.lib",
+
+		"%{Library.mono}",
 	}
 
 	filter "files:vendors/ImGuizmo/**.cpp"
@@ -56,9 +60,18 @@ project "CatEngine"
 	filter "system:windows"
 		systemversion "latest"
 
+		links
+		{
+			"%{Library.WinSock}",
+			"%{Library.Winmm}",
+			"%{Library.Version}",
+			"%{Library.Bcrypt}",
+		}
+
 		defines{
 			"GLFW_INCLUDE_NONE",
 		}
+
 
 	filter "configurations:Debug"
 		defines "CE_DEBUG"

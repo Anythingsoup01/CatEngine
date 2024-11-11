@@ -8,6 +8,31 @@
 namespace CatEngine
 {
 
+	static float GetOffset(const size_t& size)
+	{
+		if (size >= 50)
+		{
+			return 150;
+		}
+		if (size >= 40)
+		{
+			return 120;
+		}
+		if (size >= 30)
+		{
+			return 90;
+		}
+		if (size >= 20)
+		{
+			return 60;
+		}
+		if (size >= 10)
+		{
+			return 30;
+		}
+		return 0;
+	}
+
 	template<typename T>
 	static void DrawImGuiColorEdit(T& values)
 	{
@@ -18,28 +43,23 @@ namespace CatEngine
 	static void DrawImGuiColorEdit<glm::vec4>(glm::vec4& values)
 	{
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushMultiItemsWidths(4, (ImGui::GetColumnWidth() * .95f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 
 		ImGui::ColorEdit4("##CO", glm::value_ptr(values), ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine();
-		ImGui::ColorEdit4("##CI", glm::value_ptr(values), ImGuiColorEditFlags_NoSmallPreview);
 
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
 	static void DrawImGuiColorEdit<glm::vec3>(glm::vec3& values)
 	{
-
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushMultiItemsWidths(3, (ImGui::GetColumnWidth() * .95f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 
 		ImGui::ColorEdit3("##CO", glm::value_ptr(values), ImGuiColorEditFlags_NoInputs);
-		ImGui::SameLine();
-		ImGui::ColorEdit3("##CI", glm::value_ptr(values), ImGuiColorEditFlags_NoSmallPreview);
 
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<typename T>
@@ -52,7 +72,7 @@ namespace CatEngine
 	static void DrawImGuiDragFloat<glm::vec4>(glm::vec4& values, float step, float min, float max)
 	{
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushMultiItemsWidths(4, (ImGui::GetColumnWidth() * .95f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 		for (int i = 0; i < 4; i++)
 		{
@@ -62,14 +82,14 @@ namespace CatEngine
 			ImGui::SameLine();
 			ImGui::PopID();
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
 	static void DrawImGuiDragFloat<glm::vec3>(glm::vec3& values, float step, float min, float max)
 	{
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushMultiItemsWidths(3, (ImGui::GetColumnWidth() * .95f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 		for (int i = 0; i < 3; i++)
 		{
@@ -79,14 +99,14 @@ namespace CatEngine
 			ImGui::SameLine();
 			ImGui::PopID();
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
 	static void DrawImGuiDragFloat<glm::vec2>(glm::vec2& values, float step, float min, float max)
 	{
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushMultiItemsWidths(2, (ImGui::GetColumnWidth() * .95f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 		for (int i = 0; i < 2; i++)
 		{
@@ -96,14 +116,14 @@ namespace CatEngine
 			ImGui::SameLine();
 			ImGui::PopID();
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(1);
 	}
 
 	template<>
 	static void DrawImGuiDragFloat<float>(float& value, float step, float min, float max)
 	{
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushMultiItemsWidths(1, (ImGui::GetColumnWidth() * .95f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 3,0 });
 
 		ImGui::PushID(1);
@@ -111,21 +131,23 @@ namespace CatEngine
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ImGui::PopID();
-		
-		ImGui::PopStyleVar();
+
+		ImGui::PopStyleVar(1);
+		ImGui::PushMultiItemsWidths(1, ImGui::GetWindowWidth());
 	}
 
 	void ImGuiDraw::DrawColorEdit4Control(const std::string& label, glm::vec4& values, float columnWidth)
 	{
 		ImGui::PushID(label.c_str());
 		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::SetColumnWidth(0, (ImGui::GetWindowWidth() / 4) + GetOffset(label.size()));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
 		DrawImGuiColorEdit<glm::vec4>(values);
 
-		ImGui::Columns(1);
+		ImGui::EndColumns();
 
 		ImGui::PopID();
 	}
@@ -133,14 +155,15 @@ namespace CatEngine
 	void ImGuiDraw::DrawColorEdit3Control(const std::string& label, glm::vec3& values, float columnWidth)
 	{
 		ImGui::PushID(label.c_str());
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Columns(1);
+		ImGui::SetColumnWidth(0, (ImGui::GetWindowWidth() / 4) + GetOffset(label.size()));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
 		DrawImGuiColorEdit<glm::vec3>(values);
 
-		ImGui::Columns(1);
+		ImGui::EndColumns();
 
 		ImGui::PopID();
 	}
@@ -149,13 +172,14 @@ namespace CatEngine
 	{
 		ImGui::PushID(label.c_str());
 		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::SetColumnWidth(0, (ImGui::GetWindowWidth() / 4) + GetOffset(label.size()));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
 		DrawImGuiDragFloat<glm::vec4>(values, step, min, max);
 
-		ImGui::Columns(1);
+		ImGui::EndColumns();
 
 		ImGui::PopID();
 	}
@@ -163,13 +187,14 @@ namespace CatEngine
 	{
 		ImGui::PushID(label.c_str());
 		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::SetColumnWidth(0, (ImGui::GetWindowWidth() / 4) + GetOffset(label.size()));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
 		DrawImGuiDragFloat<glm::vec3>(values, step, min, max);
 
-		ImGui::Columns(1);
+		ImGui::EndColumns();
 
 		ImGui::PopID();
 	}
@@ -180,13 +205,14 @@ namespace CatEngine
 
 		ImGui::Columns(2);
 
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::SetColumnWidth(0, (ImGui::GetWindowWidth() / 4) + GetOffset(label.size()));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
 		DrawImGuiDragFloat<glm::vec2>(values, step, min, max);
 
-		ImGui::Columns(1);
+		ImGui::EndColumns();
 
 		ImGui::PopID();
 	}
@@ -196,15 +222,17 @@ namespace CatEngine
 		ImGui::PushID(label.c_str());
 
 		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::SetColumnWidth(0, (ImGui::GetWindowWidth() / 4) + GetOffset(label.size()));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
 		DrawImGuiDragFloat<float>(value, step, min, max);
 
-		ImGui::Columns(1);
+		ImGui::EndColumns();
 
 		ImGui::PopID();
+
 	}
 
 	void ImGuiDraw::DrawCheckBox(const std::string& label, bool& active, float columnWidth)
@@ -212,14 +240,17 @@ namespace CatEngine
 		ImGui::PushID(label.c_str());
 
 		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::SetColumnWidth(0, (ImGui::GetWindowWidth() / 4) + GetOffset(label.size()));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
 		ImGui::Checkbox("##CB", &active);
 
-		ImGui::Columns(1);
+		ImGui::EndColumns();
 
 		ImGui::PopID();
+
 	}
+
 }

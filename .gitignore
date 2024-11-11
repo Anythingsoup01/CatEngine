@@ -11,7 +11,8 @@
 *.sln.docstates
 *.vs/
 *.filters
-
+*.vcxproj
+*.csproj
 *.json
 
 /bin/
@@ -378,11 +379,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Sandbox/Sandbox.vcxproj
-/CatEngine/CatEngine.vcxproj.filters
-/CatEngine/CatEngine.vcxproj
 /CatEngine/vendors/VulkanSDK
 *.frag
 *.vert
 /CatEditor/imgui.ini
-/CatEditor/CatEditor.vcxproj
+
+/CatEditor/Resources/Scripts/Cat-ScriptCore.dll
+/CatEditor/SampleProject/Assets/Scripts/Binaries
+*.sln

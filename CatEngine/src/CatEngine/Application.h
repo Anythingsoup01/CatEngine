@@ -12,6 +12,8 @@
 #include "Layers/LayerStack.h"
 #include "Renderer/Renderer.h"
 
+#include "Scripting/ScriptEngine.h"
+
 
 namespace CatEngine {
 
@@ -37,7 +39,7 @@ namespace CatEngine {
 	class Application {
 	public:
 		Application(const ApplicationSpecification& specification);
-		virtual ~Application() = default;
+		virtual ~Application();
 
 		void Run();
 		void OnEvent(Event& e);
@@ -55,15 +57,21 @@ namespace CatEngine {
 
 		const ApplicationSpecification GetSpecification() const { return m_Specification; }
 
+		void SubmitToMainThread(const std::function<void()>& function);
+
 	private:
 		ApplicationSpecification m_Specification;
 		LayerStack m_LayerStack;
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
+		void ExecuteMainThreadQueue();
 	private:
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		float m_LastFrameTime = 0.f;
+
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueMutex;
 	private:
 		static Application* s_Instance;
 		bool m_Running = true;

@@ -13,7 +13,7 @@
 
 #include "Required/InformationComponents.h"
 
-#include "Scripting/NativeScriptingComponent.h"
+#include "Scripting/ScriptComponent.h"
 
 
 namespace CatEngine
@@ -28,5 +28,5 @@ namespace CatEngine
 		ComponentGroup<TagComponent, LayerComponent, TransformComponent, CameraComponent,
 		SpriteRendererComponent, CircleRendererComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent,
-		NativeScriptComponent>;
+		ScriptComponent>;
 }

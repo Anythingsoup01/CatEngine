@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include "CatEngine/Components/Components.h"
+#include "CatEngine/Scripting/ScriptEngine.h"
 
 #define YAML_CPP_STATIC_DEFINE
 #include <yaml-cpp/yaml.h>
@@ -89,6 +90,12 @@ namespace YAML {
 
 namespace CatEngine
 {
+
+
+
+
+
+
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
 	{
 		out << YAML::Flow;
@@ -128,9 +135,11 @@ namespace CatEngine
 	{
 	}
 
+
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		CE_PROFILE_FUNCTION();
+
 		out << YAML::BeginMap; // Entity
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetComponent<IDComponent>().ID;
 		if (entity.HasComponent<TagComponent>())
@@ -267,6 +276,72 @@ namespace CatEngine
 			out << YAML::Key << "Restitution" << YAML::Value << cc2d.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2d.RestitutionThreshold;
 			out << YAML::EndMap; // CircleCollider2DComponent
+
+		}
+
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			auto& sc = entity.GetComponent<ScriptComponent>();
+			out << YAML::Key << "ScriptComponent" << YAML::Value;
+			out << YAML::BeginMap; // ScriptComponent
+			out << YAML::Key << "ClassName" << YAML::Value << sc.ClassName;
+
+			// Fields
+			Ref<ScriptClass> scriptClass = ScriptEngine::GetScriptClass(sc.ClassName);
+			const auto& fields = scriptClass->GetFields();
+			if (fields.size() > 0)
+			{
+				out << YAML::Key << "ScriptFields" << YAML::Value;
+				auto& scriptFields = ScriptEngine::GetScriptFieldMap(entity);
+				out << YAML::BeginSeq;
+				for (const auto& [name, field] : fields)
+				{
+					if (scriptFields.find(name) == scriptFields.end())
+						continue;
+
+					// - Name : FieldName
+					//   Type : 1
+					//   Data : 6.0f
+
+					out << YAML::BeginMap; // ScriptFields
+
+					out << YAML::Key << "Name" << YAML::Value << name;
+					out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
+					out << YAML::Key << "Data" << YAML::Value;
+
+					ScriptFieldInstance& scriptFieldInstance = scriptFields.at(name);
+
+#define FIELD_TYPE(FieldType, Type) case ScriptFieldType::FieldType:\
+										out << scriptFieldInstance.GetValue<Type>();\
+										break;
+
+					switch (field.Type)
+					{
+						FIELD_TYPE(Float, float);
+						FIELD_TYPE(Double, double);
+						FIELD_TYPE(SByte, int8_t);
+						FIELD_TYPE(Char, char);
+						FIELD_TYPE(Int16, int16_t);
+						FIELD_TYPE(Int32, int32_t);
+						FIELD_TYPE(Int64, int64_t);
+						FIELD_TYPE(Boolean, bool);
+						FIELD_TYPE(Byte, uint8_t);
+						FIELD_TYPE(UInt16, uint16_t);
+						FIELD_TYPE(UInt32, uint32_t);
+						FIELD_TYPE(UInt64, uint64_t);
+						FIELD_TYPE(String, char*);
+						FIELD_TYPE(Vector2, glm::vec2);
+						FIELD_TYPE(Vector3, glm::vec3);
+						FIELD_TYPE(Vector4, glm::vec4);
+						FIELD_TYPE(Object, uint64_t);
+					}
+#undef FIELD_TYPE
+
+					out << YAML::EndMap; // ScriptFields
+				}
+				out << YAML::EndSeq;
+			}
+			out << YAML::EndMap; // ScriptComponent
 
 		}
 
@@ -431,6 +506,112 @@ namespace CatEngine
 					cc2d.Restitution = circleCollider2D["Restitution"].as<float>();
 					cc2d.RestitutionThreshold = circleCollider2D["RestitutionThreshold"].as<float>();
 
+				}
+				auto scriptComponent = entity["ScriptComponent"];
+				if (scriptComponent)
+				{
+					auto& sc = deserializedEntity.AddComponent<ScriptComponent>();
+
+					sc.ClassName = scriptComponent["ClassName"].as<std::string>();
+					
+					auto scriptFields = scriptComponent["ScriptFields"];
+
+					if (scriptFields)
+					{
+						Ref<ScriptClass> scriptClass = ScriptEngine::GetScriptClass(sc.ClassName);
+						const auto& fields = scriptClass->GetFields();
+
+						auto& scriptFieldMap = ScriptEngine::GetScriptFieldMap(deserializedEntity);
+
+						for (auto scriptField : scriptFields)
+						{
+							std::string fieldName = scriptField["Name"].as<std::string>();
+							std::string typeString = scriptField["Type"].as<std::string>();
+							ScriptFieldType type = Utils::StringToScriptFieldType(typeString);
+
+							ScriptFieldInstance& fieldInstance = scriptFieldMap[fieldName];
+							if (fields.find(fieldName) == fields.end())
+								continue;
+							fieldInstance.Field = fields.at(fieldName);
+
+#define FIELD_TYPE(Type)  Type data = scriptField["Data"].as<Type>(); \
+							fieldInstance.SetValue(data); \
+							break;
+									
+
+							switch (type)
+							{
+								case ScriptFieldType::Float:
+								{
+									FIELD_TYPE(float);
+								}
+								case ScriptFieldType::Double:
+								{
+									FIELD_TYPE(double);
+								}
+								case ScriptFieldType::SByte:
+								{
+									FIELD_TYPE(int8_t);
+								}
+								case ScriptFieldType::Char:
+								{
+									FIELD_TYPE(char);
+								}
+								case ScriptFieldType::Int16:
+								{
+									FIELD_TYPE(int16_t);
+								}
+								case ScriptFieldType::Int32:
+								{
+									FIELD_TYPE(int32_t);
+								}
+								case ScriptFieldType::Int64:
+								{
+									FIELD_TYPE(int64_t);
+								}
+								case ScriptFieldType::Boolean:
+								{
+									FIELD_TYPE(bool);
+								}
+								case ScriptFieldType::Byte:
+								{
+									FIELD_TYPE(uint16_t);
+								}
+								case ScriptFieldType::UInt16:
+								{
+									FIELD_TYPE(uint16_t);
+								}
+								case ScriptFieldType::UInt32:
+								{
+									FIELD_TYPE(uint32_t);
+								}
+								case ScriptFieldType::UInt64:
+								{
+									FIELD_TYPE(uint64_t);
+								}
+								case ScriptFieldType::String:
+								{
+									FIELD_TYPE(std::string);
+								}
+								case ScriptFieldType::Vector2:
+								{
+									FIELD_TYPE(glm::vec2);
+								}
+								case ScriptFieldType::Vector3:
+								{
+									FIELD_TYPE(glm::vec3);
+								}
+								case ScriptFieldType::Vector4:
+								{
+									FIELD_TYPE(glm::vec4);
+								}
+								case ScriptFieldType::Object:
+								{
+									FIELD_TYPE(uint64_t);
+								}
+							}
+						}
+					}
 				}
 			}
 		}

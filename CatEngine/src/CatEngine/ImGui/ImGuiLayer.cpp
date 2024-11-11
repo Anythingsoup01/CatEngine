@@ -11,6 +11,7 @@
 
 #include "CatEngine/Application.h"
 
+#include <imgui_internal.h>
 #include "ImGuizmo.h"
 
 namespace CatEngine {
@@ -31,6 +32,8 @@ namespace CatEngine {
 
 		io.Fonts->AddFontFromFileTTF("Resources/fonts/opensans/static/OpenSans-Bold.ttf", 16.f);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("Resources/fonts/opensans/static/OpenSans-Regular.ttf", 16.f);
+
+		ImGui::GetCurrentContext()->NavWindowingToggleLayer = false;
 
 		// ImGui Style
 		ImGui::StyleColorsDark();
@@ -53,6 +56,11 @@ namespace CatEngine {
 		ImGui_ImplOpenGL3_Init("#version 430");
 	}
 
+	void ImGuiLayer::OnUpdate(Time deltaTime)
+	{
+		ImGui::GetCurrentContext()->NavWindowingToggleLayer = false;
+	}
+
 	void ImGuiLayer::OnDetach()
 	{
 		ImGui_ImplOpenGL3_Shutdown();
@@ -62,7 +70,11 @@ namespace CatEngine {
 
 	void ImGuiLayer::OnEvent(Event& e)
 	{
-		if (m_BlockEvents) {
+		if (m_BlockKeyboardEvents) {
+			ImGuiIO& io = ImGui::GetIO();
+			e.Handled |= e.IsInCategory(CategoryKeyboardEvent) & io.WantCaptureKeyboard;
+		}
+		if (m_BlockMouseEvents) {
 			ImGuiIO& io = ImGui::GetIO();
 			e.Handled |= e.IsInCategory(CategoryMouseEvent) & io.WantCaptureMouse;
 		}

@@ -35,9 +35,11 @@ namespace CatEngine
 	
 	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
 	{
-		CE_API_ASSERT(width > 0 && height > 0, "Invalid Parameters!");
-		m_AspectRatio = (float)width / (float)height;
-		RecalculateProjection();
+		if (width > 0 && height > 0)
+		{
+			m_AspectRatio = (float)width / (float)height;
+			RecalculateProjection();
+		}
 	}
 	void SceneCamera::RecalculateProjection()
 	{

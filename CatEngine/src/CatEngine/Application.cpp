@@ -21,12 +21,22 @@ namespace CatEngine {
 			std::filesystem::current_path(m_Specification.WorkingDirectory);
 
 		m_Window = Window::Create(WindowProps(m_Specification.Name));
+		m_Window->SetVSync(true);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
 
+		ScriptEngine::Init();
+
 		m_ImGuiLayer = new CatEngine::ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+	}
+
+	Application::~Application()
+	{
+		ScriptEngine::Shutdown();
+
+		Renderer::Shutdown();
 	}
 
 	void Application::Run() 
@@ -36,6 +46,8 @@ namespace CatEngine {
 			float time = Time::GetTime();
 			Time deltaTime = time - m_LastFrameTime;
 			m_LastFrameTime = time;
+
+			ExecuteMainThreadQueue();
 
 			if (!m_Minimized)
 			{
@@ -84,6 +96,12 @@ namespace CatEngine {
 		m_Running = false;
 	}
 
+	void Application::SubmitToMainThread(const std::function<void()>& function)
+	{
+		
+		m_MainThreadQueue.emplace_back(function);
+	}
+
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
@@ -103,6 +121,20 @@ namespace CatEngine {
 		
 
 		return false;
+	}
+
+	void Application::ExecuteMainThreadQueue()
+	{
+		std::vector<std::function<void()>> copy;
+		{
+			std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+			copy = m_MainThreadQueue;
+			m_MainThreadQueue.clear();
+		}
+
+
+		for (auto& function : copy)
+			function();
 	}
 
 }

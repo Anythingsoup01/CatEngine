@@ -19,6 +19,8 @@ project "CatEditor"
 		"%{wks.location}/CatEngine/vendors/spdlog/include",
 		"%{wks.location}/CatEngine/src",
 		"%{wks.location}/CatEngine/vendors",
+		"%{wks.location}/CatEngine/vendors/mono/include",
+		"%{IncludeDir.FileWatch}",
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
@@ -36,16 +38,17 @@ project "CatEditor"
 	filter "configurations:Debug"
 		defines "CE_DEBUG"
 		runtime "Debug"
-		symbols "on"
+		optimize "off"
+		symbols  "on"
 
 	filter "configurations:Release"
 		defines "CE_RELEASE"
 		runtime "Release"
 		optimize "on"
+		symbols  "on"
 
 	filter "configurations:Dist"
 		defines "CE_DIST"
 		runtime "Release"
 		optimize "on"
-		kind "WindowedApp"
-		entrypoint "mainCRTStartup"
+		symbols  "off"

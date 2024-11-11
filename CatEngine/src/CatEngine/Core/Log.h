@@ -31,6 +31,26 @@ namespace CatEngine {
 	};
 }
 
+template<typename OStream, glm::length_t L, typename T, glm::qualifier Q>
+inline OStream& operator<<(OStream& os, const glm::vec<L, T, Q>& vector)
+{
+	return os << glm::to_string(vector);
+}
+
+template<typename OStream, glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
+inline OStream& operator<<(OStream& os, const glm::mat<C, R, T, Q>& matrix)
+{
+	return os << glm::to_string(matrix);
+}
+
+template<typename OStream, typename T, glm::qualifier Q>
+inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternio)
+{
+	return os << glm::to_string(quaternio);
+}
+
+
+
 #ifdef CE_DEBUG
 
 // Core Log Macros
@@ -53,7 +73,6 @@ namespace CatEngine {
 #define CE_API_WARN(...)
 #define CE_API_INFO(...)
 #define CE_API_TRACE(...)
-#define API_ASSERT(x, ...)
 
 // Client Log Macros
 #define CE_CLI_CRITICAL(...)             ::CatEngine::Log::GetCLILogger()->critical(__VA_ARGS__)

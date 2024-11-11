@@ -26,6 +26,9 @@ namespace CatEngine
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DeleteEntity(Entity entity);
 
+		void OnPauseStart();
+		void OnPauseStop();
+
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
@@ -40,6 +43,9 @@ namespace CatEngine
 		void DuplicateEntity(Entity entity);
 		Entity PasteEntity(Entity entity);
 
+		Entity FindEntityByName(std::string_view name);
+		Entity GetEntityByUUID(UUID entityID);
+
 		Entity GetPrimaryCameraEntity();
 
 		template<typename... Components>
@@ -48,6 +54,8 @@ namespace CatEngine
 			return m_Registry.view<Components...>();
 		}
 
+		bool IsRunning() { return m_IsRunning; }
+
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
@@ -55,11 +63,18 @@ namespace CatEngine
 		void OnPhysics2DStart();
 		void OnPhysics2DStop();
 
+		void OnScriptStart();
+
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2World* m_PhysicsWorld = nullptr;
+
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
+
+		bool m_IsRunning = false;
+		bool m_IsPaused = false;
 
 		friend class Entity;
 		friend class SceneSerializer;

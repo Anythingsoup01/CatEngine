@@ -5,6 +5,7 @@
 #include "CatEngine/Core/KeyCodes.h"
 #include "CatEngine/Core/MouseButtonCodes.h"
 
+
 #include <glfw/glfw3.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -28,11 +29,17 @@ namespace CatEngine
 			m_InitialMousePosition = mouse;
 
 			if (Input::IsMouseButtonPressed(MouseCode::ButtonMiddle))
+			{
 				MousePan(delta);
+			}
 			else if (Input::IsMouseButtonPressed(MouseCode::ButtonLeft))
+			{
 				MouseRotate(delta);
+			}	
 			else if (Input::IsMouseButtonPressed(MouseCode::ButtonRight))
+			{
 				MouseZoom(delta.y);
+			}
 			UpdateView();
 		}
 	}

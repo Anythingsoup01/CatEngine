@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 #include "CatEngine/Components/Components.h"
-#include "SoloAction.h"
+#include "CatEngine/Scripting/ScriptEngine.h"
 #include "Entity.h"
 
 #include "CatEngine/Renderer/Renderer2D.h"
@@ -200,9 +200,32 @@ namespace CatEngine
 		m_PhysicsWorld = nullptr;
 	}
 
+	void Scene::OnScriptStart()
+	{
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			ScriptEngine::OnStartEntity(entity);
+		}
+	}
+
+	void Scene::OnPauseStart()
+	{
+		m_IsPaused = true;
+	}
+
+	void Scene::OnPauseStop()
+	{
+		m_IsPaused = false;
+	}
+
+
 	void Scene::OnRuntimeStart()
 	{
-		// TODO: Start scripts before physics
+		m_IsRunning = true;
+
+		OnScriptStart();
 
 		OnPhysics2DStart();
 			
@@ -212,45 +235,42 @@ namespace CatEngine
 	void Scene::OnUpdateRuntime(Time time)
 	{
 		CE_PROFILE_FUNCTION();
-
-		// Update Scripts
+		if (!m_IsPaused)
 		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			// Update Scripts
 			{
-				if (!nsc.Instance)
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto e : view)
 				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity{ entity, this };
-					nsc.Instance->Start();
+					Entity entity = { e, this };
+					ScriptEngine::OnUpdateEntity(entity, time.deltaTime());
 				}
-
-				nsc.Instance->Update(time);
-			});
-		}
-
-		// Physics 2D
-
-		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-
-			m_PhysicsWorld->Step(time.deltaTime(), velocityIterations, positionIterations);
-
-			// Retrieve transform from Box2D
-			auto view = m_Registry.view<Rigidbody2DComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				const auto& position = body->GetPosition();
-				transform.Position.x = position.x;
-				transform.Position.y = position.y;
-				transform.Rotation.z = body->GetAngle();
 			}
 
+			// Physics 2D
+
+			{
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+
+				m_PhysicsWorld->Step(time.deltaTime(), velocityIterations, positionIterations);
+
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<Rigidbody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity{ e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					const auto& position = body->GetPosition();
+					transform.Position.x = position.x;
+					transform.Position.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+				}
+
+			}
 		}
 
 
@@ -303,7 +323,9 @@ namespace CatEngine
 
 	void Scene::OnRuntimeStop()
 	{
+		m_IsRunning = false;
 		OnPhysics2DStop();
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
@@ -371,6 +393,9 @@ namespace CatEngine
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		if (m_ViewportWidth == width && m_ViewportHeight == height)
+			return;
+
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
@@ -400,6 +425,24 @@ namespace CatEngine
 		Entity newEntity = CreateEntity(entity.GetName() + "(Copied from " + entity.GetName() + ")");
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 		return newEntity;
+	}
+	Entity Scene::FindEntityByName(std::string_view name)
+	{
+		auto view = m_Registry.view<NameComponent>();
+		for (auto entity : view)
+		{
+			const NameComponent& nameComponent = view.get<NameComponent>(entity);
+			if (nameComponent.Name == name)
+			{
+				return Entity{ entity, this };
+			}
+		}
+		return {};
+	}
+	Entity Scene::GetEntityByUUID(UUID entityID)
+	{
+		if (m_EntityMap.find(entityID) != m_EntityMap.end())
+			return { m_EntityMap.at(entityID), this };
 	}
 	Entity Scene::GetPrimaryCameraEntity()
 	{
@@ -434,12 +477,16 @@ namespace CatEngine
 
 		entity.AddComponent<TransformComponent>();
 
+		m_EntityMap[uuid] = entity.GetEntityID();
+
 		return entity;
 	}
 	void Scene::DeleteEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 	}
+
 
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
@@ -483,7 +530,7 @@ namespace CatEngine
 
 	}
 	template<>
-	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
 	{
 	}
 	template<>

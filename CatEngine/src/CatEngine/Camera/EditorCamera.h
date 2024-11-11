@@ -65,6 +65,8 @@ namespace CatEngine
 
 		float m_ViewportWidth = 1280, m_ViewportHeight = 720;
 
+		friend class EditorLayer;
+
 	};
 
 }
